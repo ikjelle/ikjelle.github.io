@@ -28,4 +28,4 @@ To get more help on the Angular CLI use `ng help` or go check out the [Angular C
 
 ## Deploying to Github
 
-Run `ng build --output-path docs --base-href /ikjelle.github.io/` and commit those files
+Run `ng build --output-path docs` and commit those files
