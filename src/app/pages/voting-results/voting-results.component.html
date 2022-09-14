@@ -1,0 +1,67 @@
+<div class="explanation group">
+    <h1>Welkom op de stemmings uitslagen pagina</h1>
+    <p>Op deze pagina kunt u alle afgelopen uitslagen vinden van de Tweede Kamer</p>
+    <p>
+        Ook kunt u met onderstaande filters uitslagen filteren op:
+    </p>
+    <ul>
+        <li>
+            Controversieel: 2 groepen die tegenovergestelde uistlagen hebben, dus 1 is tegen en de ander is Voor of vice
+            versa.
+        </li>
+        <li>
+            Apart: Uitslagen vinden waarbij 1 groep tegen was, laat in dit geval een van de groepen leeg
+        </li>
+    </ul>
+    <p>Nadat U op filter heeft gedrukt zal het een aantal seconden duren voordat de resultaten beschikbaar zijn</p>
+    <p>Alle resultaten worden via de https://opendata.tweedekamer.nl/ api opgehaald.</p>
+    <div>Disclaimer:
+        <ul>
+            <li>
+                Op dit moment staat de api niet toe dat een ander domein data mag opvragen (CORS)<br>
+                U zult daarom geen resultaten kunnen zien zonder uw browser aan te passen en/of een plugin te
+                installeren
+            </li>
+            <li>De laatste (maximaal) 250 resultaten worden opgehaald.</li>
+            <li>Wanneer een partij niet heeft gestemd wordt deze NIET genegeerd.</li>
+            <li>Resultaten van voordat de partij bestond worden ook meegenomen.</li>
+        </ul>
+    </div>
+</div>
+
+<div class="group">
+    <!-- <div class="filter-tabs">
+        Placeholder for the tabs
+        <div class="filter-tab-item">Controversieel</div>
+        <div class="filter-tab-item">Apart</div>
+    </div> -->
+
+    <!-- Tabs content -->
+    <div>
+        <!-- Controversieel -->
+        <app-controversial [parties]="searchterms">
+        </app-controversial>
+        <!-- Apart -->
+    </div>
+    <div class="button">
+        <button class="search-button" (click)="filterResults()">Filter</button>
+    </div>
+</div>
+
+<div class="group results">
+    <div *ngIf="spinner">
+        <app-spinner></app-spinner>
+        <div *ngIf="!firstLoad">
+            Als u dit ziet moet U CORS uitschakelen voor dit domein.
+            <br>
+            Let op! CORS is een soort beveiliging van de browser, dus als u klaar bent doe deze weer aan!
+        </div>
+    </div>
+    <div>
+        <div *ngFor="let page of pages">
+            <app-result [highLighted]="highLighted" [result]="result" *ngFor="let result of getResults(page.results)">
+
+            </app-result>
+        </div>
+    </div>
+</div>

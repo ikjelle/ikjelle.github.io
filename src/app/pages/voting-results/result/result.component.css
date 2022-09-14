@@ -1,0 +1,58 @@
+.container {
+    display: flex;
+    flex-direction: column;
+    border: 1px solid black;
+    margin: 10px;
+    padding: 10px;
+}
+
+.result {
+    display: flex;
+}
+
+.votes-title {
+    order: 0;
+    margin-bottom: 10px;
+}
+
+.votes {
+    margin: 10px;
+    padding: 5px;
+    width: 150px;
+    display: flex;
+    flex-direction: column;
+}
+
+.highLighted {
+    font-size: large;
+    font-weight: bold;
+}
+
+.subject {
+    padding-top: 30px;
+}
+.subject > div {
+    margin-bottom: 10px;
+}
+
+.votings {
+    display: flex;
+    flex-direction: column;
+}
+
+.votes-bar {
+    display: flex;
+    width: 100%;
+}
+
+.yay-bar {
+    background-color: green;
+    border-radius: 50px 0 0 50px;
+    text-align: end;
+}
+
+.nay-bar {
+    background-color: red;
+    border-radius: 0 50px 50px 0;
+    text-align: start;
+}
