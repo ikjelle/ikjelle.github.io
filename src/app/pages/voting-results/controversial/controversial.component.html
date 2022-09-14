@@ -1,11 +1,23 @@
-<div class="content">
+<div class="container-fluid">
+    <div class="card card-body">
+        Sleep partijen in groep 1 en laat groep 2 leeg om te zien waar deze partijen als enige tegen of voor stemden.
+        <br>
+        Sleep partijen in groep 1 en sleep andere partijen in groep 2 om te zien waar deze partijen het tegenovergestelde stemden.
+        <br>
+        *Sleep partijen in groep 2 en laat groep 1 leeg om te zien waar deze partijen samen stemden.
+        <br>
+        * moet nog geimplementeerd worden
+    </div>
     <div class="box-holder">
         <div class="box">
             <div class="box-title">Groep 1</div>
             <div cdkDropList #box1List="cdkDropList" [cdkDropListData]="box1"
                 [cdkDropListConnectedTo]="[box2List, partyList]" class="party-box box-group"
                 (cdkDropListDropped)="drop($event)">
-                <div class="box-item" *ngFor="let item of box1" cdkDrag>{{item}}</div>
+                <h1>
+                    <span class="badge rounded-pill bg-light text-dark" *ngFor="let item of box1"
+                        cdkDrag>{{item}}</span>
+                </h1>
             </div>
         </div>
         <div class="box">
@@ -13,7 +25,10 @@
             <div cdkDropList #box2List="cdkDropList" [cdkDropListData]="box2"
                 [cdkDropListConnectedTo]="[box1List, partyList]" class="party-box box-group"
                 (cdkDropListDropped)="drop($event)">
-                <div class="box-item" *ngFor="let item of box2" cdkDrag>{{item}}</div>
+                <h1>
+                    <span class="badge rounded-pill bg-light text-dark" *ngFor="let item of box2"
+                        cdkDrag>{{item}}</span>
+                </h1>
             </div>
         </div>
     </div>
@@ -23,7 +38,9 @@
     <div class="party-holder">
         <div cdkDropList #partyList="cdkDropList" [cdkDropListData]="parties"
             [cdkDropListConnectedTo]="[box1List, box2List]" class="party-box" (cdkDropListDropped)="drop($event)">
-            <div class="box-item" *ngFor="let item of parties" cdkDrag>{{item}}</div>
+            <h1>
+                <span class="badge rounded-pill bg-light text-dark" *ngFor="let item of parties" cdkDrag>{{item}}</span>
+            </h1>
         </div>
     </div>
 </div>
