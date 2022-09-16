@@ -1,68 +1,73 @@
-<div class="intro container">
-    <h1>Tweede Kamer Stemmingsuitslagen</h1>
-    Op deze pagina kunt u de Stemmingsuitslagen vinden die gedaan zijn in de tweede kamer.
-    <br>
-    Deze resultaten zijn te filteren.
-
-
-    <br>
-    <a class="btn btn-outline-info" data-bs-toggle="collapse" href="#disclaimer" role="button" aria-expanded="false"
-        aria-controls="disclaimer">
-        Disclaimer
-    </a>
-    <div class="collapse" id="disclaimer">
-        Deze pagina is nog niet af en mist een aantal functionaliteiten
+<div class="container-lg">
+    <div class="intro">
+        <h1>Tweede Kamer Stemmingsuitslagen</h1>
+        Op deze pagina kunt u de Stemmingsuitslagen vinden die gedaan zijn in de tweede kamer.
         <br>
-        De TODO's:
-        <ul>
-            <li>Paginatie, het maximale aantal resultaten op dit moment is 250</li>
-            <li>Layout verbeteringen</li>
-            <li>Meer filter opties</li>
-            <li>Een zoek optie op titel</li>
-            <li>Niet alle resultaten voldoen aan de exacte eisen</li>
-            <li>Maak website deelbaar door filters in de adres bar uit te lezen</li>
-            <li>Bij de soort van het besluit staan veel waardes, niet bij alle waardes zijn ook resultaten (moet nog filteren)</li>
-        </ul>
-        Alle resultaten worden via de <a href="https://opendata.tweedekamer.nl/">Opendate API</a> van de Tweede Kamer
-        opgehaald.
-        Hierdoor kunt u waarschijnlijk geen resultaten zien. Dit is omdat de API (op moment van creatie) geen <a
-            href="https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS">CORS</a> toelaat.
-        Dit kunt u oplossen door CORS uit te schakelen in de browser of een extentie te installeren die CORS negeert.
+        Deze resultaten zijn te filteren.
         <br>
-        <b>Let op!</b> Zorg ervoor dat U alleen CORS voor deze pagina uitschakelt
-    </div>
-</div>
-<hr>
-<div class="container-fluid">
-    <!-- The logic for grouping parties in boxes -->
-    <div>
-        <app-controversial [parties]="searchterms">
-        </app-controversial>
-    </div>
-    <div class="container-fluid">
-        Soort (Wordt mogelijk toegevoegd in de toekomst, als het mogelijk is)
-        <br>
-        <div style="display: flex;flex-wrap: wrap;">
-            <div class="form-check form-check-inline" style="order:-1000">
-                <input (change)="checkAllTypes($event)" [checked]="allTypesChecked()" class="form-check-input"
-                    type="checkbox" id="selectAll" value="all">
-                <label class="form-check-label" for="selectAll">Alles (on)selecteren</label>
-            </div>
-
-            <div [style]="{order:-1*resultType.priority}" *ngFor="let resultType of resultTypes; let i=index" class="form-check form-check-inline">
-                <input class="form-check-input" type="checkbox" [value]="resultType.name" [checked]="resultType.checked"
-                    [id]="'inlineCheckbox'+ i" (change)="changeTypeChecked(resultType)">
-                <label class="form-check-label" [for]="'inlineCheckbox'+ i">{{resultType.name}}</label>
-            </div>
+        <button (click)="disclaimerButtonToggle()" #disclaimerButton class="btn btn-info" data-bs-toggle="collapse"
+            href="#disclaimer" role="button" aria-expanded="true" aria-controls="disclaimer">
+            Disclaimer
+        </button>
+        <div class="show" id="disclaimer">
+            Deze pagina is nog niet af en mist een aantal functionaliteiten
+            <br>
+            Huidige Problemen:
+            <ul>
+                <li>Paginatie, het maximale aantal resultaten op dit moment is 250</li>
+                <li>Voor zover de data, is er geen manier om een link van tweedekamer.nl te koppelen aan het besluit
+                </li>
+                <li>De datum is wanneer de data voor het laatst aangepast is. Ik verwacht dat dit is wanneer het
+                    resultaat wordt geupload</li>
+                <li>Niet alle resultaten voldoen aan de exacte eisen</li>
+                <li>Maak website deelbaar door filters in de adres bar uit te lezen</li>
+                <li>De types van het besluit worden niet allemaal gebruikt</li>
+            </ul>
+            Alle resultaten worden via de <a href="https://opendata.tweedekamer.nl/">Opendate API</a> van de Tweede
+            Kamer opgehaald.
+            Hierdoor kunt u waarschijnlijk geen resultaten zien. Dit is omdat de API geen <a
+                href="https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS">CORS</a> toelaat en ik geen server heb die dit zou kunnen oplossen.
+            Maar u kunt het oplossen door CORS uit te schakelen in de browser of een extentie te installeren die CORS
+            negeert (zoals: <a
+                href="https://chrome.google.com/webstore/detail/allow-cors-access-control/lhobafahddgcelffkeicbaginigeejlf">Allow
+                CORS: Access-Control-Allow-Origin</a>).
+            <br>
+            <b>Let op!</b> Zorg ervoor dat U alleen CORS voor deze pagina uitschakelt
         </div>
     </div>
-    <div class="d-flex justify-content-center">
-        <button class="btn btn-primary" (click)="filterResults()">Filter</button>
-    </div>
-</div>
+    <hr>
+    <div>
+        <!-- The logic for grouping parties in boxes -->
+        <div>
+            <app-controversial [parties]="searchterms">
+            </app-controversial>
+        </div>
+        <div>
+            <label class="form-label">
+                Selecteer de type zaken:
+            </label>
+            <div style="display: flex;flex-wrap: wrap;">
+                <div class="form-check form-check-inline" style="order:-1000">
+                    <input (change)="checkAllTypes($event)" [checked]="allTypesChecked()" class="form-check-input"
+                        type="checkbox" id="selectAll" value="all">
+                    <label class="form-check-label" for="selectAll">Alles (on)selecteren</label>
+                </div>
 
-<div class="group results">
-    <div *ngIf="spinner">
+                <div [style]="{order:-1*resultType.priority}" *ngFor="let resultType of resultTypes; let i=index"
+                    class="form-check form-check-inline">
+                    <input class="form-check-input" type="checkbox" [value]="resultType.name"
+                        [checked]="resultType.checked" [id]="'inlineCheckbox'+ i"
+                        (change)="changeTypeChecked(resultType)">
+                    <label class="form-check-label" [for]="'inlineCheckbox'+ i">{{resultType.name}}</label>
+                </div>
+            </div>
+        </div>
+        <div class="d-flex justify-content-center">
+            <button class="btn btn-primary" (click)="filterResults()">Filter</button>
+        </div>
+    </div>
+    <hr>
+    <div *ngIf="spinner; else results">
         <div class="spinner-border  m-5" role="status">
             <span class="visually-hidden">Loading...</span>
         </div>
@@ -72,11 +77,16 @@
             Let op! CORS is een soort beveiliging van de browser, dus als u klaar bent doe deze weer aan!
         </div>
     </div>
-    <div>
-        <div *ngFor="let page of pages">
-            <app-result [highLighted]="highLighted" [result]="result" *ngFor="let result of getResults(page.results)">
-
-            </app-result>
+    <ng-template #results>
+        <div>
+            <div *ngFor="let page of pages">
+                <app-result [highLighted]="highLighted" [result]="result"
+                    *ngFor="let result of getResults(page.results)">
+                </app-result>
+            </div>
         </div>
-    </div>
+        <div class="d-flex justify-content-center">
+            <button class="btn btn-primary">Laad Meer Resultaten</button>
+        </div>
+    </ng-template>
 </div>

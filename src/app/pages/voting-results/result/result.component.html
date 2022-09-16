@@ -1,49 +1,39 @@
-<div class="container">
-    <div class="result">
-        <!-- Make parties that are not highlighted and overflow the height, collapse -->
-        <div class="votes yay">
-            <div class="votes-title" style="color: green;">
-                Voor
+<div class="p-2">
+    <div class="card bg-light">
+        <div class="row">
+            <div class="col-3 col-sm-2 parties">
+                <div class="result yay-result bg-success"
+                    [style]="{height: (votesYay/(votesYay + votesNay)* 100) + '%'}"></div>
+                <div>
+                    <b>Voor</b> ({{votesYay}})
+                    <div *ngFor="let party of yays"
+                        [ngStyle]="highLighted.indexOf(party.ActorNaam) > -1 ? {order: 1}: {order:2}"
+                        [ngClass]="highLighted.indexOf(party.ActorNaam) > -1 ? 'mark': ''">
+                        {{party.ActorNaam}}
+                    </div>
+                </div>
             </div>
-            <div *ngFor="let party of yays"
-                [ngStyle]="highLighted.indexOf(party.ActorNaam) > -1 ? {order: 1}: {order:2}"
-                [ngClass]="highLighted.indexOf(party.ActorNaam) > -1 ? 'highLighted': ''">
-                {{party.ActorNaam}}
+            <div class="col-6 col-sm-8">
+                <div class="card-body">
+                    <h5 class="card-title">{{result.Zaak[0].Titel}}</h5>
+                    <i>{{result.Zaak[0].Soort}}, </i> <small>{{votingResult}}</small>
+                    <p class="card-text">{{result.Zaak[0].Onderwerp}}</p>
+                    <a class="card-link" target="_blank"
+                        [href]="'https://www.tweedekamer.nl/zoeken?fld_tk_categorie=Kamerstukken&qry=' + result.Zaak[0].Nummer">{{result.Zaak[0].Nummer}}</a>
+                    <p class="card-text"><small class="text-muted">{{getLocalDate()}}</small></p>
+                </div>
             </div>
-        </div>
-        <div class="subject">
-            
-            <div>
-                Soort: {{result.Zaak[0].Soort}}, <i>Datum: {{result.GewijzigdOp}}</i>
-            </div>
-            <div>
-                Titel: {{result.Zaak[0].Titel}}
-            </div>
-            <div>
-                Onderwerp: {{result.Zaak[0].Onderwerp}}
-            </div>
-            <div> Voor meer informatie over: 
-                <a target="_blank" [href]="'https://www.tweedekamer.nl/zoeken?search_str=' + result.Zaak[0].Nummer">{{result.Zaak[0].Nummer}}</a>
-                <br>Klik op de link en zoek daarna de zaak die erbij hoort
-            </div>
-        </div>
-        <div class="votes yay">
-            <div class="votes-title" style="color: red;">
-                Tegen
-            </div>
-            <div *ngFor="let party of nays"
-                [ngStyle]="highLighted.indexOf(party.ActorNaam) > -1 ? {order: 1}: {order:2}"
-                [ngClass]="highLighted.indexOf(party.ActorNaam) > -1 ? 'highLighted': ''">
-                {{party.ActorNaam}}
-            </div>
-        </div>
-    </div>
-    <div class="votings">
-        <div>Resultaat: {{votingResult}}</div>
-        <div class="votes-bar">
-            <div class="yay-bar" [ngStyle]="{width: (votesYay/(votesYay + votesNay)* 100) + '%'}">Voor: {{votesYay}}
-            </div>
-            <div class="nay-bar" [ngStyle]="{width: (votesNay/(votesYay + votesNay)* 100) + '%'}">Tegen: {{votesNay}}
+            <div class="col-3 col-sm-2 parties">
+                <div class="result nay-result bg-danger"
+                    [style]="{height: (votesNay/(votesYay + votesNay)* 100) + '%'}"></div>
+                <div>
+                    <b>Tegen</b> ({{votesNay}})
+                    <div *ngFor="let party of nays"
+                        [ngStyle]="highLighted.indexOf(party.ActorNaam) > -1 ? {order: 1}: {order:2}"
+                        [ngClass]="highLighted.indexOf(party.ActorNaam) > -1 ? 'mark': ''">
+                        {{party.ActorNaam}}
+                    </div>
+                </div>
             </div>
         </div>
     </div>

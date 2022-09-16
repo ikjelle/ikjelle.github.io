@@ -29,6 +29,20 @@ export class ResultComponent implements OnInit {
         this.nays.push(party)
       }
     });
+    this.yays.sort((a, b) => {
+      if (a.FractieGrootte > b.FractieGrootte){
+        return -1
+      } else {
+        return 1
+      }
+    })
+    this.nays.sort((a, b) => {
+      if (a.FractieGrootte > b.FractieGrootte){
+        return -1
+      } else {
+        return 1
+      }
+    })
     if (this.votesNay > this.votesYay) {
       this.votingResult = "Verworpen"
     } else {
@@ -36,5 +50,9 @@ export class ResultComponent implements OnInit {
     }
   }
 
+  getLocalDate() {
+    const options: any = { year: 'numeric', month: 'long', day: 'numeric' };
+    return new Date(this.result.GewijzigdOp).toLocaleDateString('nl-NL', options)
+  }
 
 }

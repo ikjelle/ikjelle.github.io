@@ -2,7 +2,8 @@
     <div class="card card-body">
         Sleep partijen in groep 1 en laat groep 2 leeg om te zien waar deze partijen als enige tegen of voor stemden.
         <br>
-        Sleep partijen in groep 1 en sleep andere partijen in groep 2 om te zien waar deze partijen het tegenovergestelde stemden.
+        Sleep partijen in groep 1 en sleep andere partijen in groep 2 om te zien waar deze partijen het
+        tegenovergestelde stemden.
         <br>
         *Sleep partijen in groep 2 en laat groep 1 leeg om te zien waar deze partijen samen stemden.
         <br>
@@ -14,10 +15,10 @@
             <div cdkDropList #box1List="cdkDropList" [cdkDropListData]="box1"
                 [cdkDropListConnectedTo]="[box2List, partyList]" class="party-box box-group"
                 (cdkDropListDropped)="drop($event)">
-                <h1>
+                <h3>
                     <span class="badge rounded-pill bg-light text-dark" *ngFor="let item of box1"
                         cdkDrag>{{item}}</span>
-                </h1>
+                </h3>
             </div>
         </div>
         <div class="box">
@@ -25,22 +26,23 @@
             <div cdkDropList #box2List="cdkDropList" [cdkDropListData]="box2"
                 [cdkDropListConnectedTo]="[box1List, partyList]" class="party-box box-group"
                 (cdkDropListDropped)="drop($event)">
-                <h1>
+                <h3>
                     <span class="badge rounded-pill bg-light text-dark" *ngFor="let item of box2"
                         cdkDrag>{{item}}</span>
-                </h1>
+                </h3>
             </div>
         </div>
     </div>
-    <div class="buttons">
-        <button (click)="resetLists()" class="reset-button">Zet alle partijen terug</button>
+
+    <div class="d-flex justify-content-center">
+        <button (click)="resetLists()" class="btn btn-secondary">Reset Groepen</button>
     </div>
     <div class="party-holder">
         <div cdkDropList #partyList="cdkDropList" [cdkDropListData]="parties"
             [cdkDropListConnectedTo]="[box1List, box2List]" class="party-box" (cdkDropListDropped)="drop($event)">
-            <h1>
+            <h3>
                 <span class="badge rounded-pill bg-light text-dark" *ngFor="let item of parties" cdkDrag>{{item}}</span>
-            </h1>
+            </h3>
         </div>
     </div>
 </div>

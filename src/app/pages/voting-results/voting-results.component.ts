@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http';
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { ControversialComponent } from './controversial/controversial.component';
 import { Result } from './result';
 import { ResultService } from './result.service';
@@ -12,6 +12,8 @@ import { ResultService } from './result.service';
 export class VotingResultsComponent implements OnInit {
 
   @ViewChild(ControversialComponent) child!: ControversialComponent;
+  @ViewChild('disclaimerButton') disclaimerButton!: ElementRef;
+
   pages: Page[] = []
   parties: Party[] = []
 
@@ -71,7 +73,21 @@ export class VotingResultsComponent implements OnInit {
   }
 
   ngAfterViewInit() {
+    let disclaimerStatus = sessionStorage.getItem("disclaimer-open")
+    if (disclaimerStatus == "closed") {
+      // closeDisclaimer
+      this.disclaimerButton.nativeElement.click()
+    }
     this.filterResults()
+  }
+
+  disclaimerButtonToggle() {
+    let ariaExpanded = this.disclaimerButton.nativeElement.getAttribute('aria-expanded')
+    if (ariaExpanded == "true") {
+      sessionStorage.setItem("disclaimer-open", 'opened')
+    } else {
+      sessionStorage.setItem("disclaimer-open", 'closed')
+    }
   }
 
   getParties() {
@@ -102,14 +118,13 @@ export class VotingResultsComponent implements OnInit {
   }
 
   filterResults() {
-    console.log(this.resultTypes)
     this.startSpinner()
     let p1 = this.child.box1
     let p2 = this.child.box2
     let url = ""
 
     url = this.resultsService.getUrl(p1, p2, this.resultTypes)
-    
+
     this.http.get(url).subscribe((r: any) => {
       this.pages = [];
       let page = new Page()

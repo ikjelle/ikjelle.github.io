@@ -133,7 +133,8 @@ export class ResultService {
 
     // Hoofdelijk (per head) is not interesting for my query
     filters.addFilters([
-      // new FilterCriteria("not contains(BesluitTekst, 'Hoofdelijk')"),
+      // new FilterCriteria("not contains(BesluitTekst, 'Hoofdelijk')"), "./node_modules/@angular/material/prebuilt-themes/pink-bluegrey.css",
+
       new FilterCriteria("Stemming/any(a:a/Id ne null)")
     ])
 
@@ -151,6 +152,9 @@ export class ResultService {
     return stringToFormat
   }
 
+  // TODO: change this in more generic criteria string for var
+  // as checking if certain var is in list could be usefull
+  // use if in list as multiple eq use loads of nodes
   generateComparePartyString(parties: string[], operand: string, andOr: boolean) {
     var line = ""
     let andOrOperand = andOr ? "and" : "or"
@@ -266,6 +270,7 @@ class Table {
       url += "&"
     }
 
+    // should be an option
     url += "$orderby=GewijzigdOp desc"
 
     return this.apiBase + url
