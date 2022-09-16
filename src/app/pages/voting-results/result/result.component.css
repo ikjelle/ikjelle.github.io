@@ -12,6 +12,6 @@
 }
 
 .parties {
-    height: 100%;
+    height: inherit;
     position: relative;
 }
