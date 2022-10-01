@@ -14,8 +14,8 @@
             <br>
             Huidige Problemen:
             <ul>
-                <li>Paginatie, het maximale aantal resultaten op dit moment is 250</li>
-                <li>Voor zover de data, is er geen manier om een link van tweedekamer.nl te koppelen aan het besluit
+                <li>Voor zover de data, is er geen manier om een link van tweedekamer.nl te koppelen aan het besluit.
+                    U zult daarom de juiste zaak moet vinden, nadat u op de link heeft geklikt.
                 </li>
                 <li>De datum is wanneer de data voor het laatst aangepast is. Ik verwacht dat dit is wanneer het
                     resultaat wordt geupload</li>
@@ -26,7 +26,8 @@
             Alle resultaten worden via de <a href="https://opendata.tweedekamer.nl/">Opendate API</a> van de Tweede
             Kamer opgehaald.
             Hierdoor kunt u waarschijnlijk geen resultaten zien. Dit is omdat de API geen <a
-                href="https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS">CORS</a> toelaat en ik geen server heb die dit zou kunnen oplossen.
+                href="https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS">CORS</a> toelaat en ik geen server heb die
+            dit zou kunnen oplossen.
             Maar u kunt het oplossen door CORS uit te schakelen in de browser of een extentie te installeren die CORS
             negeert (zoals: <a
                 href="https://chrome.google.com/webstore/detail/allow-cors-access-control/lhobafahddgcelffkeicbaginigeejlf">Allow
@@ -39,7 +40,7 @@
     <div>
         <!-- The logic for grouping parties in boxes -->
         <div>
-            <app-controversial [parties]="searchterms">
+            <app-controversial [parties]="parties">
             </app-controversial>
         </div>
         <div>
@@ -67,7 +68,21 @@
         </div>
     </div>
     <hr>
-    <div *ngIf="spinner; else results">
+    <div #results>
+        <div *ngIf="filterCount">Aantal resultaten: {{filterCount}}</div>
+        <div>
+            <div *ngFor="let page of pages; let i = index">
+                <div *ngFor="let result of getResults(page.results); let j = index">
+                    <app-result [highLighted]="highLighted" [result]="result">
+                    </app-result>
+                </div>
+            </div>
+        </div>
+        <div *ngIf="this.nextPageUrl" class="d-flex justify-content-center">
+            <button (click)="this.getNextPage()" class="btn btn-primary">Laad Meer Resultaten</button>
+        </div>
+    </div>
+    <div *ngIf="spinner">
         <div class="spinner-border  m-5" role="status">
             <span class="visually-hidden">Loading...</span>
         </div>
@@ -77,16 +92,4 @@
             Let op! CORS is een soort beveiliging van de browser, dus als u klaar bent doe deze weer aan!
         </div>
     </div>
-    <ng-template #results>
-        <div>
-            <div *ngFor="let page of pages">
-                <app-result [highLighted]="highLighted" [result]="result"
-                    *ngFor="let result of getResults(page.results)">
-                </app-result>
-            </div>
-        </div>
-        <div class="d-flex justify-content-center">
-            <button class="btn btn-primary">Laad Meer Resultaten</button>
-        </div>
-    </ng-template>
 </div>

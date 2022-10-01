@@ -1,5 +1,6 @@
 import { CdkDragDrop, moveItemInArray, transferArrayItem } from '@angular/cdk/drag-drop';
 import { Component, Input, OnInit } from '@angular/core';
+import { Party } from '../party';
 
 @Component({
   selector: 'app-controversial',
@@ -8,16 +9,16 @@ import { Component, Input, OnInit } from '@angular/core';
 })
 export class ControversialComponent implements OnInit {
 
-  @Input() parties: string[] = ["VVD", "D66", "PvdA", "GroenLinks", "FvD", "PVV", "SP", "ChristenUnie"]
-  box1: string[] = []
-  box2: string[]=[]
+  @Input() parties: Party[] = []
+  box1: Party[] = []
+  box2: Party[]=[]
 
   constructor() { }
 
   ngOnInit(): void {
   }
 
-  drop(event: CdkDragDrop<string[]>|any) {
+  drop(event: CdkDragDrop<Party[]>|any) {
     if (event.previousContainer === event.container) {
       moveItemInArray(event.container.data, event.previousIndex, event.currentIndex);
     } else {

@@ -10,7 +10,9 @@ export interface Stemming {
     Soort: string;
     FractieGrootte: number;
     ActorNaam: string;
+    ActorFractie: string;
 }
+
 export interface Zaak {
     Kabinetsappreciatie: string;
     Nummer: string;

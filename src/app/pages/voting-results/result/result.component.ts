@@ -21,28 +21,33 @@ export class ResultComponent implements OnInit {
 
   ngOnInit(): void {
     this.result.Stemming.forEach(party => {
+      let voteAmount = 1
+      if (this.result.StemmingsSoort != "Hoofdelijk") {
+        voteAmount = party.FractieGrootte
+      }
       if (party.Soort == "Voor") {
-        this.votesYay += party.FractieGrootte
+        this.votesYay += voteAmount
         this.yays.push(party)
       } else if (party.Soort == "Tegen") {
-        this.votesNay += party.FractieGrootte
+        this.votesNay += voteAmount
         this.nays.push(party)
       }
     });
-    this.yays.sort((a, b) => {
-      if (a.FractieGrootte > b.FractieGrootte){
-        return -1
-      } else {
-        return 1
-      }
-    })
-    this.nays.sort((a, b) => {
-      if (a.FractieGrootte > b.FractieGrootte){
-        return -1
-      } else {
-        return 1
-      }
-    })
+
+    let listSorter = (list: Stemming[]) => {
+      list.sort((a, b) => {
+        let partyNameA = a.ActorFractie, partyNameB = b.ActorFractie
+        if (a.FractieGrootte > b.FractieGrootte || (a.FractieGrootte == b.FractieGrootte && partyNameA > partyNameB)) {
+          return -1
+        } else {
+          return 1
+        }
+      })
+    }
+
+    listSorter(this.yays)
+    listSorter(this.nays)
+
     if (this.votesNay > this.votesYay) {
       this.votingResult = "Verworpen"
     } else {

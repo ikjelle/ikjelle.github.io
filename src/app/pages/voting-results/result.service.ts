@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { Party } from './party';
 
 @Injectable({
   providedIn: 'root'
@@ -33,7 +34,8 @@ export class ResultService {
           select: [
             "Soort",
             "FractieGrootte",
-            "ActorNaam"
+            "ActorNaam",
+            "ActorFractie"
           ]
         })
       ]
@@ -50,7 +52,18 @@ export class ResultService {
   }
 
   // get all results with the current information
-  getUrl(p1: string[], p2: string[], resultTypes: any[]): string {
+  getUrl(parties1: Party[], parties2: Party[], resultTypes: any[]): string {
+    let p1 = []
+    let p2 = []
+
+    for (const pa1 of parties1) {
+      p1.push(pa1.searchTerm)
+    }
+
+    for (const pa2 of parties2) {
+      p2.push(pa2.searchTerm)
+    }
+
     // the base
     var request = this.generateDecisionRequest()
     var filters = new AndFilter();
@@ -80,55 +93,92 @@ export class ResultService {
 
     if (p1.length == 0 && p2.length == 0) {
       // show error or display just the latest results
-
-    } else if (p1.length == 0 || p2.length == 0) {
-      let parties = [...p1, ...p2]
-      var partiesEqOr = this.generateComparePartyString(parties, "eq", false);
-      var partiesNeAnd = this.generateComparePartyString(parties, "ne", true);
-
-      var getCriteriaString = (pro: boolean) => {
-        return this.formatString(
-          "Stemming/all(a:" +
-          "( (${}) and a/Soort eq '${}' ) or " +
-          "(${} and a/Soort eq '${}')" +
-          ")",
-          partiesEqOr, (pro ? "Voor" : "Tegen"), partiesNeAnd, (!pro ? "Voor" : "Tegen"))
-      }
-
-      let critStringContra = getCriteriaString(false)
-      let critStringPro = getCriteriaString(true)
-
-      var critPro = new FilterCriteria(critStringPro);
-      var critContra = new FilterCriteria(critStringContra);
-
-      // I can only use 1 filter as 2 will overflow the nodes
-      // so It should do 2 requests and have both data and use offsets for next requests
-      filters.addFilter(new OrFilter(
-        [
-          critContra,
-          critPro
-        ]
-      ))
     } else {
-      var p1EqOr = this.generateComparePartyString(p1, "eq", false);
+      // add filter so the active time of the latest party that joined is used. 
+      // I can't do this clause below as it will use too many nodes when too many parties
+      // but it would have been correct
+      // for (const p of [...p1, ...p2]){
+      //   filters.addFilter(new FilterCriteria(this.formatString("Stemming/any(a: a/ActorFractie eq '${}')", p)))
+      // }
 
-      var p2EqOr = this.generateComparePartyString(p2, "eq", false);
-
-      var allPartiesEqOr = this.generateComparePartyString(p1.concat(p2), "eq", false);
-
-      var getCriteriaString = (pro: boolean) => {
-        let firstPro = (pro ? "Voor" : "Tegen")
-        let secPro = (!pro ? "Voor" : "Tegen")
-        return this.formatString("Stemming/all(a:" +
-          "( (${}) and a/Soort eq '${}') or " +
-          "( (${}) and a/Soort eq '${}') or not (${})" +
-          ")",
-          p1EqOr, firstPro, p2EqOr, secPro, allPartiesEqOr)
+      // so the somewhat realistic option without a second query is to count from the start of the newest party
+      let joinDate = '1900-01-01T00:00:00+01:00'
+      for (const p of [...parties1, ...parties2]) {
+        if (p.dateActive > joinDate) {
+          joinDate = p.dateActive
+        }
       }
+      filters.addFilter(new FilterCriteria(this.formatString("GewijzigdOp ge ${}Z", joinDate.substring(0,19))))
 
-      let p1For = new FilterCriteria(getCriteriaString(true))
-      let p2For = new FilterCriteria(getCriteriaString(false))
-      filters.addFilter(new OrFilter([p1For, p2For]))
+      // do logic based on if 1 or 2 boxes are used
+      if (p1.length == 0 || p2.length == 0) {
+
+        let parties = [...p1, ...p2]
+        var partiesEqOr = this.generateComparePartyString(parties, "eq", false);
+        var partiesNeAnd = this.generateComparePartyString(parties, "ne", true);
+
+        var getCriteriaStringForExclusion = (pro: boolean) => {
+          return this.formatString(
+            "Stemming/all(a:" +
+            "( (${}) and a/Soort eq '${}' ) or " +
+            "(${} and a/Soort eq '${}')" +
+            ")",
+            partiesEqOr, (pro ? "Voor" : "Tegen"), partiesNeAnd, (!pro ? "Voor" : "Tegen"))
+        }
+
+        // Get where they voted together
+        var getCriteriaStringForTogetherness = (pro: boolean) => {
+          return this.formatString(
+            "Stemming/all(a:" +
+            "( (${}) and a/Soort eq '${}' ) or " +
+            "(${})" +
+            ")",
+            partiesEqOr, (pro ? "Voor" : "Tegen"), partiesNeAnd)
+        }
+
+        let voteOnly = p1.length == 0
+        let getCriteriaString = null
+        if (voteOnly) {
+          getCriteriaString = getCriteriaStringForExclusion
+        } else {
+          getCriteriaString = getCriteriaStringForTogetherness
+        }
+
+        let critStringContra = getCriteriaString(false)
+        let critStringPro = getCriteriaString(true)
+
+        var critPro = new FilterCriteria(critStringPro);
+        var critContra = new FilterCriteria(critStringContra);
+
+        // I can only use 1 filter as 2 will overflow the nodes
+        // so It should do 2 requests and have both data and use offsets for next requests
+        filters.addFilter(new OrFilter(
+          [
+            critContra,
+            critPro
+          ]
+        ))
+      } else {
+        var p1EqOr = this.generateComparePartyString(p1, "eq", false);
+
+        var p2EqOr = this.generateComparePartyString(p2, "eq", false);
+
+        var allPartiesEqOr = this.generateComparePartyString(p1.concat(p2), "eq", false);
+
+        var getCriteriaString = (pro: boolean) => {
+          let firstPro = (pro ? "Voor" : "Tegen")
+          let secPro = (!pro ? "Voor" : "Tegen")
+          return this.formatString("Stemming/all(a:" +
+            "( (${}) and a/Soort eq '${}') or " +
+            "( (${}) and a/Soort eq '${}') or not (${})" +
+            ")",
+            p1EqOr, firstPro, p2EqOr, secPro, allPartiesEqOr)
+        }
+
+        let p1For = new FilterCriteria(getCriteriaString(true))
+        let p2For = new FilterCriteria(getCriteriaString(false))
+        filters.addFilter(new OrFilter([p1For, p2For]))
+      }
     }
 
     // Hoofdelijk (per head) is not interesting for my query
@@ -167,10 +217,10 @@ export class ResultService {
       partiesString = partiesString.substring(0, partiesString.length - 1)
       partiesString += ")"
       // The in clause uses less nodes, so its way better than multiple eq
-      line += this.formatString("a/ActorNaam in ${}", partiesString)
+      line += this.formatString("a/ActorFractie in ${}", partiesString)
     } else {
       parties.forEach(p => {
-        line += this.formatString("a/ActorNaam ${} '${}' ${} ", operand, p, andOrOperand)
+        line += this.formatString("a/ActorFractie ${} '${}' ${} ", operand, p, andOrOperand)
       });
       // remove and or part
       line = line.substring(0, line.length - 2 - andOrOperand.length)
@@ -271,7 +321,7 @@ class Table {
     }
 
     // should be an option
-    url += "$orderby=GewijzigdOp desc"
+    url += "$orderby=GewijzigdOp desc&$count=true"
 
     return this.apiBase + url
   }

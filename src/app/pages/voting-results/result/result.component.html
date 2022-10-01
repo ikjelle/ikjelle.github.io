@@ -1,4 +1,4 @@
-<div class="p-2">
+<div class="p-2" *ngIf="result.Zaak.length > 0">
     <div class="card bg-light">
         <div class="row">
             <div class="col-3 col-sm-2 parties">
@@ -8,8 +8,9 @@
                     <b>Voor</b> ({{votesYay}})
                     <div *ngFor="let party of yays"
                         [ngStyle]="highLighted.indexOf(party.ActorNaam) > -1 ? {order: 1}: {order:2}"
-                        [ngClass]="highLighted.indexOf(party.ActorNaam) > -1 ? 'mark': ''">
+                        [ngClass]="highLighted.indexOf(party.ActorFractie) > -1 ? 'mark': ''">
                         {{party.ActorNaam}}
+                        <i *ngIf="this.result.StemmingsSoort == 'Hoofdelijk'">{{party.ActorFractie}}</i>
                     </div>
                 </div>
             </div>
@@ -30,8 +31,9 @@
                     <b>Tegen</b> ({{votesNay}})
                     <div *ngFor="let party of nays"
                         [ngStyle]="highLighted.indexOf(party.ActorNaam) > -1 ? {order: 1}: {order:2}"
-                        [ngClass]="highLighted.indexOf(party.ActorNaam) > -1 ? 'mark': ''">
+                        [ngClass]="highLighted.indexOf(party.ActorFractie) > -1 ? 'mark': ''">
                         {{party.ActorNaam}}
+                        <i *ngIf="this.result.StemmingsSoort == 'Hoofdelijk'">{{party.ActorFractie}}</i>
                     </div>
                 </div>
             </div>
