@@ -1,11 +1,11 @@
 <div class="container-fluid">
     <div class="card card-body">
+        Sleep partijen in groep 1 en sleep andere partijen in groep 2 om te zien waar deze partijen het
+        tegenovergestelde stemden.
+        <br>
         Sleep partijen in groep 1 en laat groep 2 leeg om te zien waar deze partijen samen stemden.
         <br>
         Sleep partijen in groep 2 en laat groep 1 leeg om te zien waar deze partijen als enige tegen of voor stemden.
-        <br>
-        Sleep partijen in groep 1 en sleep andere partijen in groep 2 om te zien waar deze partijen het
-        tegenovergestelde stemden.
     </div>
     <div class="box-holder">
         <div class="box">
@@ -39,7 +39,8 @@
         <div cdkDropList #partyList="cdkDropList" [cdkDropListData]="parties"
             [cdkDropListConnectedTo]="[box1List, box2List]" class="party-box" (cdkDropListDropped)="drop($event)">
             <h3>
-                <span class="badge rounded-pill bg-light text-dark" *ngFor="let item of parties" cdkDrag>{{item.searchTerm}}</span>
+                <span class="badge rounded-pill bg-light text-dark" *ngFor="let item of parties"
+                    cdkDrag>{{item.searchTerm}}</span>
             </h3>
         </div>
     </div>

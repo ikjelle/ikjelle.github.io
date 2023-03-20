@@ -14,14 +14,13 @@
             <br>
             Huidige Problemen:
             <ul>
-                <li>Voor zover de data, is er geen manier om een link van tweedekamer.nl te koppelen aan het besluit.
-                    U zult daarom de juiste zaak moet vinden, nadat u op de link heeft geklikt.
+                <li>
+                    De datum is wanneer de data voor het laatst aangepast is. Ik verwacht dat dit is wanneer het
+                    resultaat wordt geupload
                 </li>
-                <li>De datum is wanneer de data voor het laatst aangepast is. Ik verwacht dat dit is wanneer het
-                    resultaat wordt geupload</li>
                 <li>Niet alle resultaten voldoen aan de exacte eisen</li>
                 <li>Maak website deelbaar door filters in de adres bar uit te lezen</li>
-                <li>De types van het besluit worden niet allemaal gebruikt</li>
+                <li>Somnmige van deze besluitvormen worden niet meer gebruikt en kunnen hierdoor niet zichtbaar zijn in de app</li>
             </ul>
             Alle resultaten worden via de <a href="https://opendata.tweedekamer.nl/">Opendate API</a> van de Tweede
             Kamer opgehaald.
@@ -73,7 +72,7 @@
         <div>
             <div *ngFor="let page of pages; let i = index">
                 <div *ngFor="let result of getResults(page.results); let j = index">
-                    <app-result [highLighted]="highLighted" [result]="result">
+                    <app-result #result [highLighted]="highLighted" [result]="result">
                     </app-result>
                 </div>
             </div>

@@ -11,14 +11,15 @@ export class ControversialComponent implements OnInit {
 
   @Input() parties: Party[] = []
   box1: Party[] = []
-  box2: Party[]=[]
+  box2: Party[] = []
 
-  constructor() { }
+  constructor() {
+  }
 
   ngOnInit(): void {
   }
 
-  drop(event: CdkDragDrop<Party[]>|any) {
+  drop(event: CdkDragDrop<Party[]> | any) {
     if (event.previousContainer === event.container) {
       moveItemInArray(event.container.data, event.previousIndex, event.currentIndex);
     } else {

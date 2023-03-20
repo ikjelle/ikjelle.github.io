@@ -1,10 +1,11 @@
 import { HttpClient } from '@angular/common/http';
-import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild, ViewChildren, QueryList } from '@angular/core';
 import { ControversialComponent } from './controversial/controversial.component';
 import { IParty, Party } from './party';
 import { Result } from './result';
 import { resultTypes } from './result-types';
 import { ResultService } from './result.service';
+import { ResultComponent } from './result/result.component';
 
 @Component({
   selector: 'app-voting-results',
@@ -15,6 +16,7 @@ export class VotingResultsComponent implements OnInit {
 
   @ViewChild(ControversialComponent) child!: ControversialComponent;
   @ViewChild('disclaimerButton') disclaimerButton!: ElementRef;
+  @ViewChildren('result', { read: ElementRef }) resultComponents: any;
 
   pages: Page[] = []
   parties: Party[] = []
@@ -42,7 +44,6 @@ export class VotingResultsComponent implements OnInit {
       // closeDisclaimer
       this.disclaimerButton.nativeElement.click()
     }
-    this.filterResults()
   }
 
   disclaimerButtonToggle() {
@@ -74,6 +75,10 @@ export class VotingResultsComponent implements OnInit {
             // this.searchterms.push(party.searchTerm)
             this.parties.push(party)
           });
+        this.child.box1.push(...this.child.parties.splice(Math.floor(Math.random() * this.child.parties.length), 1))
+        this.child.box2.push(...this.child.parties.splice(Math.floor(Math.random() * this.child.parties.length), 1))
+
+        this.filterResults()
       })
   }
 
@@ -96,9 +101,13 @@ export class VotingResultsComponent implements OnInit {
     for (const p of [...p1, ...p2]) {
       this.highLighted.push(p.searchTerm)
     }
-    this.getResultsFromUrl(url)
-    // TODO: maybe apply filters of the API on the returned results as I can't do all of them on the API
-    // atleast not in 1 query
+    this.getResultsFromUrl(url).add(
+      () => setTimeout(() => {
+        // need to wait before the native element is created in the page
+        this.resultComponents.first.nativeElement.scrollIntoView({ behavior: "auto", block: "end" })
+      }, 1000
+      )
+    )
   }
 
   getNextPage() {
