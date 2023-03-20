@@ -16,7 +16,9 @@ export class ResultComponent implements OnInit {
       let did = docs[0].DocumentNummer
       // result type is not necessary for the result data. Its used for the bread crumb
       // so add the corresponding part in resultTypes if you would also like that to
-      let resultType = this.result.Zaak[0].Soort
+      let resultType = this.result.Zaak[0].Soort.
+        replace("/", "-") // replacing extra slashes as those will lead to errors
+
       link = "https://www.tweedekamer.nl/kamerstukken/" + resultType + "/detail?id=" + id + "&did=" + did
     } else {
       link = 'https://www.tweedekamer.nl/zoeken?fld_tk_categorie=Kamerstukken&qry=' + this.result.Zaak[0].Nummer

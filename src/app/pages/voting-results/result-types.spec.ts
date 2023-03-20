@@ -1,7 +1,7 @@
-import { ResultTypes } from './result-types';
+import { resultTypes } from './result-types';
 
 describe('ResultTypes', () => {
-  it('should create an instance', () => {
-    expect(new ResultTypes()).toBeTruthy();
+  it('should get a list', () => {
+    expect(resultTypes).toBeDefined();
   });
 });

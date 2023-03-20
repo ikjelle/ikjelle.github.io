@@ -25,7 +25,7 @@ export class VotingResultsComponent implements OnInit {
   highLighted: string[] = [];
   spinner: boolean = true;
   firstLoad: boolean = false;
-  resultTypes = resultTypes
+  resultTypes = resultTypes.filter(rt => rt.enabled)
   nextPageUrl: string | null = null;
   filterCount: number | null = null;
 
