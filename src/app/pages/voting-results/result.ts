@@ -20,4 +20,9 @@ export interface Zaak {
     Soort: string;
     Titel: string;
     Volgnummer: number;
+    Document: Document[];
+}
+
+export interface Document {
+    DocumentNummer: string;
 }

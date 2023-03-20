@@ -1,5 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { Result, Stemming } from '../result';
+import { resultTypes } from '../result-types';
 
 @Component({
   selector: 'app-result',
@@ -7,6 +8,21 @@ import { Result, Stemming } from '../result';
   styleUrls: ['./result.component.css']
 })
 export class ResultComponent implements OnInit {
+  getTKUrl() {
+    let link = ""
+    let docs = this.result.Zaak[0].Document
+    if (docs.length > 0) {
+      let id = this.result.Zaak[0].Nummer
+      let did = docs[0].DocumentNummer
+      // result type is not necessary for the result data. Its used for the bread crumb
+      // so add the corresponding part in resultTypes if you would also like that to
+      let resultType = this.result.Zaak[0].Soort
+      link = "https://www.tweedekamer.nl/kamerstukken/" + resultType + "/detail?id=" + id + "&did=" + did
+    } else {
+      link = 'https://www.tweedekamer.nl/zoeken?fld_tk_categorie=Kamerstukken&qry=' + this.result.Zaak[0].Nummer
+    }
+    return link
+  }
 
   @Input() result!: Result;
   @Input() highLighted: string[] = []

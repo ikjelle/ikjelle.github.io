@@ -3,6 +3,7 @@ import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { ControversialComponent } from './controversial/controversial.component';
 import { IParty, Party } from './party';
 import { Result } from './result';
+import { resultTypes } from './result-types';
 import { ResultService } from './result.service';
 
 @Component({
@@ -24,47 +25,7 @@ export class VotingResultsComponent implements OnInit {
   highLighted: string[] = [];
   spinner: boolean = true;
   firstLoad: boolean = false;
-
-  resultTypes: Array<any> = [
-    { name: "Amendement", checked: true, priority: 95 },
-    { name: "Artikelen/onderdelen (wetsvoorstel)", checked: false, priority: 0 },
-    { name: "Begroting", checked: true, priority: 90 },
-    { name: "Brief Europese Commissie", checked: false, priority: 0 },
-    { name: "Brief Kamer", checked: false, priority: 0 },
-    { name: "Brief commissie", checked: false, priority: 0 },
-    { name: "Brief derden", checked: false, priority: 0 },
-    { name: "Brief regering", checked: false, priority: 0 },
-    { name: "Brief van lid/fractie/commissie", checked: false, priority: 0 },
-    { name: "EU-voorstel", checked: false, priority: 0 },
-    { name: "Initiatiefnota", checked: false, priority: 0 },
-    { name: "Initiatiefwetgeving", checked: false, priority: 0 },
-    { name: "Interpellatie", checked: false, priority: 0 },
-    { name: "Lijst met EU-voorstellen", checked: false, priority: 0 },
-    { name: "Mondelinge vragen", checked: false, priority: 0 },
-    { name: "Motie", checked: true, priority: 90 },
-    { name: "Nationale ombudsman", checked: false, priority: 0 },
-    { name: "Netwerkverkenning", checked: false, priority: 0 },
-    { name: "Nota naar aanleiding van het (nader) verslag", checked: false, priority: 0 },
-    { name: "Nota van wijziging", checked: false, priority: 0 },
-    { name: "Overig", checked: false, priority: 0 },
-    { name: "PKB/Structuurvisie", checked: false, priority: 0 },
-    { name: "Parlementair onderzoeksrapport", checked: false, priority: 0 },
-    { name: "Position paper", checked: false, priority: 0 },
-    { name: "Rapport/brief Algemene Rekenkamer", checked: false, priority: 0 },
-    { name: "Rondvraagpunt procedurevergadering", checked: false, priority: 0 },
-    { name: "Schriftelijke vragen", checked: false, priority: 0 },
-    { name: "Stafnotitie", checked: false, priority: 0 },
-    { name: "Verdrag", checked: true, priority: 90 },
-    { name: "Verzoek bij commissie-regeling van werkzaamheden", checked: false, priority: 0 },
-    { name: "Verzoek bij regeling van werkzaamheden", checked: false, priority: 0 },
-    { name: "Verzoekschrift", checked: false, priority: 0 },
-    { name: "Voordrachten en benoemingen", checked: false, priority: 0 },
-    { name: "Wetenschappelijke factsheet", checked: false, priority: 0 },
-    { name: "Wetenschapstoets", checked: false, priority: 0 },
-    { name: "Wetgeving", checked: true, priority: 90 },
-    { name: "Wijziging RvO", checked: false, priority: 0 },
-    { name: "Wijzigingen voorgesteld door de regering", checked: false, priority: 0 },
-  ]
+  resultTypes = resultTypes
   nextPageUrl: string | null = null;
   filterCount: number | null = null;
 

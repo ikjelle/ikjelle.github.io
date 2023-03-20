@@ -28,6 +28,14 @@ export class ResultService {
             "Onderwerp",
             "Volgnummer", // Would be usefull if I also knew what its following
             "Kabinetsappreciatie"
+          ],
+          expansions: [
+            new Table("Document",
+              {
+                select: [
+                  "DocumentNummer"
+                ]
+              })
           ]
         }),
         new Table("Stemming", {
@@ -108,7 +116,7 @@ export class ResultService {
           joinDate = p.dateActive
         }
       }
-      filters.addFilter(new FilterCriteria(this.formatString("GewijzigdOp ge ${}Z", joinDate.substring(0,19))))
+      filters.addFilter(new FilterCriteria(this.formatString("GewijzigdOp ge ${}Z", joinDate.substring(0, 19))))
 
       // do logic based on if 1 or 2 boxes are used
       if (p1.length == 0 || p2.length == 0) {
