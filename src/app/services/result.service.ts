@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Party } from './party';
+import { Party } from './classes/party';
 
 @Injectable({
   providedIn: 'root'
@@ -22,6 +22,7 @@ export class ResultService {
       expansions: [
         new Table("Zaak", {
           select: [
+            "Id",
             "Nummer",
             "Soort",
             "Titel",
@@ -57,6 +58,19 @@ export class ResultService {
 
   getUncheckedTypes(resultTypes: Array<any>) {
     return resultTypes.filter(t => t.checked == false)
+  }
+
+  getResultById(caseId: string) {
+    var request = this.generateDecisionRequest()
+    var filters = new AndFilter();
+
+    let crit = this.formatString("Zaak/any(a:a/Id eq ${})", caseId)
+    filters.addFilter(new FilterCriteria(crit))
+    filters.addFilter(new FilterCriteria("Stemming/any(a:a/Id ne null)"))
+    // set the filters
+    request.filter = filters
+    // create the request url and return it
+    return request.generateUrl()
   }
 
   // get all results with the current information

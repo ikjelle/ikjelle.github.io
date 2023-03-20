@@ -1,6 +1,6 @@
 import { CdkDragDrop, moveItemInArray, transferArrayItem } from '@angular/cdk/drag-drop';
 import { Component, Input, OnInit } from '@angular/core';
-import { Party } from '../party';
+import { Party } from 'src/app/services/classes/party';
 
 @Component({
   selector: 'app-controversial',
@@ -12,6 +12,7 @@ export class ControversialComponent implements OnInit {
   @Input() parties: Party[] = []
   box1: Party[] = []
   box2: Party[] = []
+  helperOpen: boolean = false;
 
   constructor() {
   }

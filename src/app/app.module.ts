@@ -3,19 +3,37 @@ import { BrowserModule } from '@angular/platform-browser';
 import { HttpClientModule } from '@angular/common/http'
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-import { VotingResultsComponent } from './pages/voting-results/voting-results.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { ControversialComponent } from './pages/voting-results/controversial/controversial.component';
 import { DragDropModule } from '@angular/cdk/drag-drop';
-import { ResultComponent } from './pages/voting-results/result/result.component';
+import { ResultComponent } from './components/result/result.component';
 import { ReactiveFormsModule } from '@angular/forms';
+import { SingleResultComponent } from './pages/single-result/single-result.component';
+import { MainLayoutComponent } from './layouts/main-layout/main-layout.component';
+import { ControversialComponent } from './components/controversial/controversial.component';
+import { VotingResultsComponent } from './pages/voting-results/voting-results.component';
+import { HeaderComponent } from './components/header/header.component';
+import { FooterComponent } from './components/footer/footer.component';
+import { CorsErrorComponent } from './components/cors-error/cors-error.component';
+import { DisclaimerComponent } from './pages/disclaimer/disclaimer.component';
+import { AboutComponent } from './pages/about/about.component';
+import { OpenApiDisclaimerComponent } from './components/open-api-disclaimer/open-api-disclaimer.component';
+import { ContentComponent } from './components/content/content.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     VotingResultsComponent,
     ControversialComponent,
-    ResultComponent
+    ResultComponent,
+    SingleResultComponent,
+    MainLayoutComponent,
+    HeaderComponent,
+    FooterComponent,
+    CorsErrorComponent,
+    DisclaimerComponent,
+    AboutComponent,
+    OpenApiDisclaimerComponent,
+    ContentComponent
   ],
   imports: [
     BrowserModule,

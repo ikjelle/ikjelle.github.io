@@ -1,11 +1,10 @@
 import { HttpClient } from '@angular/common/http';
 import { Component, ElementRef, OnInit, ViewChild, ViewChildren, QueryList } from '@angular/core';
-import { ControversialComponent } from './controversial/controversial.component';
-import { IParty, Party } from './party';
-import { Result } from './result';
-import { resultTypes } from './result-types';
-import { ResultService } from './result.service';
-import { ResultComponent } from './result/result.component';
+import { ControversialComponent } from 'src/app/components/controversial/controversial.component';
+import { Party, IParty } from 'src/app/services/classes/party';
+import { Result } from 'src/app/services/classes/result';
+import { resultTypes } from 'src/app/services/classes/result-types';
+import { ResultService } from 'src/app/services/result.service';
 
 @Component({
   selector: 'app-voting-results',
@@ -104,7 +103,7 @@ export class VotingResultsComponent implements OnInit {
     this.getResultsFromUrl(url).add(
       () => setTimeout(() => {
         // need to wait before the native element is created in the page
-        this.resultComponents.first.nativeElement.scrollIntoView({ behavior: "auto", block: "end" })
+        // this.resultComponents.first.nativeElement.scrollIntoView({ behavior: "auto", block: "end" })
       }, 1000
       )
     )

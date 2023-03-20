@@ -14,6 +14,7 @@ export interface Stemming {
 }
 
 export interface Zaak {
+    Id: string;
     Kabinetsappreciatie: string;
     Nummer: string;
     Onderwerp: string;

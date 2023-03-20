@@ -1,39 +1,13 @@
 <div class="container-lg">
     <div class="intro">
         <h1>Tweede Kamer Stemmingsuitslagen</h1>
-        Op deze pagina kunt u de Stemmingsuitslagen vinden die gedaan zijn in de tweede kamer.
+        Op deze pagina kunt u alle stemmingsuitslagen vinden die de 2e kamer heeft gedaan.
         <br>
-        Deze resultaten zijn te filteren.
+        Deze resultaten kunt u filteren door onderstaand filter te gebruiken. Zo kunt u bijvoorbeeld makkelijk zien waar
+        2 partijen afwijken van elkaar.
+
         <br>
-        <button (click)="disclaimerButtonToggle()" #disclaimerButton class="btn btn-info" data-bs-toggle="collapse"
-            href="#disclaimer" role="button" aria-expanded="true" aria-controls="disclaimer">
-            Disclaimer
-        </button>
-        <div class="show" id="disclaimer">
-            Deze pagina is nog niet af en mist een aantal functionaliteiten
-            <br>
-            Huidige Problemen:
-            <ul>
-                <li>
-                    De datum is wanneer de data voor het laatst aangepast is. Ik verwacht dat dit is wanneer het
-                    resultaat wordt geupload
-                </li>
-                <li>Niet alle resultaten voldoen aan de exacte eisen</li>
-                <li>Maak website deelbaar door filters in de adres bar uit te lezen</li>
-                <li>Somnmige van deze besluitvormen worden niet meer gebruikt en kunnen hierdoor niet zichtbaar zijn in de app</li>
-            </ul>
-            Alle resultaten worden via de <a href="https://opendata.tweedekamer.nl/">Opendate API</a> van de Tweede
-            Kamer opgehaald.
-            Hierdoor kunt u waarschijnlijk geen resultaten zien. Dit is omdat de API geen <a
-                href="https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS">CORS</a> toelaat en ik geen server heb die
-            dit zou kunnen oplossen.
-            Maar u kunt het oplossen door CORS uit te schakelen in de browser of een extentie te installeren die CORS
-            negeert (zoals: <a
-                href="https://chrome.google.com/webstore/detail/allow-cors-access-control/lhobafahddgcelffkeicbaginigeejlf">Allow
-                CORS: Access-Control-Allow-Origin</a>).
-            <br>
-            <b>Let op!</b> Zorg ervoor dat U alleen CORS voor deze pagina uitschakelt
-        </div>
+        Alle resultaten worden opgehaald via de Opendate API van de Overheid
     </div>
     <hr>
     <div>
@@ -86,9 +60,7 @@
             <span class="visually-hidden">Loading...</span>
         </div>
         <div *ngIf="!firstLoad">
-            Als u dit ziet moet U CORS uitschakelen voor dit domein.
-            <br>
-            Let op! CORS is een soort beveiliging van de browser, dus als u klaar bent doe deze weer aan!
+            <app-cors-error></app-cors-error>
         </div>
     </div>
 </div>

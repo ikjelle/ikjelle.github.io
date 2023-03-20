@@ -1,0 +1,39 @@
+.nav-bar {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    background-color: whitesmoke;
+    align-items: stretch;
+    padding-top: 2px;
+}
+
+.left-side {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: stretch;
+}
+
+.right-side {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+    align-items: stretch;
+}
+
+.nav-item {
+    padding: 10px;
+}
+
+.nav-item:hover {
+    cursor: pointer;
+}
+
+.active-link {
+    background-color: rgb(217, 223, 223);
+    border-radius: 50%;
+}
+
+.active-link:hover {
+    cursor: auto !important;
+}

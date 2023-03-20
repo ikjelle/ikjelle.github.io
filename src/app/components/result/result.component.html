@@ -19,8 +19,8 @@
                     <h5 class="card-title">{{result.Zaak[0].Titel}}</h5>
                     <i>{{result.Zaak[0].Soort}}, </i> <small>{{votingResult}}</small>
                     <p class="card-text">{{result.Zaak[0].Onderwerp}}</p>
-                    <a class="card-link" target="_blank"
-                        [href]="getTKUrl()">{{result.Zaak[0].Nummer}}</a>
+                    <a class="card-link" target="_blank" [href]="getTKUrl()">{{result.Zaak[0].Nummer}}</a>
+                    <a [href]="'./resultaat/' + result.Zaak[0].Id + '?'+ getQueryParams()">Deel resultaat</a>
                     <p class="card-text"><small class="text-muted">{{getLocalDate()}}</small></p>
                 </div>
             </div>

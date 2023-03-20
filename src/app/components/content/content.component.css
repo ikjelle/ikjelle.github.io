@@ -1,0 +1,10 @@
+.outer {
+    padding-top: 20px;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+}
+
+.content {
+    max-width: 700px;
+}

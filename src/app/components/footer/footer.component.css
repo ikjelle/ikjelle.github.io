@@ -1,0 +1,11 @@
+.footer {
+    display: flex;
+    justify-content: space-around;
+    min-height: 40px;
+    background-color: #0e105c;
+    align-items: center;
+}
+
+.footer-item {
+    color: white;
+}

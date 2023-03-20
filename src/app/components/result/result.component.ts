@@ -1,6 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { Result, Stemming } from '../result';
-import { resultTypes } from '../result-types';
+import { Result, Stemming } from 'src/app/services/classes/result';
 
 @Component({
   selector: 'app-result',
@@ -8,6 +7,13 @@ import { resultTypes } from '../result-types';
   styleUrls: ['./result.component.css']
 })
 export class ResultComponent implements OnInit {
+  getQueryParams() {
+    let s = ""
+    this.highLighted.forEach(h => {
+      s += "highlighted=" + h + '&'
+    });
+    return s
+  }
   getTKUrl() {
     let link = ""
     let docs = this.result.Zaak[0].Document
