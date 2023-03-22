@@ -55,6 +55,7 @@ export class VotingResultsComponent implements OnInit {
   }
 
   getParties() {
+    // TODO: catch CORS
     this.http.get("https://gegevensmagazijn.tweedekamer.nl/OData/v4/2.0/Fractie?$filter=DatumInactief%20eq%20null%20and%20Afkorting%20ne%20null").
       subscribe((response: any) => {
         this.firstLoad = true
@@ -118,6 +119,7 @@ export class VotingResultsComponent implements OnInit {
 
   getResultsFromUrl(url: string) {
     this.nextPageUrl = null
+    // TODO: catch CORS
     return this.http.get(url).subscribe((r: any) => {
       let page = new Page()
       page.results = r["value"]

@@ -1,17 +1,70 @@
-.result {
-    position: absolute;
-    width: 20px;
+.component {
+    display: flex;
+    flex-direction: column;
+    padding: 5px;
+    margin: 10px;
+    border: 1px solid black;
 }
 
-.nay-result {
-    left: -20px
+.result-card {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
 }
 
-.yay-result {
-    right: -20px
+.case {
+    flex: 7;
+    display: flex;
+    flex-direction: column;
+    padding-right: 10px;
+    min-width: 320px;
+}
+
+.links {
+    margin-top: auto;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.date {
+    margin-top: auto;
+}
+
+.votes {
+    flex: 3;
+    display: flex;
+    flex-direction: row;
 }
 
 .parties {
-    height: inherit;
-    position: relative;
+    flex: 4;
+    display: flex;
+    flex-direction: column;
+    padding: 1px;
+}
+
+.bar {
+    flex: 1;
+    width: 10px;
+}
+
+.yays {
+    background-color: #00FF00;
+}
+
+.nays {
+    background-color: #FF0000;
+}
+
+.share {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+}
+
+.mark {
+    background-color: none;
+    background: linear-gradient(90deg, #FFC107 50%, rgba(255, 255, 255, 0) 50%);
+    background-size: 200% 100%;
 }

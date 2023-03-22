@@ -1,57 +1,49 @@
-<div class="container-fluid">
-    <svg (click)="helperOpen = !helperOpen" style="margin-bottom: 5px;" xmlns="http://www.w3.org/2000/svg" width="30"
-        height="30" fill="currentColor" class="bi bi-info-circle" viewBox="0 0 16 16">
-        <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z" />
-        <path
-            d="m8.93 6.588-2.29.287-.082.38.45.083c.294.07.352.176.288.469l-.738 3.468c-.194.897.105 1.319.808 1.319.545 0 1.178-.252 1.465-.598l.088-.416c-.2.176-.492.246-.686.246-.275 0-.375-.193-.304-.533L8.93 6.588zM9 4.5a1 1 0 1 1-2 0 1 1 0 0 1 2 0z" />
-    </svg>
-    <div *ngIf="helperOpen">
-        <div class="card card-body">
-            <p>
-                Sleep partijen in groep 1 en sleep andere partijen in groep 2 om te zien waar deze partijen het
-                tegenovergestelde stemden.</p>
-            <p>
-                Sleep partijen in groep 1 en laat groep 2 leeg om te zien waar deze partijen samen stemden.</p>
-            <p>
-                Sleep partijen in groep 2 en laat groep 1 leeg om te zien waar deze partijen als enige tegen of voor
-                stemden.</p>
+<div class="component">
+    <div class="helper">
+        <div (click)="helperOpen = !helperOpen" class="helper-button">
+            Uitleg: <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor"
+                class="helper-info-svg" viewBox="0 0 16 16">
+                <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z" />
+                <path
+                    d="m8.93 6.588-2.29.287-.082.38.45.083c.294.07.352.176.288.469l-.738 3.468c-.194.897.105 1.319.808 1.319.545 0 1.178-.252 1.465-.598l.088-.416c-.2.176-.492.246-.686.246-.275 0-.375-.193-.304-.533L8.93 6.588zM9 4.5a1 1 0 1 1-2 0 1 1 0 0 1 2 0z" />
+            </svg>
+        </div>
+        <div class="helper-text" *ngIf="helperOpen">
+            <p>Wil je weten waar politieke partijen tegenovergestelde standpunten hebben ingenomen? Plaats de ene groep
+                partijen in groep 1 en de andere groep partijen in groep 2. Dit geeft een overzicht van de onderwerpen
+                waarover deze
+                partijen van mening verschillen.</p>
+            <p>Wil je weten waar politieke partijen overeenstemming hebben bereikt? Plaats die partijen in groep 1
+                en laat groep 2 leeg. Dit geeft een overzicht van de onderwerpen waarover deze partijen
+                het eens zijn.</p>
+            <p>Wil je weten welke partijen als enige voor of tegen een bepaald onderwerp hebben gestemd? Plaats deze
+                partijen in groep 2 en laat groep 1 leeg. Dit geeft een overzicht van de onderwerpen waarover deze
+                partijen als enige voor of tegen hebben gestemd.</p>
         </div>
     </div>
-    <div class="box-holder">
-        <div class="box">
-            <div class="box-title">Groep 1</div>
+    <div class="groups">
+        <div class="group">
+            <h4>Groep 1</h4>
             <div cdkDropList #box1List="cdkDropList" [cdkDropListData]="box1"
-                [cdkDropListConnectedTo]="[box2List, partyList]" class="party-box box-group"
-                (cdkDropListDropped)="drop($event)">
-                <h3>
-                    <span class="badge rounded-pill bg-light text-dark" *ngFor="let item of box1"
-                        cdkDrag>{{item.searchTerm}}</span>
-                </h3>
+                [cdkDropListConnectedTo]="[box2List, partyList]" class="party-box" (cdkDropListDropped)="drop($event)">
+                <div class="party-pill" *ngFor="let item of box1" cdkDrag>{{item.searchTerm}} </div>
             </div>
         </div>
-        <div class="box">
-            <div class="box-title">Groep 2</div>
+        <div class="group">
+            <h4>Groep 2</h4>
             <div cdkDropList #box2List="cdkDropList" [cdkDropListData]="box2"
-                [cdkDropListConnectedTo]="[box1List, partyList]" class="party-box box-group"
-                (cdkDropListDropped)="drop($event)">
-                <h3>
-                    <span class="badge rounded-pill bg-light text-dark" *ngFor="let item of box2"
-                        cdkDrag>{{item.searchTerm}}</span>
-                </h3>
+                [cdkDropListConnectedTo]="[box1List, partyList]" class="party-box" (cdkDropListDropped)="drop($event)">
+                <div class="party-pill" *ngFor="let item of box2" cdkDrag>{{item.searchTerm}} </div>
             </div>
         </div>
     </div>
-
-    <div class="d-flex justify-content-center">
-        <button (click)="resetLists()" class="btn btn-secondary">Reset Groepen</button>
+    <div class="reset">
+        <button class="reset-button btn" (click)="resetLists()">Reset Groepen</button>
     </div>
-    <div class="party-holder">
+    <div class="parties">
         <div cdkDropList #partyList="cdkDropList" [cdkDropListData]="parties"
             [cdkDropListConnectedTo]="[box1List, box2List]" class="party-box" (cdkDropListDropped)="drop($event)">
-            <h3>
-                <span class="badge rounded-pill bg-light text-dark" *ngFor="let item of parties"
-                    cdkDrag>{{item.searchTerm}}</span>
-            </h3>
+            <div class="party-pill" *ngFor="let item of parties" cdkDrag>{{item.searchTerm}} </div>
         </div>
     </div>
 </div>
