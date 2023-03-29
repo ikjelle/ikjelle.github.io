@@ -1,6 +1,6 @@
 import { CdkDragDrop, moveItemInArray, transferArrayItem } from '@angular/cdk/drag-drop';
 import { Component, Input, OnInit } from '@angular/core';
-import { Party } from 'src/app/services/classes/party';
+import { SearchParty } from 'src/app/pages/voting-results/search-party';
 
 @Component({
   selector: 'app-controversial',
@@ -9,9 +9,9 @@ import { Party } from 'src/app/services/classes/party';
 })
 export class ControversialComponent implements OnInit {
 
-  @Input() parties: Party[] = []
-  box1: Party[] = []
-  box2: Party[] = []
+  @Input() parties: SearchParty[] = []
+  box1: SearchParty[] = []
+  box2: SearchParty[] = []
   helperOpen: boolean = false;
 
   constructor() {
@@ -20,7 +20,7 @@ export class ControversialComponent implements OnInit {
   ngOnInit(): void {
   }
 
-  drop(event: CdkDragDrop<Party[]> | any) {
+  drop(event: CdkDragDrop<SearchParty[]> | any) {
     if (event.previousContainer === event.container) {
       moveItemInArray(event.container.data, event.previousIndex, event.currentIndex);
     } else {

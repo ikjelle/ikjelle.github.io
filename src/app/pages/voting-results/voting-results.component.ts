@@ -1,10 +1,11 @@
 import { HttpClient } from '@angular/common/http';
 import { Component, ElementRef, OnInit, ViewChild, ViewChildren, QueryList } from '@angular/core';
 import { ControversialComponent } from 'src/app/components/controversial/controversial.component';
-import { Party, IParty } from 'src/app/services/classes/party';
-import { Result } from 'src/app/services/classes/result';
-import { resultTypes } from 'src/app/services/classes/result-types';
+import { Party, Result } from 'src/app/services/OData/models/models';
+import { ODataResponse } from 'src/app/services/OData/models/response';
+import { resultTypes } from 'src/app/services/OData/models/result-types';
 import { ResultService } from 'src/app/services/result.service';
+import { SearchParty } from './search-party';
 
 @Component({
   selector: 'app-voting-results',
@@ -18,7 +19,7 @@ export class VotingResultsComponent implements OnInit {
   @ViewChildren('result', { read: ElementRef }) resultComponents: any;
 
   pages: Page[] = []
-  parties: Party[] = []
+  parties: SearchParty[] = []
 
   filter: any = null
   lastLoadedPage: number = 0
@@ -56,23 +57,12 @@ export class VotingResultsComponent implements OnInit {
 
   getParties() {
     // TODO: catch CORS
-    this.http.get("https://gegevensmagazijn.tweedekamer.nl/OData/v4/2.0/Fractie?$filter=DatumInactief%20eq%20null%20and%20Afkorting%20ne%20null").
-      subscribe((response: any) => {
+    this.http.get<ODataResponse<Party>>(this.resultsService.getUrlOfParties()).
+      subscribe((response) => {
         this.firstLoad = true
-        const parties = <IParty>response['value']
+        const parties = response.value
           .forEach((p: any) => {
-            let party = new Party(p.NaamNL, p.Afkorting, p.DatumActief)
-            // Some parties use their full name
-            switch (party.abbreviation) {
-              case "GL":
-              case "CU":
-                party.searchTerm = party.name
-                break
-              case "Gündoğan": // inconsistency in the data
-                party.searchTerm = "Gündogan"
-                break
-            }
-            // this.searchterms.push(party.searchTerm)
+            let party = new SearchParty(p.NaamNL, p.Afkorting, p.DatumActief)
             this.parties.push(party)
           });
         this.child.box1.push(...this.child.parties.splice(Math.floor(Math.random() * this.child.parties.length), 1))
@@ -94,7 +84,7 @@ export class VotingResultsComponent implements OnInit {
     let p2 = this.child.box2
     let url = ""
 
-    url = this.resultsService.getUrl(p1, p2, this.resultTypes)
+    url = this.resultsService.getUrlOfResultsByGroupedParties(p1, p2, this.resultTypes)
     this.pages = [];
 
     this.highLighted = []
@@ -120,14 +110,12 @@ export class VotingResultsComponent implements OnInit {
   getResultsFromUrl(url: string) {
     this.nextPageUrl = null
     // TODO: catch CORS
-    return this.http.get(url).subscribe((r: any) => {
+    return this.http.get<ODataResponse<Result>>(url).subscribe((response) => {
       let page = new Page()
-      page.results = r["value"]
-      this.filterCount = r["@odata.count"]
+      page.results = response.value
+      this.filterCount = response["@odata.count"]
       this.pages.push(page)
-      if ("@odata.nextLink" in r) {
-        this.nextPageUrl = r["@odata.nextLink"]
-      }
+      this.nextPageUrl = response["@odata.nextLink"]
       this.stopSpinner()
     })
   }

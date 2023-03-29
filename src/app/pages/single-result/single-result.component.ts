@@ -1,7 +1,8 @@
 import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { Result } from 'src/app/services/classes/result';
+import { Result } from 'src/app/services/OData/models/models';
+import { ODataResponse } from 'src/app/services/OData/models/response';
 import { ResultService } from 'src/app/services/result.service';
 
 @Component({
@@ -22,9 +23,9 @@ export class SingleResultComponent implements OnInit {
     });
     this.route.params.subscribe(params => {
       let id = params['id'];
-      let url = this.resultsService.getResultById(id)
-      return this.http.get(url).subscribe((r: any) => {
-        let results: Result[] = r["value"]
+      let url = this.resultsService.getUrlOfResultById(id)
+      return this.http.get<ODataResponse<Result>>(url).subscribe((r) => {
+        let results = r.value
         this.caseResult = results[0]
       })
     });

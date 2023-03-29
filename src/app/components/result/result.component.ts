@@ -1,5 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { Result, Stemming } from 'src/app/services/classes/result';
+import { Result, Vote } from 'src/app/services/OData/models/models';
 
 @Component({
   selector: 'app-result',
@@ -34,8 +34,8 @@ export class ResultComponent implements OnInit {
 
   @Input() result!: Result;
   @Input() highLighted: string[] = []
-  yays: Stemming[] = []
-  nays: Stemming[] = []
+  yays: Vote[] = []
+  nays: Vote[] = []
 
   votesYay: number = 0;
   votesNay: number = 0;
@@ -58,7 +58,7 @@ export class ResultComponent implements OnInit {
       }
     });
 
-    let listSorter = (list: Stemming[]) => {
+    let listSorter = (list: Vote[]) => {
       list.sort((a, b) => {
         let partyNameA = a.ActorFractie, partyNameB = b.ActorFractie
         if (a.FractieGrootte > b.FractieGrootte || (a.FractieGrootte == b.FractieGrootte && partyNameA > partyNameB)) {
