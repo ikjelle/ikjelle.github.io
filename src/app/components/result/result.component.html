@@ -10,20 +10,33 @@
         </div>
         <div class="votes">
             <div class="parties">
-                <div *ngFor="let party of yays"
-                    [ngStyle]="highLighted.indexOf(party.ActorNaam) > -1 ? {order: 1}: {order:2}"
-                    [ngClass]="highLighted.indexOf(party.ActorFractie) > -1 ? 'mark': ''">
-                    {{party.ActorNaam}}
+                <div *ngFor="let party of yays" class="party"
+                    [ngStyle]="highLighted.indexOf(party.ActorNaam) > -1 ? {order: 1}: {order:2}">
+                    <div class="party-name" [ngClass]="highLighted.indexOf(party.ActorFractie) > -1 ? 'mark': ''">
+                        {{party.ActorNaam}}
+                    </div><span class="size-hover">
+                        {{party.FractieGrootte}}
+                    </span>
                     <i *ngIf="this.result.StemmingsSoort == 'Hoofdelijk'">{{party.ActorFractie}}</i>
                 </div>
             </div>
-            <div class="bar yays" [style]="{height: (votesYay/(votesYay + votesNay)* 100) + '%'}"></div>
-            <div class="bar nays" [style]="{height: (votesNay/(votesYay + votesNay)* 100) + '%'}"></div>
+            <div class="bar yays" [style]="{height: (votesYay/(votesYay + votesNay)* 100) + '%'}">
+                <div class="bar-hover"></div>
+                <span class="size-hover">{{votesYay}}</span>
+            </div>
+            <div class="bar nays" [style]="{height: (votesNay/(votesYay + votesNay)* 100) + '%'}">
+                <div class="bar-hover"></div>
+                <span class="size-hover">{{votesNay}}</span>
+            </div>
             <div class="parties">
-                <div *ngFor="let party of nays"
-                    [ngStyle]="highLighted.indexOf(party.ActorNaam) > -1 ? {order: 1}: {order:2}"
-                    [ngClass]="highLighted.indexOf(party.ActorFractie) > -1 ? 'mark': ''">
-                    {{party.ActorNaam}}
+                <div *ngFor="let party of nays" class="party"
+                    [ngStyle]="highLighted.indexOf(party.ActorNaam) > -1 ? {order: 1}: {order:2}">
+                    <div class="party-name" [ngClass]="highLighted.indexOf(party.ActorFractie) > -1 ? 'mark': ''">
+                        {{party.ActorNaam}}
+                    </div><span class="size-hover">
+                        {{party.FractieGrootte}}
+                    </span>
+
                     <i *ngIf="this.result.StemmingsSoort == 'Hoofdelijk'">{{party.ActorFractie}}</i>
                 </div>
             </div>
