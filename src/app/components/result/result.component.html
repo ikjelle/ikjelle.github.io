@@ -1,48 +1,57 @@
 <div class="component">
-    <div class="result-card">
+    <div class="result-card" [ngStyle]="collapsable && !collapsed? {height: maxSize + 'px', overflowY: 'clip'} : {}">
         <div class="case">
             <h3>{{result.Zaak[0].Titel}}</h3>
             <i>{{result.Zaak[0].Soort}}, </i> <small>{{votingResult}}</small>
             <p>{{result.Zaak[0].Onderwerp}}</p>
-            <a class="link" target="_blank" [href]="getTKUrl()">{{result.Zaak[0].Nummer}}</a>
-            <p class="date"><small class="text-muted">{{getLocalDate()}}</small></p>
-
+            <div class="link-date">
+                <a class="link" target="_blank" [href]="getTKUrl()">{{result.Zaak[0].Nummer}}</a>
+                <p class="date"><small class="text-muted">{{getLocalDate()}}</small></p>
+            </div>
         </div>
-        <div class="votes">
+        <div class="votes" #votes
+            [ngStyle]="collapsable && !collapsed? {height: maxSize + 'px', overflowY: 'clip'} : {}">
             <div class="parties">
                 <div *ngFor="let party of yays" class="party"
                     [ngStyle]="highLighted.indexOf(party.ActorNaam) > -1 ? {order: 1}: {order:2}">
                     <div class="party-name" [ngClass]="highLighted.indexOf(party.ActorFractie) > -1 ? 'mark': ''">
                         {{party.ActorNaam}}
-                    </div><span class="size-hover">
+                        <i *ngIf="this.result.StemmingsSoort == 'Hoofdelijk'">{{party.ActorFractie}}</i>
+                    </div><span *ngIf="this.result.StemmingsSoort != 'Hoofdelijk'" class="size-hover">
                         {{party.FractieGrootte}}
                     </span>
-                    <i *ngIf="this.result.StemmingsSoort == 'Hoofdelijk'">{{party.ActorFractie}}</i>
                 </div>
             </div>
-            <div class="bar yays" [style]="{height: (votesYay/(votesYay + votesNay)* 100) + '%'}">
-                <div class="bar-hover"></div>
-                <span class="size-hover">{{votesYay}}</span>
+            <div class="voting-bar">
+                <div class="bar-votes yay">{{votesYay}}</div>
+                <div class="bar yays" [style]="{height: (votesYay/(votesYay + votesNay)* 100) + '%'}"> </div>
             </div>
-            <div class="bar nays" [style]="{height: (votesNay/(votesYay + votesNay)* 100) + '%'}">
-                <div class="bar-hover"></div>
-                <span class="size-hover">{{votesNay}}</span>
+            <div class="voting-bar">
+                <div class="bar-votes nay"> {{votesNay}}</div>
+                <div class="bar nays" [style]="{height: (votesNay/(votesYay + votesNay)* 100) + '%'}"> </div>
             </div>
             <div class="parties">
                 <div *ngFor="let party of nays" class="party"
                     [ngStyle]="highLighted.indexOf(party.ActorNaam) > -1 ? {order: 1}: {order:2}">
                     <div class="party-name" [ngClass]="highLighted.indexOf(party.ActorFractie) > -1 ? 'mark': ''">
-                        {{party.ActorNaam}}
-                    </div><span class="size-hover">
+                        {{party.ActorNaam}} <i
+                            *ngIf="this.result.StemmingsSoort == 'Hoofdelijk'">{{party.ActorFractie}}</i>
+                    </div><span *ngIf="this.result.StemmingsSoort != 'Hoofdelijk'" class="size-hover">
                         {{party.FractieGrootte}}
                     </span>
-
-                    <i *ngIf="this.result.StemmingsSoort == 'Hoofdelijk'">{{party.ActorFractie}}</i>
                 </div>
             </div>
         </div>
     </div>
-    <div class="share">
-        <a [href]="'./resultaat/' + result.Zaak[0].Id + '?'+ getQueryParams()">Deel resultaat</a>
+    <div class="footer">
+        <div class="collapse" *ngIf="collapsable">
+            <button (click)="toggleCollapse()">
+                <div *ngIf="!collapsed">Laat meer zien</div>
+                <div *ngIf="collapsed">Laat minder zien</div>
+            </button>
+        </div>
+        <div class="share">
+            <a target="_blank" [href]="'./resultaat/' + result.Zaak[0].Id + '?'+ getQueryParams()">Deel resultaat</a>
+        </div>
     </div>
 </div>

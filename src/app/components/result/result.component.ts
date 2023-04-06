@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
 import { Result, Vote } from 'src/app/services/OData/models/models';
 
 @Component({
@@ -6,7 +6,7 @@ import { Result, Vote } from 'src/app/services/OData/models/models';
   templateUrl: './result.component.html',
   styleUrls: ['./result.component.css']
 })
-export class ResultComponent implements OnInit {
+export class ResultComponent implements OnInit, AfterViewInit {
   getQueryParams() {
     let s = ""
     this.highLighted.forEach(h => {
@@ -84,4 +84,19 @@ export class ResultComponent implements OnInit {
     return new Date(this.result.GewijzigdOp).toLocaleDateString('nl-NL', options)
   }
 
+  maxSize: number = 420;
+  collapsable: boolean = false;
+  collapsed: boolean = false;
+  @ViewChild('votes')
+  votesElement!: ElementRef;
+  ngAfterViewInit() {
+    var height = this.votesElement.nativeElement.offsetHeight;
+
+    if (height > 400) {
+      this.collapsable = true;
+    }
+  }
+  toggleCollapse() {
+    this.collapsed = !this.collapsed
+  }
 }

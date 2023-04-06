@@ -43,7 +43,7 @@
         <div>
             <div #results class="results">
                 <div *ngIf="filterCount">Aantal resultaten: {{filterCount}}</div>
-                <div class="results-pages">
+                <div class="results-pages" *ngIf="pages.length > 0results">
                     <div *ngFor="let page of pages; let i = index">
                         <div *ngFor="let result of getResults(page.results); let j = index">
                             <app-result #result [highLighted]="highLighted" [result]="result">

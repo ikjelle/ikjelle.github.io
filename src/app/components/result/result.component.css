@@ -20,14 +20,19 @@
     min-width: 320px;
 }
 
-.links {
-    margin-top: auto;
+.link-date {
     display: flex;
     flex-direction: row;
-    justify-content: space-between;
+    justify-content: center;
+}
+
+.link {
+    margin-right: auto;
 }
 
 .date {
+    margin-left: auto;
+    margin-right: auto;
     margin-top: auto;
 }
 
@@ -45,7 +50,6 @@
 }
 
 .bar {
-    flex: 1;
     min-width: 10px;
     position: relative;
 }
@@ -58,11 +62,22 @@
     background-color: #FF0000;
 }
 
+.footer {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+}
+
+.collapse {
+    margin-left: auto;
+}
+
 .share {
     display: flex;
     flex-direction: row;
-    justify-content: flex-end;
+    margin-left: auto;
 }
+
 
 .mark {
     background-color: none;
@@ -79,9 +94,22 @@
     text-indent: -1em;
 }
 
-.bar-hover {
+.voting-bar {
+    flex: 1;
+}
+
+.bar-votes {
     width: 100%;
-    height: 100%;
+    text-size-adjust: 100%;
+}
+
+.bar-votes.yay {
+    border-right: 1px dotted black;
+    text-align: left;
+}
+
+.bar-votes.nay {
+    text-align: right;
 }
 
 .size-hover {
@@ -95,10 +123,6 @@
     min-height: 20px;
     text-align: center;
     z-index: 1;
-}
-
-.bar-hover:hover+.size-hover {
-    display: block;
 }
 
 .party-name:hover+.size-hover {

@@ -68,6 +68,8 @@
 }
 
 .results-pages {
+    border-top: 1px solid black;
+    border-bottom: 1px solid black;
     max-height: 90vh;
     overflow-y: scroll;
     margin-left: -10px;
