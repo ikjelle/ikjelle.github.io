@@ -12,6 +12,7 @@
         <div class="votes" #votes
             [ngStyle]="collapsable && !collapsed? {height: maxSize + 'px', overflowY: 'clip'} : {}">
             <div class="parties">
+                <!-- Maybe if head vote, groupby parties and collapse them open to see who voted -->
                 <div *ngFor="let party of yays" class="party"
                     [ngStyle]="highLighted.indexOf(party.ActorNaam) > -1 ? {order: 1}: {order:2}">
                     <div class="party-name" [ngClass]="highLighted.indexOf(party.ActorFractie) > -1 ? 'mark': ''">
@@ -34,8 +35,8 @@
                 <div *ngFor="let party of nays" class="party"
                     [ngStyle]="highLighted.indexOf(party.ActorNaam) > -1 ? {order: 1}: {order:2}">
                     <div class="party-name" [ngClass]="highLighted.indexOf(party.ActorFractie) > -1 ? 'mark': ''">
-                        {{party.ActorNaam}} <i
-                            *ngIf="this.result.StemmingsSoort == 'Hoofdelijk'">{{party.ActorFractie}}</i>
+                        {{party.ActorNaam}}
+                        <i *ngIf="this.result.StemmingsSoort == 'Hoofdelijk'"> {{party.ActorFractie}}</i>
                     </div><span *ngIf="this.result.StemmingsSoort != 'Hoofdelijk'" class="size-hover">
                         {{party.FractieGrootte}}
                     </span>

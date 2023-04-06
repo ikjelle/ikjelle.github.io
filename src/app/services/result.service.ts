@@ -22,9 +22,9 @@ export class ResultService {
           ]
         }),
         new Table(new Vote())
-      ]
-    }
-    )
+      ],
+      count: true,
+    })
   }
 
   getYay(pro: boolean) {

@@ -8,17 +8,18 @@ export class Table {
     expansions?: Table[];
     filter?: Filter;
     table = "";
+    count = false;
 
     public constructor(model: any, init?: Partial<Table>) {
         this.select = Reflect.getMetadata(MetaDataSelectKey, model);
         // overwrite select for custom select
+        // I would love for this model to be generics, but thats not possible in typescript
         Object.assign(this, init);
         this.table = Reflect.getOwnMetadata(MetaDataModelKey, model.constructor)
     }
 
     getClass<T extends { new(...args: any[]): {} }>(constructor: T) {
-        return class extends constructor {
-        }
+        return class extends constructor { }
     }
 
     getSelect() {
@@ -54,53 +55,46 @@ export class Table {
         return "";
     }
 
+    getCount() {
+        if (this.count) {
+            return "$count=true"
+        }
+        return "";
+    }
+
+    generateTable(delimter: string) {
+        let parts = []
+
+        parts.push(this.getSelect());
+        parts.push(this.getExpansions()!);
+        parts.push(this.getFilter()!);
+        parts.push(this.getCount()!);
+
+        parts = parts.filter(p => p.length > 0)
+
+        return parts.join(delimter)
+    }
+
     generateExpansion() {
         var navigation = "(";
 
-        var s = this.getSelect();
-        if (s != "") {
-            navigation += s;
-            navigation += ";";
-        }
-        var s = this.getFilter();
-        if (s != "") {
-            navigation += s;
-            navigation += ";";
-        }
-        var s = this.getExpansions();
-        if (s != "") {
-            navigation += s;
-            navigation += ";";
-        }
+        navigation += this.generateTable(";")
 
-        navigation = navigation.slice(0, navigation.length - 1);
         navigation += ")";
         return this.table + (navigation.length > 2 ? navigation : "");
     }
 
-    generateUrl(): string {
+    generateUrl(orderByDesc = true): string {
         var url = "";
         url += this.table;
         url += "?";
-
-        var s = this.getSelect();
-        if (s != "") {
-            url += s;
-            url += "&";
+        
+        let statements = []
+        statements.push(this.generateTable("&"))
+        if (orderByDesc) {
+            statements.push("$orderby=GewijzigdOp desc");
         }
-        var s = this.getExpansions();
-        if (s != "") {
-            url += s;
-            url += "&";
-        }
-        var s = this.getFilter();
-        if (s != "") {
-            url += s;
-            url += "&";
-        }
-
-        // should be an option
-        url += "$orderby=GewijzigdOp desc&$count=true";
+        url += statements.join("&")
 
         return this.apiBase + url;
     }
