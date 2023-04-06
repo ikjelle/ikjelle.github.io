@@ -18,6 +18,7 @@ import { DisclaimerComponent } from './pages/disclaimer/disclaimer.component';
 import { AboutComponent } from './pages/about/about.component';
 import { OpenApiDisclaimerComponent } from './components/open-api-disclaimer/open-api-disclaimer.component';
 import { ContentComponent } from './components/content/content.component';
+import { LogoComponent } from './svg-assets/logo/logo.component';
 
 @NgModule({
   declarations: [
@@ -33,7 +34,8 @@ import { ContentComponent } from './components/content/content.component';
     DisclaimerComponent,
     AboutComponent,
     OpenApiDisclaimerComponent,
-    ContentComponent
+    ContentComponent,
+    LogoComponent
   ],
   imports: [
     BrowserModule,

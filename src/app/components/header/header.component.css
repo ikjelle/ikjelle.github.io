@@ -38,3 +38,8 @@
 .active-link:hover {
     cursor: auto !important;
 }
+
+.home {
+    display: flex;
+    flex-direction: row;
+}
