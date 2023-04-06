@@ -22,6 +22,7 @@
 }
 
 .nav-item {
+    all: unset;
     padding: 10px;
 }
 
