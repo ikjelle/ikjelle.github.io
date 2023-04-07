@@ -28,4 +28,7 @@ To get more help on the Angular CLI use `ng help` or go check out the [Angular C
 
 ## Deploying to Github
 
-Run `ng build --output-path docs` and commit those files
+Build the project `ng build --output-path docs`.  
+Create a 404 with the html so routing works `cp docs/index.html docs/404.html`.  
+or all in one line `ng build --output-path docs && cp docs/index.html docs/404.html`
+Commit all files in docs for the pages
