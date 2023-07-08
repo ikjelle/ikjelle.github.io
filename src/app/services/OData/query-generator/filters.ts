@@ -145,6 +145,28 @@ export class InCriterica extends Filter {
     }
 }
 
+export enum TF { // TextFilter
+    SW = "startswith",
+    EW = "endswith",
+    CO = "contains",
+}
+
+export class TextCriteria extends Filter {
+    public constructor(private method: TF, private prop: string, private searchText: string) {
+        super();
+    }
+
+    toText(ref?: string): string {
+        let text = ""
+        text += this.method + "("
+        if (ref) text += ref + "/"
+        text += this.prop + ","
+        text += "'" + this.searchText + "'"
+        text += ")"
+        return text;
+    }
+}
+
 export class NotCriterica extends Filter {
     public constructor(private filter: Filter) {
         super();

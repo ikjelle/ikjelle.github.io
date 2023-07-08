@@ -1,8 +1,9 @@
 import { Injectable, Type } from '@angular/core';
 import { Case, Document, Party, Result, Vote } from './OData/models/models';
 import { SearchParty } from "../pages/voting-results/search-party";
-import { AllCriteria, AndFilter, AnyCriteria, c, CompareCriterica, CustomCriteria, Filter, InCriterica, NotCriterica, OrFilter } from './OData/query-generator/filters';
+import { AllCriteria, AndFilter, AnyCriteria, c, CompareCriterica, CustomCriteria, Filter, InCriterica, NotCriterica, OrFilter, TextCriteria, TF } from './OData/query-generator/filters';
 import { Table } from './OData/query-generator/Table';
+import { filter } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -39,11 +40,37 @@ export class ResultService {
     return resultTypes.filter(t => t.checked == false)
   }
 
-  getUrlOfParties() {
+  getUrlOfParties(startDateString: string | null, endDateString: string | null) {
     let table = new Table(new Party)
+
+    // Not doing this.
+    // Its impossible to know which party was there or not.
+    // the data of the party only shows when it first got added and when it ended. You can't really know anything else and it fucks up the results anyway.
+    // But here is the implementation anyway, replace the first filter with datinactivefilter.
+    let startDate = startDateString ? new Date(startDateString) : null;
+    let endDate = endDateString ? new Date(endDateString) : new Date();
+    // if period is a scale of numbers like 0 - 9 We should see it like this:
+    // period I search for is 3 - 7
+    // party a = 0 - 9 (null)  MATCH
+    // party b = 1 - 5  MATCH
+    // party c = 5 - 9  MATCH
+    // party d = 1 - 2  No Match
+    // party d = 8 - 9 (null)  No Match
+    let filters = []
+    if (endDate != null) {
+      filters.push(new CompareCriterica("DatumActief", c.le, endDate.toISOString()));
+    }
+    if (startDate != null) {
+      filters.push(
+        new OrFilter([
+          new CompareCriterica("DatumInactief", c.ge, startDate.toISOString()),
+          new CompareCriterica("DatumInactief", c.eq, "null")
+        ]))
+    }
+
     table.filter = new AndFilter(
       [
-        new CompareCriterica("DatumInactief", c.eq, "null"),
+        ...filters,
         new CompareCriterica("Afkorting", c.ne, "null")
       ]
     )
@@ -64,7 +91,7 @@ export class ResultService {
   }
 
   // get all results with the current information
-  getUrlOfResultsByGroupedParties(parties1: SearchParty[], parties2: SearchParty[], resultTypes: any[]): string {
+  getUrlOfResultsByGroupedParties(parties1: SearchParty[], parties2: SearchParty[], resultTypes: any[], startDateString: string | null, endDateString: string | null, searchTerm: string | null): string {
     // get party names
     let p1 = []
     let p2 = []
@@ -74,6 +101,8 @@ export class ResultService {
     for (const pa2 of parties2) {
       p2.push(pa2.searchTerm)
     }
+    let startDate = startDateString ? new Date(startDateString) : null;
+    let endDate = endDateString ? new Date(endDateString) : new Date();
 
     // the base
     const request = this.generateResultTable()
@@ -89,19 +118,27 @@ export class ResultService {
     }
 
     // todo: maybe make an inverse query so we can have the smallest url.
-
+    let dateFilters = [];
+    if (startDate) {
+      dateFilters.push(
+        new CompareCriterica("GewijzigdOp", c.ge, startDate.toISOString()))
+    }
+    dateFilters.push(new CompareCriterica("GewijzigdOp", c.le, endDate.toISOString()))
+    filters.addFilter(new AndFilter(dateFilters))
+    if (searchTerm != null || searchTerm == "") {
+      filters.addFilter(new AllCriteria("Zaak", new OrFilter([new TextCriteria(TF.CO, "Onderwerp", searchTerm), new TextCriteria(TF.CO, "Titel", searchTerm)])));
+    }
     if (p1.length == 0 && p2.length == 0) {
       // show error or display just the latest results
     } else {
       // so the somewhat realistic option without a second query is to count from the start of the newest party
       // DISCLAIMER: the party, most of the time, gets created days before the actor actually goes to vote.
-      let joinDate = '1900-01-01T00:00:00+01:00'
-      for (const p of [...parties1, ...parties2]) {
-        if (p.dateActive > joinDate) {
-          joinDate = p.dateActive
-        }
-      }
-      filters.addFilter(new CompareCriterica("GewijzigdOp", c.ge, joinDate.substring(0, 19) + "Z"))
+      // let joinDate = '1900-01-01T00:00:00+01:00'
+      // for (const p of [...parties1, ...parties2]) {
+      //   if (p.dateActive > joinDate) {
+      //     joinDate = p.dateActive
+      //   }
+      // }
 
       // do logic based on if 1 or 2 boxes are used
       if (p1.length == 0 || p2.length == 0) {

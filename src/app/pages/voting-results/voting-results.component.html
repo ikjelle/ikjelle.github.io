@@ -15,6 +15,35 @@
         <app-controversial [parties]="parties">
         </app-controversial>
 
+        <div *ngIf="extendedFiltersEnabled">
+            <label>
+                Periode
+            </label>
+            <div>
+                <div class="periodDate">
+                    <div>Start Datum:</div>
+                    <div>
+                        <input type="date" [value]="periodStart" (change)="periodStartDateChange($event)" />
+                    </div>
+                </div>
+                <div class="periodDate">
+                    <div> Eind Datum:</div>
+                    <div>
+                        <input type="date" [value]="periodEnd" (change)="periodEndDateChange($event)" />
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div *ngIf="extendedFiltersEnabled">
+            <label>
+                Zoekterm:
+            </label>
+            <div>
+                <input (change)="searchInputChange($event)" [value]="this.textSearch" type="text">
+            </div>
+        </div>
+
         <div class="filters">
 
             <label>
@@ -60,7 +89,7 @@
                 <div class="spinner-border" role="status">
                     <span class="visually-hidden">Resultaten aan het ophalen...</span>
                 </div>
-                <div *ngIf="!firstLoad">
+                <div *ngIf="!firstTimeLoaded">
                     <app-cors-error></app-cors-error>
                 </div>
             </div>
