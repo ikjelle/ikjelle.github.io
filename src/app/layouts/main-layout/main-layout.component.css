@@ -7,7 +7,15 @@
 
 .header {}
 
-.content {}
+.content {
+    width: 100%;
+}
+
+.content-width {
+    max-width: 850px;
+    margin: auto;
+    padding: 8px;
+}
 
 .footer {
     margin-top: auto;

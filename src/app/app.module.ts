@@ -24,6 +24,8 @@ import { VoteAlongComponent } from './pages/vote-along/vote-along.component';
 import { DifferenceComponent } from './pages/difference/difference.component';
 import { PeriodPickerComponent } from './components/period-picker/period-picker.component';
 import { CollapseComponent } from './components/collapse/collapse.component';
+import { CaseTypePickerComponent } from './components/case-type-picker/case-type-picker.component';
+import { LoadingSpinnerComponent } from './components/loading-spinner/loading-spinner.component';
 
 @NgModule({
   declarations: [
@@ -45,7 +47,9 @@ import { CollapseComponent } from './components/collapse/collapse.component';
     VoteAlongComponent,
     DifferenceComponent,
     PeriodPickerComponent,
-    CollapseComponent
+    CollapseComponent,
+    CaseTypePickerComponent,
+    LoadingSpinnerComponent
   ],
   imports: [
     BrowserModule,

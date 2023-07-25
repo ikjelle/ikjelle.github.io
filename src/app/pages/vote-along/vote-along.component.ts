@@ -1,10 +1,11 @@
 import { KeyValue } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { filter } from 'rxjs';
+import { CaseTypePickerComponent } from 'src/app/components/case-type-picker/case-type-picker.component';
 import { Party, Decision, Vote } from 'src/app/services/OData/models/models';
 import { ODataResponse } from 'src/app/services/OData/models/response';
-import { resultTypes } from 'src/app/services/OData/models/result-types';
+import { AllCaseTypes, CaseTypeCheckBox } from 'src/app/services/OData/models/result-types';
 import { AndFilter } from 'src/app/services/OData/query-generator/filters';
 import { ResultService } from 'src/app/services/result.service';
 
@@ -31,6 +32,7 @@ interface PartyData {
 })
 export class VoteAlongComponent implements OnInit {
   polling: boolean = false;
+  @ViewChild(CaseTypePickerComponent) caseTypePickerComp!: CaseTypePickerComponent
   getAllSignedCasedOf(signer: any, fraction: string) {
     if (false) {
       return 0; // return 0 if x turned off.
@@ -40,47 +42,29 @@ export class VoteAlongComponent implements OnInit {
 
   periodStart?: string = new Date(2021, 2, 32).toISOString().slice(0, 10);
   periodEnd?: string = undefined
-  resultTypes = resultTypes.filter(rt => rt.enabled)
+
   ready: boolean = false;
+
+
+  totalCount?: number = undefined
+  amountPolled: number = 0
   constructor(private resultsService: ResultService, private http: HttpClient) { }
 
   ngOnInit(): void {
-  }
-
-  checkAllTypes(event: any) {
-    if (event.target.checked) {
-      for (const resultType of this.resultTypes) {
-        resultType.checked = true
-      }
-    } else {
-      for (const resultType of this.resultTypes) {
-        resultType.checked = false
-      }
-    }
-  }
-
-  allTypesChecked() {
-    for (const resultType of this.resultTypes) {
-      if (!resultType.checked) {
-        return false;
-      }
-    }
-    return true
-  }
-
-  changeTypeChecked(type: any) {
-    type.checked = !type.checked
   }
 
   search() {
     this.data = {}
     this.ready = false;
     this.polling = true;
+    this.totalCount = undefined
+    this.amountPolled = 0
+
     let url = ""
 
     let table = this.resultsService.getTableOfDecisionsWithActor()
 
-    let f = this.resultsService.getDecisionsByCaseType(this.resultTypes).filter
+    let f = this.resultsService.getDecisionsByCaseType(this.caseTypePickerComp.caseTypes).filter
     let f2 = this.resultsService.getDecisionsBetween(this.periodStart, this.periodEnd).filter
 
     let andFilter = new AndFilter()
@@ -96,6 +80,8 @@ export class VoteAlongComponent implements OnInit {
     let getCases = (url: string) => {
       return this.http.get<ODataResponse<Decision>>(url).subscribe((response) => {
         let nextLink = response["@odata.nextLink"]
+        this.totalCount = response["@odata.count"]!
+        this.amountPolled += response.value.length
         if (nextLink) getCases(nextLink);
         else this.polling = false
         this.setResults(response.value);

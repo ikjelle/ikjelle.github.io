@@ -3,10 +3,11 @@ import { Component, ElementRef, OnInit, ViewChild, ViewChildren, QueryList } fro
 import { ControversialComponent } from 'src/app/components/controversial/controversial.component';
 import { CaseSubject, Party, Decision } from 'src/app/services/OData/models/models';
 import { ODataResponse } from 'src/app/services/OData/models/response';
-import { resultTypes } from 'src/app/services/OData/models/result-types';
+import { AllCaseTypes, CaseTypeCheckBox } from 'src/app/services/OData/models/result-types';
 import { ResultService } from 'src/app/services/result.service';
 import { SearchParty } from './search-party';
 import { AndFilter, Filter } from 'src/app/services/OData/query-generator/filters';
+import { CaseTypePickerComponent } from 'src/app/components/case-type-picker/case-type-picker.component';
 
 @Component({
   selector: 'app-voting-results',
@@ -14,34 +15,33 @@ import { AndFilter, Filter } from 'src/app/services/OData/query-generator/filter
   styleUrls: ['./voting-results.component.css']
 })
 export class VotingResultsComponent implements OnInit {
-
   @ViewChild(ControversialComponent) child!: ControversialComponent;
   @ViewChild('disclaimerButton') disclaimerButton!: ElementRef;
   @ViewChildren('result', { read: ElementRef }) resultComponents: any;
+  @ViewChild(CaseTypePickerComponent) caseTypePickerComp!: CaseTypePickerComponent
 
   extendedFiltersEnabled = true;
-  pages: Page[] = []
+
   parties: SearchParty[] = []
+
   periodStart?: string = new Date(2021, 2, 32).toISOString().slice(0, 10);
   periodEnd?: string = undefined
 
   textSearch = "";
 
-  filter: any = null
+
   lastLoadedPage: number = 0
-  searchterms: string[] = []
+
   highLighted: string[] = [];
-  spinner: boolean = false;
-  resultTypes = resultTypes.filter(rt => rt.enabled)
-  nextPageUrl: string | null = null;
-  filterCount: number | null = null;
-  subjects: CaseSubject[] = [];
+
+  loading: boolean = false;
   firstTimeLoaded = false;
 
   constructor(private resultsService: ResultService, private http: HttpClient) {
   }
 
   ngOnInit(): void {
+    this.resetData()
     this.getParties()
   }
 
@@ -111,8 +111,8 @@ export class VotingResultsComponent implements OnInit {
   }
 
   filterResults() {
-    this.filterCount = null
-    this.startSpinner()
+    this.resetData()
+
     let p1 = this.child.box1
     let p1Ids = p1.map(p => p.id)
     let p2 = this.child.box2
@@ -120,11 +120,12 @@ export class VotingResultsComponent implements OnInit {
     let url = ""
 
     let tableBetween = this.resultsService.getDecisionsBetweenDatesAndParties(this.periodStart, this.periodEnd, [...p1.map(p => p.og), ...p2.map(p => p.og)])
-    let tableCaseTypes = this.resultsService.getDecisionsByCaseType(this.resultTypes)
+    let tableCaseTypes = this.resultsService.getDecisionsByCaseType(this.caseTypePickerComp.caseTypes)
     let tableTextSearch = this.resultsService.getDecisionsContainingText(this.textSearch)
     let tableGroupSearch = null
-    if (p1.length == 0 && p2.length == 0) {
 
+    if (p1.length == 0 && p2.length == 0) {
+      // do request without group logic
     } else if (p1.length > 0 && p2.length > 0) { // vs
       tableGroupSearch = this.resultsService.getDecisionsByDifferentVote(p1Ids, p2Ids)
     } else if (p2.length == 0) { // together
@@ -144,74 +145,70 @@ export class VotingResultsComponent implements OnInit {
     table.filter = new AndFilter(filters)
 
     url = table.generateUrl();
-    this.pages = [];
+
 
     this.highLighted = []
     for (const p of [...p1, ...p2]) {
       this.highLighted.push(p.searchTerm)
     }
-    this.getResultsFromUrl(url).add(
-      () => setTimeout(() => {
-        // need to wait before the native element is created in the page
-        // this.resultComponents.first.nativeElement.scrollIntoView({ behavior: "auto", block: "end" })
-      }, 1000
-      )
-    )
+    this.currentUrl = url
+    this.getDecisionsByIndex(1)
   }
 
-  getNextPage() {
-    if (this.nextPageUrl) {
-      this.startSpinner()
-      this.getResultsFromUrl(this.nextPageUrl)
+
+  getResultsOfActivePage(): any {
+    let index = this.currentIndex
+    if (index in this.data) {
+      return this.data[index]
+    } else {
+      this.getDecisionsByIndex(index)
+      return []
     }
   }
 
-  getResultsFromUrl(url: string) {
-    this.nextPageUrl = null
+  resetData() {
+    this.data = {}
+    this.currentIndex = 1
+    this.currentUrl = ""
+    this.decisionAmount = 0
+  }
+
+  currentUrl!: string;
+  currentIndex = 1
+  data: { [index: number]: Decision[] } = {}
+  decisionAmount: number = 0
+
+  getIndexes() {
+    if (this.decisionAmount == 0) return []
+    return Array.from({ length: (Math.ceil(this.decisionAmount / 250)) }, (_, i) => i + 1)
+  }
+
+  getDecisionsByIndex(index: number) {
+    this.currentIndex = index
+    if (index in this.data) {
+      return;
+    } else {
+      this.data[index] = []
+      this.startLoading(index)
+    }
     // TODO: catch CORS
+    let url = this.currentUrl;
+    if (index > 1) {
+      url += "&skip=" + (250 * (index - 1))
+    }
     return this.http.get<ODataResponse<Decision>>(url).subscribe((response) => {
-      let page = new Page()
-      page.results = response.value
-      this.filterCount = response["@odata.count"]
-      this.pages.push(page)
-      this.nextPageUrl = response["@odata.nextLink"]
-      this.stopSpinner()
+      this.decisionAmount = response["@odata.count"]!
+      this.data[index] = response.value
+      this.endLoading(index)
     })
   }
 
-  startSpinner() {
-    this.spinner = true;
+  lastLoadingIndex = 1
+  startLoading(index: number) {
+    this.lastLoadingIndex = index;
+    this.loading = true;
   }
-  stopSpinner() {
-    this.spinner = false;
+  endLoading(index: number) {
+    if (index == this.lastLoadingIndex) this.loading = false;
   }
-
-  checkAllTypes(event: any) {
-    if (event.target.checked) {
-      for (const resultType of this.resultTypes) {
-        resultType.checked = true
-      }
-    } else {
-      for (const resultType of this.resultTypes) {
-        resultType.checked = false
-      }
-    }
-  }
-
-  allTypesChecked() {
-    for (const resultType of this.resultTypes) {
-      if (!resultType.checked) {
-        return false;
-      }
-    }
-    return true
-  }
-
-  changeTypeChecked(type: any) {
-    type.checked = !type.checked
-  }
-}
-
-class Page {
-  results: Decision[] = []
 }

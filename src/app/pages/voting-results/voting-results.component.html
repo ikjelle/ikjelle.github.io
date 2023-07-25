@@ -1,171 +1,54 @@
-<div class="page" style="display: none;">
-    <div class="content">
-        <div class="intro">
-            <h1>Tweede Kamer Stemmingsuitslagen</h1>
-            Op deze pagina vindt u een overzicht van alle stemmingen die hebben plaatsgevonden in de Tweede Kamer. U
-            kunt
-            deze
-            resultaten filteren door gebruik te maken van het filter onderaan de pagina. Hiermee kunt u bijvoorbeeld
-            eenvoudig zien
-            op welke onderwerpen twee partijen van elkaar verschillen.
-            <br>
-            <app-open-api-disclaimer></app-open-api-disclaimer>
-        </div>
-
-
-
-        <div *ngIf="extendedFiltersEnabled">
-            <label>
-                Periode
-            </label>
-            <div>
-                <div class="periodDate">
-                    <div>Start Datum:</div>
-                    <div>
-                        <input type="date" [value]="periodStart" (change)="periodStartDateChange($event)" />
-                    </div>
-                </div>
-                <div class="periodDate">
-                    <div> Eind Datum:</div>
-                    <div>
-                        <input type="date" [value]="periodEnd" (change)="periodEndDateChange($event)" />
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div *ngIf="extendedFiltersEnabled">
-            <label>
-                Zoekterm:
-            </label>
-            <div>
-                <input (change)="searchInputChange($event)" [value]="this.textSearch" type="text">
-            </div>
-        </div>
-
-        <div class="filters">
-
-            <label>
-                Selecteer de type zaken:
-            </label>
-            <div class="checkboxes">
-                <div class="filter-box" style="order:-1000">
-                    <input (change)="checkAllTypes($event)" [checked]="allTypesChecked()" type="checkbox" id="selectAll"
-                        value="all">
-                    <label for="selectAll">Alles (on)selecteren</label>
-                </div>
-
-                <div class="filter-box" [style]="{order:-1*resultType.priority!}"
-                    *ngFor="let resultType of resultTypes; let i=index">
-                    <input type="checkbox" [value]="resultType.name" [checked]="resultType.checked"
-                        [id]="'inlineCheckbox'+ i" (change)="changeTypeChecked(resultType)">
-                    <label [for]="'inlineCheckbox'+ i">{{resultType.name}}</label>
-                </div>
-            </div>
-
-            <div class="filter-button">
-                <button class="btn btn-prim" (click)="filterResults()">Filter</button>
-            </div>
-        </div>
-
-        <div>
-            <div #results class="results">
-                <div *ngIf="filterCount">Aantal resultaten: {{filterCount}}</div>
-                <div class="results-pages" *ngIf="pages.length > 0results">
-                    <div *ngFor="let page of pages; let i = index">
-                        <div *ngFor="let result of getResults(page.results); let j = index">
-                            <app-result #result [highLighted]="highLighted" [result]="result">
-                            </app-result>
-                        </div>
-                    </div>
-                    <div *ngIf="this.nextPageUrl" class="filter-button">
-                        <button (click)="this.getNextPage()" class="btn btn-prim">Laad Meer Resultaten</button>
-                    </div>
-                </div>
-            </div>
-
-            <div *ngIf="spinner">
-                <div class="spinner-border" role="status">
-                    <span class="visually-hidden">Resultaten aan het ophalen...</span>
-                </div>
-                <div *ngIf="!firstTimeLoaded">
-                    <app-cors-error></app-cors-error>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
-<div class="page">
-    <div class="desc">
+<div class="fcc gap">
+    <div class="fcc gap">
         <h2>Tweede Kamer Stemmingsuitslagen Filteren</h2>
         Op deze pagina vindt u een overzicht van alle stemmingen die hebben plaatsgevonden in de Tweede Kamer. U
         kunt deze resultaten filteren door gebruik te maken van de filters. Hiermee kunt u bijvoorbeeld
         eenvoudig zien op welke zaken twee partijen van elkaar verschillen.
     </div>
     <hr style="width: 100%;">
-    <div class="period">
-        <app-period-picker [(start)]="periodStart" [(end)]="periodEnd" (update)="updateDate()"></app-period-picker>
-    </div>
-    <div class="search">
-        <div class="searchInput">
-            <div>Zoekterm: </div>
-            <input placeholder="Zoekterm" (change)="searchInputChange($event)" [value]="this.textSearch" type="text">
-        </div>
-    </div>
-    <div class="collapse">
-        <app-collapse [title]="'Fracties vergelijken'">
-            <app-controversial [parties]="parties">
-            </app-controversial>
-        </app-collapse>
+    <app-period-picker [(start)]="periodStart" [(end)]="periodEnd" (update)="updateDate()"></app-period-picker>
 
+    <div class="ffrwc l-gap">
+        <div>Zoekterm: </div>
+        <input placeholder="Zoekterm" (change)="searchInputChange($event)" [value]="this.textSearch" type="text">
     </div>
-    <div class="collapse">
-        <app-collapse [title]="'Type zaken'">
-            <div class="checkboxes">
-                <div class="filter-box" style="order:-1000">
-                    <input (change)="checkAllTypes($event)" [checked]="allTypesChecked()" type="checkbox" id="selectAll"
-                        value="all">
-                    <label for="selectAll">Alles (on)selecteren</label>
-                </div>
+    <app-collapse [title]="'Fracties vergelijken'">
+        <app-controversial [parties]="parties">
+        </app-controversial>
+    </app-collapse>
 
-                <div class="filter-box" [style]="{order:-1*resultType.priority!}"
-                    *ngFor="let resultType of resultTypes; let i=index">
-                    <input type="checkbox" [value]="resultType.name" [checked]="resultType.checked"
-                        [id]="'inlineCheckbox'+ i" (change)="changeTypeChecked(resultType)">
-                    <label [for]="'inlineCheckbox'+ i">{{resultType.name}}</label>
-                </div>
-            </div>
-        </app-collapse>
-
-    </div>
+    <app-collapse [title]="'Type zaken'">
+        <app-case-type-picker></app-case-type-picker>
+    </app-collapse>
     <!-- Subject list is to big to choose, so not included -->
-    <div class="filter-button">
+    <div class="frc">
         <button class="btn btn-prim" (click)="filterResults()">Filter</button>
     </div>
-    <div class="results">
-        <div #results class="results">
-            <div *ngIf="filterCount != null">Aantal resultaten: {{filterCount}}</div>
-            <div class="results-pages" *ngIf="pages.length > 0results">
-                <div *ngFor="let page of pages; let i = index">
-                    <div *ngFor="let result of getResults(page.results); let j = index">
-                        <app-result #result [highLighted]="highLighted" [result]="result">
-                        </app-result>
-                    </div>
-                </div>
-                <div *ngIf="this.nextPageUrl" class="filter-button">
-                    <button (click)="this.getNextPage()" class="btn btn-prim">Laad Meer Resultaten</button>
+    <div class="fcc" *ngIf="currentUrl != ''">
+        <div #results class="fcc gap">
+            <div *ngIf="decisionAmount != 0">Aantal resultaten: {{decisionAmount}}</div>
+            <ng-container *ngTemplateOutlet="pagination"></ng-container>
+            <app-loading-spinner *ngIf="loading"></app-loading-spinner>
+            <div class="ffrwc">
+                <div *ngFor="let result of getResultsOfActivePage(); let j = index">
+                    <app-result #result [highLighted]="highLighted" [result]="result">
+                    </app-result>
                 </div>
             </div>
+
+            <ng-container *ngTemplateOutlet="pagination"></ng-container>
         </div>
 
-        <div *ngIf="spinner">
-            <div class="spinner-border" role="status">
-                <span class="visually-hidden">Resultaten aan het ophalen...</span>
-            </div>
-            <div *ngIf="!firstTimeLoaded">
-                <app-cors-error></app-cors-error>
-            </div>
+    </div>
+    <app-cors-error *ngIf="!firstTimeLoaded"></app-cors-error>
+</div>
+
+
+<ng-template #pagination>
+    <div class="ffrwc l-gap">
+        <div [ngStyle]="{'cursor': i == currentIndex? '': 'pointer', 'text-decoration': i == currentIndex? 'underline': ''}"
+            (click)="getDecisionsByIndex(i)" *ngFor="let i of getIndexes()">
+            {{i}}
         </div>
     </div>
-</div>
+</ng-template>

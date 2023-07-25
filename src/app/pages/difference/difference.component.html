@@ -1,11 +1,22 @@
-<div>
+<div class="fcc gap">
+    <div class="fcc gap">
+        <h2>Verschillen tussen 2 Fracties</h2>
+        Op deze pagina kunt u de periode en 2 fracties uitkiezen. Wanneer u daarna op de knop klikt,
+        worden alle resultaten opgehaald. Nadat de data is opgehaald kunt u per kamerstukdossier, een soort van
+        onderwerp,
+        zien waar deze 2 partijen verschillend hebben gestemd.
+
+        Let op, het kan even duren voordat alles is opgehaald.
+    </div>
+    <hr style="width: 100%;">
+
     <app-period-picker [(start)]="periodStart" [(end)]="periodEnd"
         (update)="updateAvailableParties()"></app-period-picker>
-    <div>
-        <div>
+    <div class="ffrwc gap">
+        <div class="ffrwc l-gap">
             <div>Kies partij: </div>
             <div>
-                <select (selectionchange)="setA($event)">
+                <select class="party-select" (change)="setA($event)">
                     <option [selected]="partyAId== null" disabled>Kies een Partij</option>
                     <option [disabled]="p.Id == partyBId" [value]="p.Id" [selected]="p && p.Id==partyAId"
                         *ngFor="let p of parties">{{p.NaamNL}}
@@ -13,10 +24,10 @@
                 </select>
             </div>
         </div>
-        <div>
+        <div class="ffrwc l-gap">
             <div>Kies partij: </div>
             <div>
-                <select (change)="setB($event)">
+                <select class="party-select" (change)="setB($event)">
                     <option [selected]="partyBId== null" disabled>Kies een Partij</option>
                     <option [disabled]="p.Id == partyAId" [value]="p.Id" [selected]="p.Id==partyBId"
                         *ngFor="let p of parties">{{p.NaamNL}}</option>
@@ -24,39 +35,50 @@
             </div>
         </div>
     </div>
-    <div class="collapse">
-        <app-collapse [title]="'Type zaken'">
-            <div class="checkboxes">
-                <div class="filter-box" style="order:-1000">
-                    <input (change)="checkAllTypes($event)" [checked]="allTypesChecked()" type="checkbox" id="selectAll"
-                        value="all">
-                    <label for="selectAll">Alles (on)selecteren</label>
-                </div>
+    <app-collapse [title]="'Type zaken'">
+        <app-case-type-picker></app-case-type-picker>
+    </app-collapse>
+    <div class="frc">
+        <button [disabled]="!(partyAId && partyBId)" [ngClass]="{'btn-disabled': !(partyAId && partyBId)}"
+            class="btn btn-prim" (click)="getDifferences()">Laat verschillen
+            zien.</button>
+    </div>
 
-                <div class="filter-box" [style]="{order:-1*resultType.priority!}"
-                    *ngFor="let resultType of resultTypes; let i=index">
-                    <input type="checkbox" [value]="resultType.name" [checked]="resultType.checked"
-                        [id]="'inlineCheckbox'+ i" (change)="changeTypeChecked(resultType)">
-                    <label [for]="'inlineCheckbox'+ i">{{resultType.name}}</label>
-                </div>
+    <app-cors-error *ngIf="parties.length == 0"></app-cors-error>
+    <div class="fcc" style="padding:8px" *ngIf="totalCount || polling">
+        <div *ngIf="totalCount" class="frc">
+            Totaal aantal zaken met verschil: {{totalCount}}
+        </div>
+        <div class="frc" *ngIf="totalCasesNoDifference">Totaal aantal zaken behandeld door de 2e kamer:
+            {{totalCasesNoDifference}} (Met de huidige filters)
+        </div>
+        <div class="fcc" *ngIf="polling">
+            <div class="frc">Bezig met ophalen, data opgehaald: {{retrievedCount}}/{{totalCount}}</div>
+            <app-loading-spinner></app-loading-spinner>
+        </div>
+    </div>
+
+    <div class="ffrwc" style="padding:8px">
+        <div style="width: 600px; min-height: 400px;" [style]=" {order:-1*k.value.decisions.length}"
+            *ngFor="let k of data | keyvalue">
+            <div>{{k.value.caseSubject.Titel}} ({{k.value.decisions.length}})</div>
+            <div class="fr">
+                Voor:
+                {{getPartyName(this.partyAId)}}
+                {{getNumberOfSided(true, this.partyAId, k.value.decisions)}}
+                -
+                {{getNumberOfSided(false, this.partyAId, k.value.decisions)}}
+                {{getPartyName(this.partyBId)}}
             </div>
-        </app-collapse>
-    </div>
-    <div>
-        <button (click)="getDifferences()">Laat verschillen zien.</button>
-    </div>
-</div>
-<div>
-    <div>
-        Sorteer bij:
-        * alfabetisch hoog/laag
-        * verschillen hoog/laag
-    </div>
-    Per kamerstukdoosier:
-    <div>
-        <div>
-            Naam
-            nummer oneens / nummer totaal
+
+
+            <app-collapse title="Zaken: ">
+                <div class="fc" style="gap: 4px; overflow-y: scroll;">
+                    <app-collapse *ngFor="let d of k.value.decisions" [title]="getTitle(d)">
+                        <app-result [highLighted]="getHighLighted()" [result]="d"></app-result>
+                    </app-collapse>
+                </div>
+            </app-collapse>
         </div>
     </div>
 </div>

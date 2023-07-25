@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, Input, OnInit, SimpleChanges, ViewChild } from '@angular/core';
 import { Decision, Vote } from 'src/app/services/OData/models/models';
 
 @Component({
@@ -6,7 +6,7 @@ import { Decision, Vote } from 'src/app/services/OData/models/models';
   templateUrl: './result.component.html',
   styleUrls: ['./result.component.css']
 })
-export class ResultComponent implements OnInit, AfterViewInit {
+export class ResultComponent implements OnInit {
   getQueryParams() {
     let s = ""
     this.highLighted.forEach(h => {
@@ -43,7 +43,14 @@ export class ResultComponent implements OnInit, AfterViewInit {
 
   constructor() { }
 
-  ngOnInit(): void {
+  ngOnInit(): void { }
+  ngOnChanges(changes: SimpleChanges) {
+    if (changes['result']) {
+      this.newParty()
+    }
+  }
+  newParty() {
+
     this.result.Stemming.forEach(party => {
       let voteAmount = 1
       if (this.result.StemmingsSoort != "Hoofdelijk") {
@@ -89,13 +96,7 @@ export class ResultComponent implements OnInit, AfterViewInit {
   collapsed: boolean = false;
   @ViewChild('votes')
   votesElement!: ElementRef;
-  ngAfterViewInit() {
-    var height = this.votesElement.nativeElement.offsetHeight;
 
-    if (height > 400) {
-      this.collapsable = true;
-    }
-  }
   toggleCollapse() {
     this.collapsed = !this.collapsed
   }

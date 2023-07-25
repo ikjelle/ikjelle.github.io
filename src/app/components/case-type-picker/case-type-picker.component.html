@@ -1,0 +1,13 @@
+<div class="checkboxes">
+    <div class="filter-box" style="order:-1000">
+        <input (change)="checkAllTypes($event)" [checked]="allTypesChecked()" type="checkbox" id="selectAll"
+            value="all">
+        <label for="selectAll">Alles (on)selecteren</label>
+    </div>
+
+    <div class="filter-box" [style]="{order:-1*resultType.priority!}" *ngFor="let resultType of caseTypes; let i=index">
+        <input type="checkbox" [value]="resultType.name" [checked]="resultType.checked" [id]="'inlineCheckbox'+ i"
+            (change)="changeTypeChecked(resultType)">
+        <label [for]="'inlineCheckbox'+ i">{{resultType.name}}</label>
+    </div>
+</div>

@@ -1,7 +1,7 @@
-export class ResultType {
+export class CaseTypeCheckBox {
     name!: string;
 
-    public constructor(init?: Partial<ResultType>) {
+    public constructor(init?: Partial<CaseTypeCheckBox>) {
         Object.assign(this, init);
     }
 
@@ -168,4 +168,4 @@ const datalist: Array<any> = [
     },
 ];
 
-export const resultTypes: Array<ResultType> = datalist.map(part => { return new ResultType(part) })
+export const AllCaseTypes: Array<CaseTypeCheckBox> = datalist.map(part => { return new CaseTypeCheckBox(part) })

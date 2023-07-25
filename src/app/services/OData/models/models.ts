@@ -71,11 +71,14 @@ export class Case {
     @s
     Titel!: string;
     @s
+    Citeertitel!: string;
+    @s
     Volgnummer!: number;
 
     Besluit!: Decision[];
     Document!: Document[];
     ZaakActor!: CaseActor[];
+    Kamerstukdossier!: CaseSubject[];
 }
 
 @model("ZaakActor")

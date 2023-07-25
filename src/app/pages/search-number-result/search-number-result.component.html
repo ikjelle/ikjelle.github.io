@@ -1,5 +1,5 @@
-<div style="display: flex; flex-direction: column; margin-top: 30px; gap: 8px;">
-    <div style="align-self: center; display: flex; flex-direction: column;justify-content: center; flex-wrap: wrap;">
+<div class="fc gap">
+    <div style="align-self: center;" class="fcc">
         <h2>Zoek zaak met een identificatie Nummer</h2>
         Op deze pagina kunt u een zaak zoeken met een identificatie nummer.<br>
         Een nummer kan het volgende formaat hebben:
@@ -10,7 +10,7 @@
         </ul>
     </div>
     <hr style="width:100%">
-    <div style="display: flex; gap:10px; justify-content: center; flex-wrap: wrap;">
+    <div class="ffrwc gap">
         <div>
             Nummer:
         </div>
@@ -19,8 +19,9 @@
                 placeholder="Bijv. 2023Z13581, 36392-5, 36200-A-93">
         </div>
     </div>
-    <div class="filter-button">
-        <button class="btn btn-prim" (click)="searchResult()">Filter</button>
+    <div class="frc">
+        <button class="btn btn-prim" (click)="searchResult()">Zoek</button>
     </div>
+    <app-cors-error *ngIf="!result"></app-cors-error>
     <app-result *ngIf="result" [result]="result"></app-result>
 </div>

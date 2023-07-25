@@ -1,8 +1,9 @@
 .collapse {
-    width: 100%;
     display: flex;
     flex-direction: column;
     justify-content: center;
+    padding-left: 20px;
+    padding-right: 20px;
 }
 
 .title {

@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Activity, AgendaItem, Case, CaseSubject, Document, Party, Decision, Vote, CaseActor } from './OData/models/models';
 import { AllCriteria, AndFilter, AnyCriteria, c, CompareCriterica, Filter, InCriterica, NotCriterica, OrFilter, TextCriteria, TF } from './OData/query-generator/filters';
 import { Table } from './OData/query-generator/Table';
-import { ResultType } from './OData/models/result-types';
+import { CaseTypeCheckBox } from './OData/models/result-types';
 
 @Injectable({
   providedIn: 'root'
@@ -47,10 +47,11 @@ export class ResultService {
   }
 
   getTableOfDecisions() {
+    // add options so this builds up the table
     return new Table(new Decision(), {
       expansions: [
         new Table(new Case(), {
-          expansions: [new Table(new Document())]
+          expansions: [new Table(new CaseSubject()), new Table(new Document())]
         }),
         new Table(new Vote()),
         // get date
@@ -180,7 +181,7 @@ export class ResultService {
     )
   }
 
-  getDecisionsByCaseType(resultTypes: ResultType[]): Table {
+  getDecisionsByCaseType(resultTypes: CaseTypeCheckBox[]): Table {
     let table = this.getTableOfDecisions()
 
     let checkedTypes = resultTypes.filter(rt => rt.checked)
