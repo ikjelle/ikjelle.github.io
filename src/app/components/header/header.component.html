@@ -1,4 +1,4 @@
-<div class="nav-bar">
+<div class="header">
     <div class="left-side">
         <a class="nav-item home" routerLinkActive="active-link" routerLink=""
             [routerLinkActiveOptions]="{ exact: true }">
@@ -6,13 +6,29 @@
             <h3>Resultaten </h3>
         </a>
     </div>
+    <div class="nav-bar">
+        <div class="center-side">
+            <a routerLinkActive="active-link" class="nav-item" routerLink="/filter">
+                Filter
+            </a>
+            <a routerLinkActive="active-link" class="nav-item" routerLink="/zoek">
+                Zoek
+            </a>
+            <a routerLinkActive="active-link" class="nav-item" routerLink="/mee-stemmers">
+                Mee-stemmers
+            </a>
+            <a routerLinkActive="active-link" class="nav-item" routerLink="/verschillen">
+                Verschillen
+            </a>
+        </div>
 
-    <div class="right-side">
-        <a routerLinkActive="active-link" class="nav-item" routerLink="/disclaimer">
-            <h3>Disclaimer </h3>
-        </a>
-        <a routerLinkActive="active-link" class="nav-item" routerLink="/over">
-            <h3>Over</h3>
-        </a>
+        <div class="right-side">
+            <a routerLinkActive="active-link" class="nav-item" routerLink="/disclaimer">
+                Disclaimer
+            </a>
+            <a routerLinkActive="active-link" class="nav-item" routerLink="/over">
+                Over
+            </a>
+        </div>
     </div>
 </div>

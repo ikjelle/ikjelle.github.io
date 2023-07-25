@@ -19,6 +19,11 @@ import { AboutComponent } from './pages/about/about.component';
 import { OpenApiDisclaimerComponent } from './components/open-api-disclaimer/open-api-disclaimer.component';
 import { ContentComponent } from './components/content/content.component';
 import { LogoComponent } from './svg-assets/logo/logo.component';
+import { SearchNumberResultComponent } from './pages/search-number-result/search-number-result.component';
+import { VoteAlongComponent } from './pages/vote-along/vote-along.component';
+import { DifferenceComponent } from './pages/difference/difference.component';
+import { PeriodPickerComponent } from './components/period-picker/period-picker.component';
+import { CollapseComponent } from './components/collapse/collapse.component';
 
 @NgModule({
   declarations: [
@@ -35,7 +40,12 @@ import { LogoComponent } from './svg-assets/logo/logo.component';
     AboutComponent,
     OpenApiDisclaimerComponent,
     ContentComponent,
-    LogoComponent
+    LogoComponent,
+    SearchNumberResultComponent,
+    VoteAlongComponent,
+    DifferenceComponent,
+    PeriodPickerComponent,
+    CollapseComponent
   ],
   imports: [
     BrowserModule,
@@ -43,7 +53,8 @@ import { LogoComponent } from './svg-assets/logo/logo.component';
     HttpClientModule,
     BrowserAnimationsModule,
     DragDropModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+
   ],
   providers: [],
   bootstrap: [AppComponent]

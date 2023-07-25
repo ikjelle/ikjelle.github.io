@@ -1,0 +1,16 @@
+<div class="collapse">
+    <div class="title" (click)="collapseComponent()">
+        {{title}}
+        <div *ngIf="collapsed; else close">
+            Openen
+        </div>
+        <ng-template #close>
+            <div>
+                Sluiten
+            </div>
+        </ng-template>
+    </div>
+    <div class="content" *ngIf="!collapsed">
+        <ng-content></ng-content>
+    </div>
+</div>

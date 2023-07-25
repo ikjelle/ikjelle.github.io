@@ -1,0 +1,26 @@
+<div style="display: flex; flex-direction: column; margin-top: 30px; gap: 8px;">
+    <div style="align-self: center; display: flex; flex-direction: column;justify-content: center; flex-wrap: wrap;">
+        <h2>Zoek zaak met een identificatie Nummer</h2>
+        Op deze pagina kunt u een zaak zoeken met een identificatie nummer.<br>
+        Een nummer kan het volgende formaat hebben:
+        <ul>
+            <li>&#123;jaar&#125;Z&#123;nummer&#125;</li>
+            <li>&#123;onderwerp&#125;-&#123;volgnummer&#125;</li>
+            <li>&#123;onderwerp&#125;-&#123;toevoeging&#125;-&#123;volgnummer&#125;</li>
+        </ul>
+    </div>
+    <hr style="width:100%">
+    <div style="display: flex; gap:10px; justify-content: center; flex-wrap: wrap;">
+        <div>
+            Nummer:
+        </div>
+        <div>
+            <input style="width: 250px;" [value]="number" (change)="numberInputChanged($event)" type="text"
+                placeholder="Bijv. 2023Z13581, 36392-5, 36200-A-93">
+        </div>
+    </div>
+    <div class="filter-button">
+        <button class="btn btn-prim" (click)="searchResult()">Filter</button>
+    </div>
+    <app-result *ngIf="result" [result]="result"></app-result>
+</div>

@@ -1,4 +1,4 @@
-class ResultType {
+export class ResultType {
     name!: string;
 
     public constructor(init?: Partial<ResultType>) {

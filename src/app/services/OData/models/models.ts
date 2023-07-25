@@ -15,16 +15,29 @@ function s(target: any, propertyKey: string) {
 }
 
 @model('Besluit')
-export class Result {
+export class Decision {
     @s
     StemmingsSoort!: string;
     @s
     BesluitSoort!: string;
-    @s
-    GewijzigdOp!: string;
+    // @s
+    // GewijzigdOp!: string;
 
     Stemming!: Vote[];
     Zaak!: Case[];
+
+    Agendapunt!: AgendaItem;
+}
+
+@model("Agendapunt")
+export class AgendaItem {
+    Activiteit!: Activity
+}
+
+@model("Activiteit")
+export class Activity {
+    @s
+    Datum!: string;
 }
 
 @model("Stemming")
@@ -37,6 +50,10 @@ export class Vote {
     ActorNaam!: string;
     @s
     ActorFractie!: string;
+    @s
+    Vergissing!: boolean;
+    @s
+    Fractie_Id!: string;
 }
 
 @model("Zaak")
@@ -56,7 +73,33 @@ export class Case {
     @s
     Volgnummer!: number;
 
+    Besluit!: Decision[];
     Document!: Document[];
+    ZaakActor!: CaseActor[];
+}
+
+@model("ZaakActor")
+export class CaseActor {
+    @s
+    Fractie_Id!: string;
+    @s
+    ActorFractie!: string;
+    @s
+    Relatie!: string;
+}
+
+@model("Kamerstukdossier")
+export class CaseSubject {
+    @s
+    Id!: string;
+    @s
+    Nummer!: number;
+    @s
+    Toevoeging!: string;
+    @s
+    Titel!: string;
+
+    "Zaak@odata.count": number;
 }
 
 @model("Document")
@@ -85,4 +128,6 @@ export class Party {
     NaamEN!: string;
     @s
     NaamNL!: string;
+
+    "Stemming@odata.count"!: number
 }

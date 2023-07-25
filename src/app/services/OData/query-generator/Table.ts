@@ -6,9 +6,14 @@ export class Table {
     apiBase: string = "https://gegevensmagazijn.tweedekamer.nl/OData/v4/2.0/";
     select?: string[];
     expansions?: Table[];
+    // maybe auto add filter so that removed entities will not be in results
     filter?: Filter;
     table = "";
     count = false;
+
+    orderBy = false;
+    orderByProp: string = "";
+    orderByAscending = false;
 
     public constructor(model: any, init?: Partial<Table>) {
         this.select = Reflect.getMetadata(MetaDataSelectKey, model);
@@ -18,19 +23,15 @@ export class Table {
         this.table = Reflect.getOwnMetadata(MetaDataModelKey, model.constructor)
     }
 
-    getClass<T extends { new(...args: any[]): {} }>(constructor: T) {
-        return class extends constructor { }
-    }
-
     getSelect() {
-        if (this.select) {
+        if (this.select && this.select.length > 0) {
             return "$select=" + this.select.join(",");
         }
         return "";
     }
 
     getExpansions() {
-        if (this.expansions) {
+        if (this.expansions && this.expansions.length > 0) {
             var expand = "$expand=";
 
             var expansionCount = this.expansions.length;
@@ -69,6 +70,7 @@ export class Table {
         parts.push(this.getExpansions()!);
         parts.push(this.getFilter()!);
         parts.push(this.getCount()!);
+        parts.push(this.generateOrderBy()!);
 
         parts = parts.filter(p => p.length > 0)
 
@@ -84,17 +86,20 @@ export class Table {
         return this.table + (navigation.length > 2 ? navigation : "");
     }
 
-    generateUrl(orderByDesc = true): string {
+    generateOrderBy(): string {
+        if (!this.orderBy) return "";
+        let orderByStatement = "$orderby="
+        orderByStatement += this.orderByProp + " "
+        orderByStatement += this.orderByAscending ? "asc" : "desc"
+        return orderByStatement;
+    }
+
+    generateUrl(): string {
         var url = "";
         url += this.table;
         url += "?";
-        
-        let statements = []
-        statements.push(this.generateTable("&"))
-        if (orderByDesc) {
-            statements.push("$orderby=GewijzigdOp desc");
-        }
-        url += statements.join("&")
+
+        url += this.generateTable("&")
 
         return this.apiBase + url;
     }

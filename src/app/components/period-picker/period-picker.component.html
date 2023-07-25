@@ -1,0 +1,25 @@
+<div class="component">
+    <div style="align-self: center; display: flex; flex-direction: row;">
+        Kies de Periode:
+    </div>
+    <div class="period">
+        <div class="dateInput">
+            <div>Start Datum:</div>
+            <div>
+                <input type="date" [value]="start" (change)="periodStartDateChange($event)" />
+            </div>
+        </div>
+        <div class="dateInput">
+            <div> Eind Datum:</div>
+            <div>
+                <input type="date" [value]="end" (change)="periodEndDateChange($event)" />
+            </div>
+        </div>
+    </div>
+    <div class="presets">
+        <div (click)="setSelected(set)" class="preset" [ngClass]="{'active': selectedSet==set}"
+            *ngFor="let set of presets">
+            {{set.name}}
+        </div>
+    </div>
+</div>

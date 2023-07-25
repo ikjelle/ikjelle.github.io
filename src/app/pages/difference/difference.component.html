@@ -1,0 +1,62 @@
+<div>
+    <app-period-picker [(start)]="periodStart" [(end)]="periodEnd"
+        (update)="updateAvailableParties()"></app-period-picker>
+    <div>
+        <div>
+            <div>Kies partij: </div>
+            <div>
+                <select (selectionchange)="setA($event)">
+                    <option [selected]="partyAId== null" disabled>Kies een Partij</option>
+                    <option [disabled]="p.Id == partyBId" [value]="p.Id" [selected]="p && p.Id==partyAId"
+                        *ngFor="let p of parties">{{p.NaamNL}}
+                    </option>
+                </select>
+            </div>
+        </div>
+        <div>
+            <div>Kies partij: </div>
+            <div>
+                <select (change)="setB($event)">
+                    <option [selected]="partyBId== null" disabled>Kies een Partij</option>
+                    <option [disabled]="p.Id == partyAId" [value]="p.Id" [selected]="p.Id==partyBId"
+                        *ngFor="let p of parties">{{p.NaamNL}}</option>
+                </select>
+            </div>
+        </div>
+    </div>
+    <div class="collapse">
+        <app-collapse [title]="'Type zaken'">
+            <div class="checkboxes">
+                <div class="filter-box" style="order:-1000">
+                    <input (change)="checkAllTypes($event)" [checked]="allTypesChecked()" type="checkbox" id="selectAll"
+                        value="all">
+                    <label for="selectAll">Alles (on)selecteren</label>
+                </div>
+
+                <div class="filter-box" [style]="{order:-1*resultType.priority!}"
+                    *ngFor="let resultType of resultTypes; let i=index">
+                    <input type="checkbox" [value]="resultType.name" [checked]="resultType.checked"
+                        [id]="'inlineCheckbox'+ i" (change)="changeTypeChecked(resultType)">
+                    <label [for]="'inlineCheckbox'+ i">{{resultType.name}}</label>
+                </div>
+            </div>
+        </app-collapse>
+    </div>
+    <div>
+        <button (click)="getDifferences()">Laat verschillen zien.</button>
+    </div>
+</div>
+<div>
+    <div>
+        Sorteer bij:
+        * alfabetisch hoog/laag
+        * verschillen hoog/laag
+    </div>
+    Per kamerstukdoosier:
+    <div>
+        <div>
+            Naam
+            nummer oneens / nummer totaal
+        </div>
+    </div>
+</div>

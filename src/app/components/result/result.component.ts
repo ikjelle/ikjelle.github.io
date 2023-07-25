@@ -1,5 +1,5 @@
 import { AfterViewInit, Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
-import { Result, Vote } from 'src/app/services/OData/models/models';
+import { Decision, Vote } from 'src/app/services/OData/models/models';
 
 @Component({
   selector: 'app-result',
@@ -32,7 +32,7 @@ export class ResultComponent implements OnInit, AfterViewInit {
     return link
   }
 
-  @Input() result!: Result;
+  @Input() result!: Decision;
   @Input() highLighted: string[] = []
   yays: Vote[] = []
   nays: Vote[] = []
@@ -81,7 +81,7 @@ export class ResultComponent implements OnInit, AfterViewInit {
 
   getLocalDate() {
     const options: any = { year: 'numeric', month: 'long', day: 'numeric' };
-    return new Date(this.result.GewijzigdOp).toLocaleDateString('nl-NL', options)
+    return new Date(this.result.Agendapunt.Activiteit.Datum).toLocaleDateString('nl-NL', options)
   }
 
   maxSize: number = 420;

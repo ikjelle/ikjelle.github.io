@@ -4,10 +4,17 @@ import { AboutComponent } from './pages/about/about.component';
 import { DisclaimerComponent } from './pages/disclaimer/disclaimer.component';
 import { SingleResultComponent } from './pages/single-result/single-result.component';
 import { VotingResultsComponent } from './pages/voting-results/voting-results.component';
+import { SearchNumberResultComponent } from './pages/search-number-result/search-number-result.component';
+import { VoteAlongComponent } from './pages/vote-along/vote-along.component';
+import { DifferenceComponent } from './pages/difference/difference.component';
 
 
 const routes: Routes = [
   { path: 'resultaat/:id', component: SingleResultComponent },
+  { path: 'filter', component: VotingResultsComponent },
+  { path: 'zoek', component: SearchNumberResultComponent },
+  { path: 'mee-stemmers', component: VoteAlongComponent },
+  { path: 'verschillen', component: DifferenceComponent },
   { path: 'disclaimer', component: DisclaimerComponent },
   { path: 'over', component: AboutComponent },
   { path: '**', component: VotingResultsComponent },

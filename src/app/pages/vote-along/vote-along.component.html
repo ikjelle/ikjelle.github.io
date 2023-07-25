@@ -1,0 +1,59 @@
+<div class="page">
+    <div class="desc">
+        <h2>Mee stemmende partijen per ingediende zaak</h2>
+        Op deze pagina kunt u een overzicht zien van alle partijen in een geselecteerde periode.
+        Per partij ziet u dan hoeveel zaken zijn ingediend (ook mede-ingediend) en hoe vaak andere partijen voor en
+        tegen hebben gestemd.
+    </div>
+    <hr style="width: 100%;">
+    <div>
+        <app-period-picker [(start)]="periodStart" [(end)]="periodEnd"></app-period-picker>
+    </div>
+    <div class="collapse">
+        <app-collapse [title]="'Type zaken'">
+            <div class="checkboxes">
+                <div class="filter-box" style="order:-1000">
+                    <input (change)="checkAllTypes($event)" [checked]="allTypesChecked()" type="checkbox" id="selectAll"
+                        value="all">
+                    <label for="selectAll">Alles (on)selecteren</label>
+                </div>
+
+                <div class="filter-box" [style]="{order:-1*resultType.priority!}"
+                    *ngFor="let resultType of resultTypes; let i=index">
+                    <input type="checkbox" [value]="resultType.name" [checked]="resultType.checked"
+                        [id]="'inlineCheckbox'+ i" (change)="changeTypeChecked(resultType)">
+                    <label [for]="'inlineCheckbox'+ i">{{resultType.name}}</label>
+                </div>
+            </div>
+        </app-collapse>
+    </div>
+    <div class="search-button">
+        <button [disabled]="polling" class="btn btn-prim" [ngClass]="{'disabled': polling}"
+            (click)="search()">Genereer</button>
+    </div>
+    <div *ngIf="polling">Bezig met ophalen van de resultaten, dit kan even duren.</div>
+    <!-- Haal alle zaken op -->
+    <div class="results" *ngIf="data && ready">
+        <div *ngFor="let p of data | keyvalue" class="party-box"
+            [style]="{order: -1 *getAllSignedCasedOf(p.value, p.key)}">
+            <div class="party-actor">{{getFractionName(p.key)}} - {{p.value[p.key].helped}}</div>
+            <div class="party-list">
+                <div *ngFor="let r of p.value| keyvalue" class="party-row"
+                    [style]="{order:-1*(r.value.agreed-r.value.disagreed)}">
+                    <div class="party-name">{{getFractionName(r.key)}}</div>
+                    <div class="bars">
+                        <div *ngIf="r.value.agreed > 0"
+                            [ngStyle]="{'width':( r.value.agreed / (r.value.agreed+r.value.disagreed+ r.value.notVoted )* 100).toString() + '%'}"
+                            class="bar green">{{r.value.agreed}}</div>
+                        <div *ngIf="r.value.disagreed > 0"
+                            [ngStyle]="{'width':( r.value.disagreed / (r.value.agreed+r.value.disagreed+ r.value.notVoted )* 100).toString() + '%'}"
+                            class="bar red">{{r.value.disagreed}}</div>
+                        <div *ngIf="r.value.notVoted > 0"
+                            [ngStyle]="{'width':( r.value.notVoted / (r.value.agreed+r.value.disagreed+ r.value.notVoted )* 100).toString() + '%'}"
+                            class="bar grey">{{r.value.notVoted}}</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

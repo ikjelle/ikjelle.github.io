@@ -1,0 +1,35 @@
+.component {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.period {
+    display: flex;
+    flex-flow: row wrap;
+    justify-content: center;
+    gap: 4px;
+}
+
+.dateInput {
+    display: flex;
+    flex-flow: row wrap;
+    gap: 4px;
+}
+
+.presets {
+    display: flex;
+    flex-flow: row wrap;
+    gap: 4px;
+    justify-content: center;
+}
+
+.preset {
+    border-radius: 50%;
+    background: rgb(217, 223, 223);
+    padding: 10px;
+}
+
+.preset.active {
+    border: 2px solid #212529;
+}

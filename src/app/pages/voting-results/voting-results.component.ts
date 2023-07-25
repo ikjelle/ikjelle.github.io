@@ -1,11 +1,12 @@
 import { HttpClient } from '@angular/common/http';
 import { Component, ElementRef, OnInit, ViewChild, ViewChildren, QueryList } from '@angular/core';
 import { ControversialComponent } from 'src/app/components/controversial/controversial.component';
-import { Party, Result } from 'src/app/services/OData/models/models';
+import { CaseSubject, Party, Decision } from 'src/app/services/OData/models/models';
 import { ODataResponse } from 'src/app/services/OData/models/response';
 import { resultTypes } from 'src/app/services/OData/models/result-types';
 import { ResultService } from 'src/app/services/result.service';
 import { SearchParty } from './search-party';
+import { AndFilter, Filter } from 'src/app/services/OData/query-generator/filters';
 
 @Component({
   selector: 'app-voting-results',
@@ -21,20 +22,21 @@ export class VotingResultsComponent implements OnInit {
   extendedFiltersEnabled = true;
   pages: Page[] = []
   parties: SearchParty[] = []
-  periodStart: string = new Date(2021, 2, 32).toISOString().slice(0, 10);
-  periodEnd: string | null = null
+  periodStart?: string = new Date(2021, 2, 32).toISOString().slice(0, 10);
+  periodEnd?: string = undefined
 
-  textSearch = "china";
+  textSearch = "";
 
   filter: any = null
   lastLoadedPage: number = 0
   searchterms: string[] = []
   highLighted: string[] = [];
-  spinner: boolean = true;
-  firstTimeLoaded: boolean = false;
+  spinner: boolean = false;
   resultTypes = resultTypes.filter(rt => rt.enabled)
   nextPageUrl: string | null = null;
   filterCount: number | null = null;
+  subjects: CaseSubject[] = [];
+  firstTimeLoaded = false;
 
   constructor(private resultsService: ResultService, private http: HttpClient) {
   }
@@ -59,6 +61,10 @@ export class VotingResultsComponent implements OnInit {
     this.periodStart = event.target.value;
     this.getParties();
   }
+  updateDate() {
+    this.getParties();
+  }
+
   searchInputChange(event: any) {
     this.textSearch = event.target.value;
   }
@@ -74,13 +80,15 @@ export class VotingResultsComponent implements OnInit {
 
   getParties() {
     // TODO: catch CORS
-    this.http.get<ODataResponse<Party>>(this.resultsService.getUrlOfParties(this.periodStart, this.periodEnd)).
+    this.http.get<ODataResponse<Party>>(this.resultsService.getParties(this.periodStart, this.periodEnd).generateUrl()).
       subscribe((response) => {
         let tempParties: SearchParty[] = [];
         const parties = response.value
-          .forEach((p: any) => {
-            let party = new SearchParty(p.NaamNL, p.Afkorting, p.DatumActief)
-            tempParties.push(party)
+          .forEach((p: Party) => {
+            let party = new SearchParty(p.Id, p.NaamNL, p.Afkorting, p.DatumActief, p.DatumInactief)
+            party.og = p
+            if (p["Stemming@odata.count"] > 0)
+              tempParties.push(party)
           });
         let allParties = [...this.parties, ...this.child.box1, ...this.child.box2]
         // Only change the parties that are new or removed. as otherways filters get cleaned
@@ -93,16 +101,11 @@ export class VotingResultsComponent implements OnInit {
           }
         }
         this.parties.push(...newParties);
-        if (!this.firstTimeLoaded) {
-          this.child.box1.push(...this.child.parties.splice(Math.floor(Math.random() * this.child.parties.length), 1))
-          this.child.box2.push(...this.child.parties.splice(Math.floor(Math.random() * this.child.parties.length), 1))
-          this.filterResults()
-        }
-        this.firstTimeLoaded = true
+        this.firstTimeLoaded = true;
       })
   }
 
-  getResults(results: Result[]) {
+  getResults(results: Decision[]) {
     return results
     // Hoofdelijke Stemmingen zullen alleen werken zonder dat er partijen zijn ingevoerd
   }
@@ -111,10 +114,36 @@ export class VotingResultsComponent implements OnInit {
     this.filterCount = null
     this.startSpinner()
     let p1 = this.child.box1
+    let p1Ids = p1.map(p => p.id)
     let p2 = this.child.box2
+    let p2Ids = p2.map(p => p.id)
     let url = ""
 
-    url = this.resultsService.getUrlOfResultsByGroupedParties(p1, p2, this.resultTypes, this.periodStart, this.periodEnd, this.textSearch)
+    let tableBetween = this.resultsService.getDecisionsBetweenDatesAndParties(this.periodStart, this.periodEnd, [...p1.map(p => p.og), ...p2.map(p => p.og)])
+    let tableCaseTypes = this.resultsService.getDecisionsByCaseType(this.resultTypes)
+    let tableTextSearch = this.resultsService.getDecisionsContainingText(this.textSearch)
+    let tableGroupSearch = null
+    if (p1.length == 0 && p2.length == 0) {
+
+    } else if (p1.length > 0 && p2.length > 0) { // vs
+      tableGroupSearch = this.resultsService.getDecisionsByDifferentVote(p1Ids, p2Ids)
+    } else if (p2.length == 0) { // together
+      tableGroupSearch = this.resultsService.getDecisionsByTogetherness(p1Ids)
+    } else if (p1.length == 0) { // alone
+      tableGroupSearch = this.resultsService.getDecisionsByOpposingAll(p2Ids)
+    }
+
+    let table = tableBetween
+    let filters: Filter[] = []
+    for (let f of [tableBetween.filter, tableCaseTypes.filter, tableTextSearch.filter, tableGroupSearch?.filter]) {
+      if (f != null) {
+        filters.push(f)
+      }
+    }
+
+    table.filter = new AndFilter(filters)
+
+    url = table.generateUrl();
     this.pages = [];
 
     this.highLighted = []
@@ -140,7 +169,7 @@ export class VotingResultsComponent implements OnInit {
   getResultsFromUrl(url: string) {
     this.nextPageUrl = null
     // TODO: catch CORS
-    return this.http.get<ODataResponse<Result>>(url).subscribe((response) => {
+    return this.http.get<ODataResponse<Decision>>(url).subscribe((response) => {
       let page = new Page()
       page.results = response.value
       this.filterCount = response["@odata.count"]
@@ -149,8 +178,6 @@ export class VotingResultsComponent implements OnInit {
       this.stopSpinner()
     })
   }
-
-
 
   startSpinner() {
     this.spinner = true;
@@ -183,14 +210,8 @@ export class VotingResultsComponent implements OnInit {
   changeTypeChecked(type: any) {
     type.checked = !type.checked
   }
-
-  // TODO: Add pagination, but don't think its interesting enough
-  // nextPage() {
-  //   // create filter for next results
-  //   this.lastLoadedPage += 1
-  // }
 }
 
 class Page {
-  results: Result[] = []
+  results: Decision[] = []
 }
