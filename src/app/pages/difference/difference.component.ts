@@ -13,15 +13,6 @@ import { ResultService } from 'src/app/services/result.service';
   styleUrls: ['./difference.component.css']
 })
 export class DifferenceComponent implements OnInit {
-  getSubjectTitle(decisionSubject: { caseSubject: CaseSubject, decisions: Decision[] }): string {
-    return decisionSubject.caseSubject.Titel + " (" + decisionSubject.decisions.length + ")<br>" +
-      "Aantal Voor stemmen: " + this.getPartyName(this.usedPartyAId) + " " +
-      this.getNumberOfSided(true, this.usedPartyAId, decisionSubject.decisions) + " " +
-      "-" +
-      this.getNumberOfSided(false, this.usedPartyAId, decisionSubject.decisions) + " " +
-      this.getPartyName(this.usedPartyBId)
-
-  }
   polling: boolean = false;
   @ViewChild(CaseTypePickerComponent) caseTypePickerComp!: CaseTypePickerComponent
   usedPartyAId: string | undefined;

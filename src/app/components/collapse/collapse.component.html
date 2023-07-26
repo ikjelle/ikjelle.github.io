@@ -1,6 +1,9 @@
 <div class="collapse">
     <div class="title" (click)="collapseComponent()">
-        <span [innerHTML]="title"></span>
+        <div style="width: 80%;">
+            <ng-content *ngIf="!title" select="[id=title]"></ng-content>
+            <span *ngIf="title" [innerHTML]="title"></span>
+        </div>
         <div class="icon" *ngIf="collapsed; else close">
             &#x25BD;
         </div>
