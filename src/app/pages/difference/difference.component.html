@@ -19,8 +19,7 @@
                 <select class="party-select" (change)="setA($event)">
                     <option [selected]="partyAId== null" disabled>Kies een Partij</option>
                     <option [disabled]="p.Id == partyBId" [value]="p.Id" [selected]="p && p.Id==partyAId"
-                        *ngFor="let p of parties">{{p.NaamNL}}
-                    </option>
+                        *ngFor="let p of parties">{{p.Afkorting}}</option>
                 </select>
             </div>
         </div>
@@ -30,7 +29,7 @@
                 <select class="party-select" (change)="setB($event)">
                     <option [selected]="partyBId== null" disabled>Kies een Partij</option>
                     <option [disabled]="p.Id == partyAId" [value]="p.Id" [selected]="p.Id==partyBId"
-                        *ngFor="let p of parties">{{p.NaamNL}}</option>
+                        *ngFor="let p of parties">{{p.Afkorting}}</option>
                 </select>
             </div>
         </div>
@@ -59,20 +58,9 @@
     </div>
 
     <div class="ffrwc" style="padding:8px">
-        <div style="width: 600px; min-height: 400px;" [style]=" {order:-1*k.value.decisions.length}"
+        <div class="fcc" style="width: 100%; margin-bottom: 8px;" [style]=" {order:-1*k.value.decisions.length}"
             *ngFor="let k of data | keyvalue">
-            <div>{{k.value.caseSubject.Titel}} ({{k.value.decisions.length}})</div>
-            <div class="fr">
-                Voor:
-                {{getPartyName(this.partyAId)}}
-                {{getNumberOfSided(true, this.partyAId, k.value.decisions)}}
-                -
-                {{getNumberOfSided(false, this.partyAId, k.value.decisions)}}
-                {{getPartyName(this.partyBId)}}
-            </div>
-
-
-            <app-collapse title="Zaken: ">
+            <app-collapse [title]="getSubjectTitle(k.value)">
                 <div class="fc" style="gap: 4px; overflow-y: scroll;">
                     <app-collapse *ngFor="let d of k.value.decisions" [title]="getTitle(d)">
                         <app-result [highLighted]="getHighLighted()" [result]="d"></app-result>

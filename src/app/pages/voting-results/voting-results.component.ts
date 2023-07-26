@@ -1,11 +1,10 @@
 import { HttpClient } from '@angular/common/http';
-import { Component, ElementRef, OnInit, ViewChild, ViewChildren, QueryList } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild, ViewChildren } from '@angular/core';
 import { ControversialComponent } from 'src/app/components/controversial/controversial.component';
-import { CaseSubject, Party, Decision } from 'src/app/services/OData/models/models';
+import { Party, Decision } from 'src/app/services/OData/models/models';
 import { ODataResponse } from 'src/app/services/OData/models/response';
-import { AllCaseTypes, CaseTypeCheckBox } from 'src/app/services/OData/models/result-types';
 import { ResultService } from 'src/app/services/result.service';
-import { SearchParty } from './search-party';
+
 import { AndFilter, Filter } from 'src/app/services/OData/query-generator/filters';
 import { CaseTypePickerComponent } from 'src/app/components/case-type-picker/case-type-picker.component';
 
@@ -22,7 +21,7 @@ export class VotingResultsComponent implements OnInit {
 
   extendedFiltersEnabled = true;
 
-  parties: SearchParty[] = []
+  parties: Party[] = []
 
   periodStart?: string = new Date(2021, 2, 32).toISOString().slice(0, 10);
   periodEnd?: string = undefined
@@ -82,18 +81,11 @@ export class VotingResultsComponent implements OnInit {
     // TODO: catch CORS
     this.http.get<ODataResponse<Party>>(this.resultsService.getParties(this.periodStart, this.periodEnd).generateUrl()).
       subscribe((response) => {
-        let tempParties: SearchParty[] = [];
-        const parties = response.value
-          .forEach((p: Party) => {
-            let party = new SearchParty(p.Id, p.NaamNL, p.Afkorting, p.DatumActief, p.DatumInactief)
-            party.og = p
-            if (p["Stemming@odata.count"] > 0)
-              tempParties.push(party)
-          });
+        let tempParties = response.value;
         let allParties = [...this.parties, ...this.child.box1, ...this.child.box2]
         // Only change the parties that are new or removed. as otherways filters get cleaned
-        let newParties = tempParties.filter((p) => !allParties.some(tp => tp.name == p.name))
-        let removedParties = allParties.filter((p) => tempParties.every(tp => tp.name != p.name))
+        let newParties = tempParties.filter((p) => !allParties.some(tp => tp.Afkorting == p.Afkorting))
+        let removedParties = allParties.filter((p) => tempParties.every(tp => tp.Afkorting != p.Afkorting))
         for (let p of removedParties) {
           const partyIndex = this.parties.indexOf(p);
           if (partyIndex !== -1) {
@@ -114,12 +106,12 @@ export class VotingResultsComponent implements OnInit {
     this.resetData()
 
     let p1 = this.child.box1
-    let p1Ids = p1.map(p => p.id)
+    let p1Ids = p1.map(p => p.Id)
     let p2 = this.child.box2
-    let p2Ids = p2.map(p => p.id)
+    let p2Ids = p2.map(p => p.Id)
     let url = ""
 
-    let tableBetween = this.resultsService.getDecisionsBetweenDatesAndParties(this.periodStart, this.periodEnd, [...p1.map(p => p.og), ...p2.map(p => p.og)])
+    let tableBetween = this.resultsService.getDecisionsBetweenDatesAndParties(this.periodStart, this.periodEnd, [...p1, ...p2])
     let tableCaseTypes = this.resultsService.getDecisionsByCaseType(this.caseTypePickerComp.caseTypes)
     let tableTextSearch = this.resultsService.getDecisionsContainingText(this.textSearch)
     let tableGroupSearch = null
@@ -149,7 +141,7 @@ export class VotingResultsComponent implements OnInit {
 
     this.highLighted = []
     for (const p of [...p1, ...p2]) {
-      this.highLighted.push(p.searchTerm)
+      this.highLighted.push(p.Afkorting)
     }
     this.currentUrl = url
     this.getDecisionsByIndex(1)

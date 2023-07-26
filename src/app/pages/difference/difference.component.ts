@@ -13,8 +13,19 @@ import { ResultService } from 'src/app/services/result.service';
   styleUrls: ['./difference.component.css']
 })
 export class DifferenceComponent implements OnInit {
+  getSubjectTitle(decisionSubject: { caseSubject: CaseSubject, decisions: Decision[] }): string {
+    return decisionSubject.caseSubject.Titel + " (" + decisionSubject.decisions.length + ")<br>" +
+      "Aantal Voor stemmen: " + this.getPartyName(this.usedPartyAId) + " " +
+      this.getNumberOfSided(true, this.usedPartyAId, decisionSubject.decisions) + " " +
+      "-" +
+      this.getNumberOfSided(false, this.usedPartyAId, decisionSubject.decisions) + " " +
+      this.getPartyName(this.usedPartyBId)
+
+  }
   polling: boolean = false;
   @ViewChild(CaseTypePickerComponent) caseTypePickerComp!: CaseTypePickerComponent
+  usedPartyAId: string | undefined;
+  usedPartyBId: string | undefined;
   getNumberOfSided(pro: boolean, partyId: string | undefined, decisions: Decision[]) {
     return decisions.filter(d =>
       d.Stemming.find(p =>
@@ -25,14 +36,14 @@ export class DifferenceComponent implements OnInit {
     return this.parties.find(p => p.Id == partyId)?.NaamNL;
   }
   getHighLighted(): string[] {
-    return this.parties.filter(p => p.Id == this.partyAId || p.Id == this.partyBId).map(p => p.Afkorting)
+    return this.parties.filter(p => p.Id == this.usedPartyAId || p.Id == this.usedPartyBId).map(p => p.Afkorting)
   }
   getTitle(d: Decision): string {
-    return d.Zaak[0].Onderwerp + ':' +
-      d.Stemming.find(p => p.Fractie_Id == this.partyAId)?.ActorFractie + "(" +
-      d.Stemming.find(p => p.Fractie_Id == this.partyAId)?.Soort + (d.Stemming.find(p => p.Fractie_Id == this.partyAId)?.Vergissing ? '*' : '') + ")-" +
-      d.Stemming.find(p => p.Fractie_Id == this.partyBId)?.ActorFractie + "(" +
-      d.Stemming.find(p => p.Fractie_Id == this.partyBId)?.Soort + (d.Stemming.find(p => p.Fractie_Id == this.partyBId)?.Vergissing ? '*' : '') + ")";
+    return d.Zaak[0].Onderwerp + ':<br>' +
+      d.Stemming.find(p => p.Fractie_Id == this.usedPartyAId)?.ActorFractie + "(" +
+      d.Stemming.find(p => p.Fractie_Id == this.usedPartyAId)?.Soort + (d.Stemming.find(p => p.Fractie_Id == this.usedPartyAId)?.Vergissing ? '*' : '') + ") - " +
+      d.Stemming.find(p => p.Fractie_Id == this.usedPartyBId)?.ActorFractie + "(" +
+      d.Stemming.find(p => p.Fractie_Id == this.usedPartyBId)?.Soort + (d.Stemming.find(p => p.Fractie_Id == this.usedPartyBId)?.Vergissing ? '*' : '') + ")";
   }
   periodStart?: string = new Date(2021, 2, 32).toISOString().slice(0, 10);
   periodEnd?: string = undefined;
@@ -71,12 +82,16 @@ export class DifferenceComponent implements OnInit {
     this.retrievedCount = 0
     this.totalCasesNoDifference = undefined
     this.totalCount = undefined
-    let table = this.resultsService.getDecisionsByDifferentVote([this.partyAId!], [this.partyBId!])
+    this.usedPartyAId = this.partyAId;
+    this.usedPartyBId = this.partyBId;
+
+    let f1 = this.resultsService.getDecisionsByDifferentVote([this.partyAId!], [this.partyBId!]).filter
     let f2 = this.resultsService.getDecisionsBetweenDatesAndParties(this.periodStart, this.periodEnd, this.parties.filter(p => p.Id == this.partyAId || p.Id == this.partyBId)).filter
     let f3 = this.resultsService.getDecisionsByCaseType(this.caseTypePickerComp.caseTypes).filter;
 
+    let table = this.resultsService.getTableOfDecisionsWithSubjectNumber();
     let filters: Filter[] = []
-    for (let f of [table.filter, f2, f3]) {
+    for (let f of [f1, f2, f3]) {
       if (f != null) {
         filters.push(f)
       }

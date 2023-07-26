@@ -51,9 +51,34 @@ export class ResultService {
     return new Table(new Decision(), {
       expansions: [
         new Table(new Case(), {
+          expansions: [new Table(new Document())]
+        }),
+        new Table(new Vote(), {
+          expansions: [new Table(new Party(), {
+            select: ["Afkorting", "NaamEN", "NaamNL"]
+          })]
+        }),
+        // get date
+        new Table(new AgendaItem(), { expansions: [new Table(new Activity(), {})] })
+      ],
+      filter: new AnyCriteria("Stemming", new CompareCriterica("Id", c.ne, "null")),
+      count: true,
+      orderBy: true,
+      orderByProp: "Agendapunt/Activiteit/Datum"
+    })
+  }
+  getTableOfDecisionsWithSubjectNumber() {
+    // add options so this builds up the table
+    return new Table(new Decision(), {
+      expansions: [
+        new Table(new Case(), {
           expansions: [new Table(new CaseSubject()), new Table(new Document())]
         }),
-        new Table(new Vote()),
+        new Table(new Vote(), {
+          expansions: [new Table(new Party(), {
+            select: ["Afkorting", "NaamEN", "NaamNL"]
+          })]
+        }),
         // get date
         new Table(new AgendaItem(), { expansions: [new Table(new Activity(), {})] })
       ],
@@ -64,6 +89,7 @@ export class ResultService {
     })
   }
   getTableOfDecisionsWithActor(): Table {
+    // minimal select for result component
     return new Table(new Decision(), {
       expansions: [
         new Table(new Case(), {
@@ -72,7 +98,11 @@ export class ResultService {
             new Table(new Document())
           ]
         }),
-        new Table(new Vote()),
+        new Table(new Vote(), {
+          expansions: [new Table(new Party(), {
+            select: ["Afkorting", "NaamEN", "NaamNL"]
+          })]
+        }),
         new Table(new AgendaItem(), { expansions: [new Table(new Activity(), {})] })
       ],
       filter: new AnyCriteria("Stemming", new CompareCriterica("Id", c.ne, "null")),
@@ -105,7 +135,10 @@ export class ResultService {
       filter: new AndFilter([
         ...filters,
         new CompareCriterica("Afkorting", c.ne, "null")
-      ])
+      ]),
+      orderBy: true,
+      orderByProp: "NaamNL",
+      orderByAscending: true
     })
 
     return table

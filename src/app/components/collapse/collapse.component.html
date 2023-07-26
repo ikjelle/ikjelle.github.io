@@ -1,12 +1,12 @@
 <div class="collapse">
     <div class="title" (click)="collapseComponent()">
-        {{title}}
-        <div *ngIf="collapsed; else close">
-            Openen
+        <span [innerHTML]="title"></span>
+        <div class="icon" *ngIf="collapsed; else close">
+            &#x25BD;
         </div>
         <ng-template #close>
-            <div>
-                Sluiten
+            <div class="icon">
+                &#x25B3;
             </div>
         </ng-template>
     </div>

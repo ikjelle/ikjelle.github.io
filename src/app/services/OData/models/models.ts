@@ -32,6 +32,8 @@ export class Decision {
 @model("Agendapunt")
 export class AgendaItem {
     Activiteit!: Activity
+    @s
+    Id!: string
 }
 
 @model("Activiteit")
@@ -54,14 +56,16 @@ export class Vote {
     Vergissing!: boolean;
     @s
     Fractie_Id!: string;
+
+    Fractie!: Party;
 }
 
 @model("Zaak")
 export class Case {
     @s
     Id!: string;
-    @s
-    Kabinetsappreciatie!: string;
+    // @s
+    // Kabinetsappreciatie!: string;
     @s
     Nummer!: string;
     @s

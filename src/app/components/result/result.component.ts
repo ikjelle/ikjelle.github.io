@@ -1,5 +1,5 @@
-import { AfterViewInit, Component, ElementRef, Input, OnInit, SimpleChanges, ViewChild } from '@angular/core';
-import { Decision, Vote } from 'src/app/services/OData/models/models';
+import { Component, ElementRef, Input, OnInit, SimpleChanges, ViewChild } from '@angular/core';
+import { Decision, Party, Vote } from 'src/app/services/OData/models/models';
 
 @Component({
   selector: 'app-result',
@@ -7,6 +7,10 @@ import { Decision, Vote } from 'src/app/services/OData/models/models';
   styleUrls: ['./result.component.css']
 })
 export class ResultComponent implements OnInit {
+  isHighLighted(party: Party) {
+    return this.highLighted.indexOf(party.Afkorting) > -1 ||
+      this.highLighted.indexOf(party.Id) > -1
+  }
   getQueryParams() {
     let s = ""
     this.highLighted.forEach(h => {
@@ -50,7 +54,6 @@ export class ResultComponent implements OnInit {
     }
   }
   newParty() {
-
     this.result.Stemming.forEach(party => {
       let voteAmount = 1
       if (this.result.StemmingsSoort != "Hoofdelijk") {

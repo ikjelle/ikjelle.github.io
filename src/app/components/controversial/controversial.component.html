@@ -26,14 +26,14 @@
             <h4>Groep 1</h4>
             <div cdkDropList #box1List="cdkDropList" [cdkDropListData]="box1"
                 [cdkDropListConnectedTo]="[box2List, partyList]" class="party-box" (cdkDropListDropped)="drop($event)">
-                <div class="party-pill" *ngFor="let item of box1" cdkDrag>{{item.searchTerm}} </div>
+                <div class="party-pill" *ngFor="let item of box1" cdkDrag>{{item.Afkorting}} </div>
             </div>
         </div>
         <div class="group">
             <h4>Groep 2</h4>
             <div cdkDropList #box2List="cdkDropList" [cdkDropListData]="box2"
                 [cdkDropListConnectedTo]="[box1List, partyList]" class="party-box" (cdkDropListDropped)="drop($event)">
-                <div class="party-pill" *ngFor="let item of box2" cdkDrag>{{item.searchTerm}} </div>
+                <div class="party-pill" *ngFor="let item of box2" cdkDrag>{{item.Afkorting}} </div>
             </div>
         </div>
     </div>
@@ -43,7 +43,7 @@
     <div class="parties">
         <div cdkDropList #partyList="cdkDropList" [cdkDropListData]="parties"
             [cdkDropListConnectedTo]="[box1List, box2List]" class="party-box" (cdkDropListDropped)="drop($event)">
-            <div class="party-pill" *ngFor="let item of parties" cdkDrag>{{item.searchTerm}} </div>
+            <div class="party-pill" *ngFor="let item of parties" cdkDrag>{{item.Afkorting}} </div>
         </div>
     </div>
 </div>
