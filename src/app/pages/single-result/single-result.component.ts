@@ -21,13 +21,16 @@ export class SingleResultComponent implements OnInit {
     this.route.queryParamMap.subscribe(params => {
       this.highLighted = params.getAll('highlighted');
     });
-    this.route.params.subscribe(params => {
-      let id = params['id'];
-      let url = this.resultsService.getDecisionByGuid(id).generateUrl()
-      return this.http.get<ODataResponse<Decision>>(url).subscribe((r) => {
-        let results = r.value
-        this.caseResult = results[0]
-      })
+    this.route.params.subscribe({
+      next: params => {
+        let id = params['id'];
+        let url = this.resultsService.getDecisionByGuid(id).generateUrl()
+        return this.http.get<ODataResponse<Decision>>(url).subscribe((r) => {
+          let results = r.value
+          this.caseResult = results[0]
+        })
+      },
+      error: err => { }
     });
   }
 

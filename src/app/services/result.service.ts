@@ -51,7 +51,7 @@ export class ResultService {
     return new Table(new Decision(), {
       expansions: [
         new Table(new Case(), {
-          expansions: [new Table(new Document())]
+          expansions: [new Table(new CaseSubject(), {}), new Table(new Document())]
         }),
         new Table(new Vote(), {
           expansions: [new Table(new Party(), {
@@ -157,23 +157,18 @@ export class ResultService {
     return table;
   }
 
-  getDecisionByNumber(number: string): Table {
+  getDecisionByNumbers(numbers: string[]): Table {
     let table = this.getTableOfDecisions()
     table.filter = new AndFilter([table.filter!,
     new AndFilter([
-      new AnyCriteria("Zaak", new CompareCriterica("Nummer", c.eq, "'" + number + "'")),
+      new AnyCriteria("Zaak", new InCriterica("Nummer", numbers)),
       new CompareCriterica("StemmingsSoort", c.ne, "null")
-    ])
-    ]);
+    ])]);
     return table;
   }
 
-  getCaseBySubject(subjectNumber: number, followNumber: number, addition?: string): Table {
-    let table = new Table(new Case(), {
-      expansions: [
-        new Table(new CaseSubject())
-      ]
-    });
+  getCaseBySubject(subjectNumber: number, followNumber?: number, addition?: string): Table {
+    let table = new Table(new Case(), { select: ["Nummer"], orderBy: true, orderByProp: "GestartOp" });
 
     let subjectCriteria: Filter = new CompareCriterica("Nummer", c.eq, subjectNumber)
     if (addition != undefined) {
@@ -183,10 +178,13 @@ export class ResultService {
       ])
     }
 
-    table.filter = new AndFilter([
+    let filter = new AndFilter([
+      new AnyCriteria("Besluit", new CompareCriterica("StemmingsSoort", c.ne, 'null')),
       new AnyCriteria("Kamerstukdossier", subjectCriteria),
-      new CompareCriterica("Volgnummer", c.eq, followNumber)
     ])
+    if (followNumber) filter.addFilter(new CompareCriterica("Volgnummer", c.eq, followNumber))
+
+    table.filter = filter
     return table;
   }
 

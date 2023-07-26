@@ -80,20 +80,24 @@ export class VotingResultsComponent implements OnInit {
   getParties() {
     // TODO: catch CORS
     this.http.get<ODataResponse<Party>>(this.resultsService.getParties(this.periodStart, this.periodEnd).generateUrl()).
-      subscribe((response) => {
-        let tempParties = response.value;
-        let allParties = [...this.parties, ...this.child.box1, ...this.child.box2]
-        // Only change the parties that are new or removed. as otherways filters get cleaned
-        let newParties = tempParties.filter((p) => !allParties.some(tp => tp.Afkorting == p.Afkorting))
-        let removedParties = allParties.filter((p) => tempParties.every(tp => tp.Afkorting != p.Afkorting))
-        for (let p of removedParties) {
-          const partyIndex = this.parties.indexOf(p);
-          if (partyIndex !== -1) {
-            this.parties.splice(partyIndex, 1);
+      subscribe({
+        next: (response) => {
+          let tempParties = response.value;
+          let allParties = [...this.parties, ...this.child.box1, ...this.child.box2]
+          // Only change the parties that are new or removed. as otherways filters get cleaned
+          let newParties = tempParties.filter((p) => !allParties.some(tp => tp.Afkorting == p.Afkorting))
+          let removedParties = allParties.filter((p) => tempParties.every(tp => tp.Afkorting != p.Afkorting))
+          for (let p of removedParties) {
+            const partyIndex = this.parties.indexOf(p);
+            if (partyIndex !== -1) {
+              this.parties.splice(partyIndex, 1);
+            }
           }
+          this.parties.push(...newParties);
+          this.firstTimeLoaded = true;
+        },
+        error: err => {
         }
-        this.parties.push(...newParties);
-        this.firstTimeLoaded = true;
       })
   }
 
@@ -188,10 +192,13 @@ export class VotingResultsComponent implements OnInit {
     if (index > 1) {
       url += "&skip=" + (250 * (index - 1))
     }
-    return this.http.get<ODataResponse<Decision>>(url).subscribe((response) => {
-      this.decisionAmount = response["@odata.count"]!
-      this.data[index] = response.value
-      this.endLoading(index)
+    return this.http.get<ODataResponse<Decision>>(url).subscribe({
+      next: (response) => {
+        this.decisionAmount = response["@odata.count"]!
+        this.data[index] = response.value
+        this.endLoading(index)
+      },
+      error: err => { }
     })
   }
 

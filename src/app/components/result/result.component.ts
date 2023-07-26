@@ -7,6 +7,14 @@ import { Decision, Party, Vote } from 'src/app/services/OData/models/models';
   styleUrls: ['./result.component.css']
 })
 export class ResultComponent implements OnInit {
+  getCaseNumber() {
+    let number = ""
+    number += this.result.Zaak[0].Kamerstukdossier[0].Nummer
+    if (this.result.Zaak[0].Kamerstukdossier[0].Toevoeging) number += "-" + this.result.Zaak[0].Kamerstukdossier[0].Toevoeging
+    number += "-" + this.result.Zaak[0].Volgnummer
+    return number
+  }
+
   isHighLighted(party: Party) {
     return this.highLighted.indexOf(party.Afkorting) > -1 ||
       this.highLighted.indexOf(party.Id) > -1

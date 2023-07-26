@@ -14,7 +14,10 @@
 <div class="component">
     <div class="result-card" [ngStyle]="collapsable && !collapsed? {height: maxSize + 'px', overflowY: 'clip'} : {}">
         <div class="case">
-            <h3>{{result.Zaak[0].Titel}}</h3>
+            <div class="fr">
+                <h3>{{result.Zaak[0].Titel}}</h3>
+                <div>{{getCaseNumber()}}</div>
+            </div>
             <i>{{result.Zaak[0].Soort}}, </i> <small>{{votingResult}}</small>
             <p>{{result.Zaak[0].Onderwerp}}</p>
             <div class="link-date">

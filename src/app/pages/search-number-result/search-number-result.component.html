@@ -15,13 +15,35 @@
             Nummer:
         </div>
         <div>
-            <input style="width: 250px;" [value]="number" (change)="numberInputChanged($event)" type="text"
+            <input style="width: 250px;" [value]="number" (input)="numberInputChanged($event)" type="text"
                 placeholder="Bijv. 2023Z13581, 36392-5, 36200-A-93">
         </div>
     </div>
     <div class="frc">
-        <button class="btn btn-prim" (click)="searchResult()">Zoek</button>
+        <button [disabled]="!number" [ngClass]="{'btn-disabled': !number}" class="btn btn-prim"
+            (click)="searchResult()">Zoek</button>
     </div>
-    <app-cors-error *ngIf="!result"></app-cors-error>
-    <app-result *ngIf="result" [result]="result"></app-result>
+    <app-cors-error *ngIf="!results"></app-cors-error>
+    <div class="fcc" *ngIf="notFound">
+        <div>
+            De zoekopdracht gaf geen resultaten.
+        </div>
+        <div *ngIf="toMuch">
+            Dit onderwerp heeft heel veel resultaten. Misschien heeft u meer geluk op: <a
+                href="https://www.tweedekamer.nl/kamerstukken">tweedekamer.nl</a>
+        </div>
+
+        <div *ngIf="results">Misschien staat het resultaat bij de volgende uitslagen</div>
+    </div>
+    <div *ngIf="results" class="fcc l-gap">
+        <div *ngIf="results.length > 1" class="fr l-gap">
+            Sorteren op:
+            <select (change)="setOrderBy($event)">
+                <option [selected]="op.val == orderby" *ngFor="let op of getOptions()" [value]="op.val">
+                    {{op.name}}
+                </option>
+            </select>
+        </div>
+        <app-result *ngFor="let result of results" [result]="result"></app-result>
+    </div>
 </div>

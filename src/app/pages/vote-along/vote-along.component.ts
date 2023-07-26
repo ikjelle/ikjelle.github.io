@@ -78,13 +78,16 @@ export class VoteAlongComponent implements OnInit {
     url = table.generateUrl()
 
     let getCases = (url: string) => {
-      return this.http.get<ODataResponse<Decision>>(url).subscribe((response) => {
-        let nextLink = response["@odata.nextLink"]
-        this.totalCount = response["@odata.count"]!
-        this.amountPolled += response.value.length
-        if (nextLink) getCases(nextLink);
-        else this.polling = false
-        this.setResults(response.value);
+      return this.http.get<ODataResponse<Decision>>(url).subscribe({
+        next: (response) => {
+          let nextLink = response["@odata.nextLink"]
+          this.totalCount = response["@odata.count"]!
+          this.amountPolled += response.value.length
+          if (nextLink) getCases(nextLink);
+          else this.polling = false
+          this.setResults(response.value);
+        },
+        error: err => { }
       })
     }
     getCases(url)
@@ -161,11 +164,14 @@ export class VoteAlongComponent implements OnInit {
     this.ready = false;
     let url = this.resultsService.getPartiesByIds(ids).generateUrl()
 
-    this.http.get<ODataResponse<Party>>(url).subscribe((response) => {
-      for (let p of response.value) {
-        this.parties[p.Id] = p
-      }
-      this.ready = true;
+    this.http.get<ODataResponse<Party>>(url).subscribe({
+      next: (response) => {
+        for (let p of response.value) {
+          this.parties[p.Id] = p
+        }
+        this.ready = true;
+      },
+      error: err => { }
     })
   }
   parties: { [id: string]: Party } = {}
