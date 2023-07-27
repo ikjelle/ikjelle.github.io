@@ -3,6 +3,7 @@ import { Component, OnInit } from '@angular/core';
 import { Case, Decision } from 'src/app/services/OData/models/models';
 import { ODataResponse } from 'src/app/services/OData/models/response';
 import { Table } from 'src/app/services/OData/query-generator/Table';
+import { AndFilter } from 'src/app/services/OData/query-generator/filters';
 import { ResultService } from 'src/app/services/result.service';
 
 @Component({
@@ -64,7 +65,7 @@ export class SearchNumberResultComponent implements OnInit {
       },
     ]
     if (this.testFollowNumber) options.push({
-      name: "In de buurt van volgnummer", val: 5,
+      name: "In de buurt van Volgnummer", val: 5,
       orderby: (a: Decision, b: Decision) => {
         if (Math.abs(a.Zaak[0].Volgnummer - this.testFollowNumber!) == Math.abs(b.Zaak[0].Volgnummer - this.testFollowNumber!)) {
           return 0;
@@ -170,7 +171,12 @@ export class SearchNumberResultComponent implements OnInit {
     if (numbers.length > max) {
       this.toMuch = true;
     }
-    let url = this.resultService.getDecisionByNumbers(numbers.splice(0, max)).generateUrl()
+    let table = this.resultService.getTableOfDecisions(true)
+    table.filter = new AndFilter([
+      table.filter!,
+      this.resultService.getDecisionByNumbers(numbers.splice(0, max)).filter!
+    ])
+    let url = table.generateUrl()
     this.http.get<ODataResponse<Decision>>(url).subscribe({
       next:
         (response) => {

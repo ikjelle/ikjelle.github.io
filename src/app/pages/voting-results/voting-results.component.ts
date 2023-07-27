@@ -110,11 +110,9 @@ export class VotingResultsComponent implements OnInit {
     this.resetData()
 
     let p1 = this.child.box1
-    let p1Ids = p1.map(p => p.Id)
     let p2 = this.child.box2
-    let p2Ids = p2.map(p => p.Id)
     let url = ""
-
+    let table = this.resultsService.getTableOfDecisions(true)
     let tableBetween = this.resultsService.getDecisionsBetweenDatesAndParties(this.periodStart, this.periodEnd, [...p1, ...p2])
     let tableCaseTypes = this.resultsService.getDecisionsByCaseType(this.caseTypePickerComp.caseTypes)
     let tableTextSearch = this.resultsService.getDecisionsContainingText(this.textSearch)
@@ -123,16 +121,15 @@ export class VotingResultsComponent implements OnInit {
     if (p1.length == 0 && p2.length == 0) {
       // do request without group logic
     } else if (p1.length > 0 && p2.length > 0) { // vs
-      tableGroupSearch = this.resultsService.getDecisionsByDifferentVote(p1Ids, p2Ids)
+      tableGroupSearch = this.resultsService.getDecisionsByDifferentVote(p1, p2)
     } else if (p2.length == 0) { // together
-      tableGroupSearch = this.resultsService.getDecisionsByTogetherness(p1Ids)
+      tableGroupSearch = this.resultsService.getDecisionsByTogetherness(p1)
     } else if (p1.length == 0) { // alone
-      tableGroupSearch = this.resultsService.getDecisionsByOpposingAll(p2Ids)
+      tableGroupSearch = this.resultsService.getDecisionsByOpposingAll(p2)
     }
 
-    let table = tableBetween
     let filters: Filter[] = []
-    for (let f of [tableBetween.filter, tableCaseTypes.filter, tableTextSearch.filter, tableGroupSearch?.filter]) {
+    for (let f of [table.filter, tableBetween.filter, tableCaseTypes.filter, tableTextSearch.filter, tableGroupSearch?.filter]) {
       if (f != null) {
         filters.push(f)
       }
@@ -166,17 +163,17 @@ export class VotingResultsComponent implements OnInit {
     this.data = {}
     this.currentIndex = 1
     this.currentUrl = ""
-    this.decisionAmount = 0
+    this.decisionAmount = undefined
   }
 
   currentUrl!: string;
   currentIndex = 1
   data: { [index: number]: Decision[] } = {}
-  decisionAmount: number = 0
+  decisionAmount?: number;
 
   getIndexes() {
     if (this.decisionAmount == 0) return []
-    return Array.from({ length: (Math.ceil(this.decisionAmount / 250)) }, (_, i) => i + 1)
+    return Array.from({ length: (Math.ceil(this.decisionAmount! / 250)) }, (_, i) => i + 1)
   }
 
   getDecisionsByIndex(index: number) {

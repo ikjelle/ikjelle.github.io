@@ -68,7 +68,7 @@ export class VoteAlongComponent implements OnInit {
     let f2 = this.resultsService.getDecisionsBetween(this.periodStart, this.periodEnd).filter
 
     let andFilter = new AndFilter()
-    for (let filter of [f, f2]) {
+    for (let filter of [table.filter, f, f2]) {
       if (filter != null) {
         andFilter.addFilter(filter)
       }

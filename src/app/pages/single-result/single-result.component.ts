@@ -3,6 +3,7 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Decision } from 'src/app/services/OData/models/models';
 import { ODataResponse } from 'src/app/services/OData/models/response';
+import { AndFilter } from 'src/app/services/OData/query-generator/filters';
 import { ResultService } from 'src/app/services/result.service';
 
 @Component({
@@ -24,7 +25,12 @@ export class SingleResultComponent implements OnInit {
     this.route.params.subscribe({
       next: params => {
         let id = params['id'];
-        let url = this.resultsService.getDecisionByGuid(id).generateUrl()
+        let table = this.resultsService.getTableOfDecisions(true)
+        table.filter = new AndFilter([
+          table.filter!,
+          this.resultsService.getDecisionByGuid(id).filter!
+        ])
+        let url = table.generateUrl()
         return this.http.get<ODataResponse<Decision>>(url).subscribe((r) => {
           let results = r.value
           this.caseResult = results[0]

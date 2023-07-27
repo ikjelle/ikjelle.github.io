@@ -76,7 +76,7 @@ export class DifferenceComponent implements OnInit {
     this.usedPartyAId = this.partyAId;
     this.usedPartyBId = this.partyBId;
 
-    let f1 = this.resultsService.getDecisionsByDifferentVote([this.partyAId!], [this.partyBId!]).filter
+    let f1 = this.resultsService.getDecisionsByDifferentVote([this.parties.find(p => p.Id == this.partyAId!)!], [this.parties.find(p => p.Id == this.partyBId!)!]).filter
     let f2 = this.resultsService.getDecisionsBetweenDatesAndParties(this.periodStart, this.periodEnd, this.parties.filter(p => p.Id == this.partyAId || p.Id == this.partyBId)).filter
     let f3 = this.resultsService.getDecisionsByCaseType(this.caseTypePickerComp.caseTypes).filter;
 

@@ -26,7 +26,7 @@
     </div>
     <div class="fcc" *ngIf="currentUrl != ''">
         <div #results class="fcc gap">
-            <div *ngIf="decisionAmount != 0">Aantal resultaten: {{decisionAmount}}</div>
+            <div *ngIf="decisionAmount != undefined">Aantal resultaten: {{decisionAmount}}</div>
             <ng-container *ngTemplateOutlet="pagination"></ng-container>
             <app-loading-spinner *ngIf="loading"></app-loading-spinner>
             <div class="ffrwc">

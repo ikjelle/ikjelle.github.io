@@ -46,9 +46,9 @@ export class ResultService {
     return pro ? "'Voor'" : "'Tegen'"
   }
 
-  getTableOfDecisions() {
+  getTableOfDecisions(withFilter: boolean = false) {
     // add options so this builds up the table
-    return new Table(new Decision(), {
+    let table = new Table(new Decision(), {
       expansions: [
         new Table(new Case(), {
           expansions: [new Table(new CaseSubject(), {}), new Table(new Document())]
@@ -61,11 +61,14 @@ export class ResultService {
         // get date
         new Table(new AgendaItem(), { expansions: [new Table(new Activity(), {})] })
       ],
-      filter: new AnyCriteria("Stemming", new CompareCriterica("Id", c.ne, "null")),
       count: true,
       orderBy: true,
       orderByProp: "Agendapunt/Activiteit/Datum"
     })
+    if (withFilter)
+      table.filter = new AnyCriteria("Stemming", new CompareCriterica("Id", c.ne, "null"));
+
+    return table;
   }
   getTableOfDecisionsWithSubjectNumber() {
     // add options so this builds up the table
@@ -152,18 +155,17 @@ export class ResultService {
 
   getDecisionByGuid(id: string): Table {
     let table = this.getTableOfDecisions()
-    table.filter = new AndFilter([table.filter!, new AnyCriteria("Zaak", new CompareCriterica("Id", c.eq, id))])
+    table.filter = new AnyCriteria("Zaak", new CompareCriterica("Id", c.eq, id))
 
     return table;
   }
 
   getDecisionByNumbers(numbers: string[]): Table {
     let table = this.getTableOfDecisions()
-    table.filter = new AndFilter([table.filter!,
-    new AndFilter([
+    table.filter = new AndFilter([
       new AnyCriteria("Zaak", new InCriterica("Nummer", numbers)),
       new CompareCriterica("StemmingsSoort", c.ne, "null")
-    ])]);
+    ]);
     return table;
   }
 
@@ -198,7 +200,7 @@ export class ResultService {
     if (end!) {
       dateFilters.push(new CompareCriterica("Agendapunt/Activiteit/Datum", c.le, this.formatDateString(end)))
     }
-    table.filter = new AndFilter([table.filter!, new AndFilter(dateFilters)])
+    table.filter = new AndFilter(dateFilters)
     return table;
   }
 
@@ -220,7 +222,7 @@ export class ResultService {
     if (checkedTypes.length < resultTypes.length) {
       const typeNames = checkedTypes.map(t => t.name)
       // The in clause uses less nodes, so its way better than multiple eq
-      new AndFilter([table.filter!, table.filter = new AllCriteria("Zaak", new InCriterica("Soort", typeNames))])
+      table.filter = new AllCriteria("Zaak", new InCriterica("Soort", typeNames))
     }
 
     return table;
@@ -231,22 +233,28 @@ export class ResultService {
 
     if (searchText != "") {
       // check in subject or title, all the data I got.
-      table.filter = new AndFilter([table.filter!, new AllCriteria("Zaak",
+      table.filter = new AllCriteria("Zaak",
         new OrFilter([
           new TextCriteria(TF.CO, "Onderwerp", searchText),
           new TextCriteria(TF.CO, "Titel", searchText)])
-      )]);
+      );
     }
 
     return table
   }
 
-  getDecisionsByDifferentVote(partyIdsA: string[], partyIdsB: string[]): Table {
+  getDecisionsByDifferentVote(partiesA: Party[], partiesB: Party[]): Table {
     let table = this.getTableOfDecisions()
 
-    const p1EqOr = new InCriterica("Fractie_Id", partyIdsA)
-    const p2EqOr = new InCriterica("Fractie_Id", partyIdsB)
-    const allPartiesEqOr = new InCriterica("Fractie_Id", partyIdsA.concat(partyIdsB))
+    // not using ids as it makes the url too big
+    // const p1EqOr = new InCriterica("Fractie_Id", partiesA.map(p => p.Id))
+    // const p2EqOr = new InCriterica("Fractie_Id", partiesB.map(p => p.Id))
+    // const allPartiesEqOr = new InCriterica("Fractie_Id", partiesA.concat(partiesB).map(p => p.Id))
+
+    // party names are pretty different. but sooner or later someone will use the same name and this could fail when used for a to big period.
+    const p1EqOr = new InCriterica("Fractie/Afkorting", partiesA.map(p => p.Afkorting))
+    const p2EqOr = new InCriterica("Fractie/Afkorting", partiesB.map(p => p.Afkorting))
+    const allPartiesEqOr = new InCriterica("Fractie/Afkorting", partiesA.concat(partiesB).map(p => p.Afkorting))
 
     const getCriteriaString = (pro: boolean) => {
       let firstPro = this.getYay(pro)
@@ -265,14 +273,14 @@ export class ResultService {
     // or if in a and said no it will fail and also be excluded
     let p1For = getCriteriaString(true)
     let p2For = getCriteriaString(false)
-    table.filter = new AndFilter([table.filter!, new OrFilter([p1For, p2For])])
+    table.filter = new OrFilter([p1For, p2For])
     return table;
   }
 
-  getDecisionsByOpposingAll(partyIds: string[]): Table {
+  getDecisionsByOpposingAll(parties: Party[]): Table {
     let table = this.getTableOfDecisions()
 
-    const partiesIn = new InCriterica("Fractie_Id", partyIds)
+    const partiesIn = new InCriterica("Fractie/Afkorting", parties.map(p => p.Afkorting))
     const partiesNotIn = new NotCriterica(partiesIn)
 
     // all in and yay/nay or all not in and nay/yay
@@ -287,18 +295,18 @@ export class ResultService {
     let critContra = getCriteriaString(false)
     let critPro = getCriteriaString(true)
 
-    table.filter = new AndFilter([table.filter!,
-    new OrFilter([
-      critContra,
-      critPro
-    ])])
+    table.filter =
+      new OrFilter([
+        critContra,
+        critPro
+      ])
     return table;
   }
 
-  getDecisionsByTogetherness(partyIds: string[]): Table {
+  getDecisionsByTogetherness(parties: Party[]): Table {
     let table = this.getTableOfDecisions()
 
-    const partiesIn = new InCriterica("Fractie_Id", partyIds)
+    const partiesIn = new InCriterica("Fractie/Afkorting", parties.map(p => p.Afkorting))
     const partiesNotIn = new NotCriterica(partiesIn)
 
     // all parties in goup and same vote yay/nay or not in the group
@@ -313,10 +321,10 @@ export class ResultService {
     let critContra = getCriteriaString(false)
     let critPro = getCriteriaString(true)
 
-    table.filter = new AndFilter([table.filter!, new OrFilter([
+    table.filter = new OrFilter([
       critContra,
       critPro
-    ])])
+    ])
 
     return table;
   }
