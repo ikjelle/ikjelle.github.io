@@ -7,6 +7,31 @@ import { Decision, Party, Vote } from 'src/app/services/OData/models/models';
   styleUrls: ['./result.component.css']
 })
 export class ResultComponent implements OnInit {
+  getOrderedVotes(): any {
+
+    return this.result.Stemming.sort((v1: Vote, v2: Vote) => {
+      if (v1.ActorFractie > v2.ActorFractie) { return 1 }
+      else {
+        return -1;
+      }
+    })
+  }
+  getHOrder(vote: Vote): any {
+    let order = 0
+    switch (vote.Soort) {
+      case "Voor":
+        order = 10
+        break
+      case "Tegen":
+        order = 20
+        break
+      default:
+        order = 30
+    }
+    if (this.isHighLighted(vote.Fractie))
+      order -= 1
+    return order
+  }
   getCaseNumber() {
     let number = ""
     number += this.result.Zaak[0].Kamerstukdossier[0].Nummer
@@ -46,8 +71,10 @@ export class ResultComponent implements OnInit {
 
   @Input() result!: Decision;
   @Input() highLighted: string[] = []
+  @Input() vertical: boolean = false;
   yays: Vote[] = []
   nays: Vote[] = []
+  parties: Vote[] = []
 
   votesYay: number = 0;
   votesNay: number = 0;
@@ -61,6 +88,17 @@ export class ResultComponent implements OnInit {
       this.newParty()
     }
   }
+  getClass(vote: Vote) {
+    switch (vote.Soort) {
+      case "Voor":
+        return "yays"
+      case "Tegen":
+        return "nays"
+      default:
+        return "neutral"
+    }
+  }
+
   newParty() {
     this.result.Stemming.forEach(party => {
       let voteAmount = 1

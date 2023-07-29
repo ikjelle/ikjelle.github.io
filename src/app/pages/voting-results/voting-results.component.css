@@ -1,0 +1,28 @@
+.result {
+    min-width: 200px;
+    max-width: 275px;
+}
+
+/* Desktops and laptops ----------- */
+@media screen and (max-width: 1024px) {
+    .result {
+        min-width: 200px;
+        max-width: 275px;
+    }
+}
+
+/* iPads (portrait and landscape) ----------- */
+@media screen and (max-width: 800px) {
+    .result {
+        min-width: 200px;
+        max-width: 275px;
+    }
+}
+
+/* mobiles (landscape and portrait) */
+@media screen and (max-width: 590px) {
+    .result {
+        min-width: 200px;
+        max-width: 500px;
+    }
+}

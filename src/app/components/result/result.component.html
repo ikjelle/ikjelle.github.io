@@ -11,51 +11,77 @@
     </div>
 </ng-template>
 
-<div class="component">
-    <div class="result-card" [ngStyle]="collapsable && !collapsed? {height: maxSize + 'px', overflowY: 'clip'} : {}">
-        <div class="case">
-            <div class="fr">
-                <h3>{{result.Zaak[0].Titel}}</h3>
-                <div>{{getCaseNumber()}}</div>
-            </div>
-            <i>{{result.Zaak[0].Soort}}, </i> <small>{{votingResult}}</small>
-            <p>{{result.Zaak[0].Onderwerp}}</p>
-            <div class="link-date">
-                <a class="link" target="_blank" [href]="getTKUrl()">{{result.Zaak[0].Nummer}}</a>
-                <p class="date"><small class="text-muted">{{getLocalDate()}}</small></p>
-            </div>
+<ng-template #verticalVote>
+    <div class="frc l-gap votes" #votes
+        [ngStyle]="collapsable && !collapsed? {height: maxSize + 'px', overflowY: 'clip'} : {}">
+        <div class="parties" style="text-align: right;">
+            <ng-template ngFor let-vote [ngForOf]="yays">
+                <ng-container *ngTemplateOutlet="partyTemplate; context: { $implicit: vote }"></ng-container>
+            </ng-template>
         </div>
-        <div class="votes" #votes
-            [ngStyle]="collapsable && !collapsed? {height: maxSize + 'px', overflowY: 'clip'} : {}">
-            <div class="parties">
-                <ng-template ngFor let-vote [ngForOf]="yays">
-                    <ng-container *ngTemplateOutlet="partyTemplate; context: { $implicit: vote }"></ng-container>
-                </ng-template>
-            </div>
+        <div class="fr">
             <div class="voting-bar">
                 <div class="bar-votes yay">{{votesYay}}</div>
-                <div class="bar yays" [style]="{height: (votesYay/(votesYay + votesNay)* 100) + '%'}"> </div>
+                <div style="height: calc(100% - 19px)">
+                    <div class="bar yays" [style]="{height: (votesYay/(votesYay + votesNay)* 100) + '%'}"> </div>
+                </div>
             </div>
             <div class="voting-bar">
                 <div class="bar-votes nay"> {{votesNay}}</div>
-                <div class="bar nays" [style]="{height: (votesNay/(votesYay + votesNay)* 100) + '%'}"> </div>
+                <div style="height: calc(100% - 19px)">
+                    <div class="bar nays" [style]="{height: (votesNay/(votesYay + votesNay)* 100) + '%'}"> </div>
+                </div>
             </div>
-            <div class="parties">
-                <ng-template ngFor let-vote [ngForOf]="nays">
-                    <ng-container *ngTemplateOutlet="partyTemplate; context: { $implicit: vote }"></ng-container>
-                </ng-template>
+        </div>
+        <div class="parties" style="text-align: left;">
+            <ng-template ngFor let-vote [ngForOf]="nays">
+                <ng-container *ngTemplateOutlet="partyTemplate; context: { $implicit: vote }"></ng-container>
+            </ng-template>
+        </div>
+    </div>
+</ng-template>
+
+<ng-template #horizontalVote>
+    <div class="frc vote-bar">
+        <div style="height: 25px;" class="yays frc" [style]="{width: (votesYay/(votesYay + votesNay)* 100) + '%'}">
+            <div class="fcc">{{votesYay}}</div>
+        </div>
+        <div style="height: 25px;" class="nays frc" [style]="{width: (votesNay/(votesYay + votesNay)* 100) + '%'}">
+            <div class="fcc">{{votesNay}}</div>
+        </div>
+    </div>
+    <div class="hor-parties gap">
+        <div *ngFor="let vote of getOrderedVotes()" class="fr l-gap" [ngStyle]="{order: getHOrder(vote)}">
+            <div class="bubble" [ngClass]="getClass(vote)"></div>
+            <div class="fcc">
+                <ng-container *ngTemplateOutlet="partyTemplate; context: { $implicit: vote }"></ng-container>
             </div>
         </div>
     </div>
-    <div class="footer">
-        <div class="collapse" *ngIf="collapsable">
-            <button (click)="toggleCollapse()">
-                <div *ngIf="!collapsed">Laat meer zien</div>
-                <div *ngIf="collapsed">Laat minder zien</div>
-            </button>
+</ng-template>
+
+<div class="fcc gap card">
+    <div class="header fc l-gap">
+        <div class="fr" style="justify-content: space-between;">
+            <h3 class="hyphenate" style="margin:0;">{{result.Zaak[0].Titel}}</h3>
+            <p class="date"><small class="text-muted">{{getLocalDate()}}</small></p>
         </div>
-        <div class="share">
-            <a target="_blank" [href]="'./resultaat/' + result.Zaak[0].Id + '?'+ getQueryParams()">Deel resultaat</a>
+        <div class="fr l-gap">
+            <i>{{result.Zaak[0].Soort}}:</i>
+            <small style="align-self: flex-end;">{{getCaseNumber()}}</small>
         </div>
+        <small>{{votingResult}}</small>
+        <div>{{result.Zaak[0].Onderwerp}}</div>
+    </div>
+    <div *ngIf="vertical; else horizontalVote">
+        <ng-container *ngTemplateOutlet="verticalVote"></ng-container>
+    </div>
+    <div class="fr" style="justify-content: space-between;">
+        <div class="fr gap">
+            <a class="link" target="_blank" [href]="getTKUrl()">tweedekamer.nl</a>
+        </div>
+        <a target="_blank" [href]="'./resultaat/' + result.Zaak[0].Id + '?'+ getQueryParams()">
+            <img style="width: 18px; height: 18px;" src="./assets/share.png">
+        </a>
     </div>
 </div>

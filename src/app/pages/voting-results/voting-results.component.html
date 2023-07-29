@@ -1,9 +1,9 @@
 <div class="fcc gap">
     <div class="fcc gap">
         <h2>Tweede Kamer Stemmingsuitslagen Filteren</h2>
-        Op deze pagina vindt u een overzicht van alle stemmingen die hebben plaatsgevonden in de Tweede Kamer. U
-        kunt deze resultaten filteren door gebruik te maken van de filters. Hiermee kunt u bijvoorbeeld
-        eenvoudig zien op welke zaken twee partijen van elkaar verschillen.
+        Op deze pagina vindt u een overzicht van alle stemmingen die hebben plaatsgevonden in de Tweede Kamer. U kunt
+        deze uitslagen filteren door gebruik te maken van de beschikbare filters. Hiermee kunt u bijvoorbeeld
+        gemakkelijk zien op welke zaken twee partijen van elkaar verschillen.
     </div>
     <hr style="width: 100%;">
     <app-period-picker [(start)]="periodStart" [(end)]="periodEnd" (update)="updateDate()"></app-period-picker>
@@ -29,9 +29,9 @@
             <div *ngIf="decisionAmount != undefined">Aantal resultaten: {{decisionAmount}}</div>
             <ng-container *ngTemplateOutlet="pagination"></ng-container>
             <app-loading-spinner *ngIf="loading"></app-loading-spinner>
-            <div class="ffrwc">
-                <div *ngFor="let result of getResultsOfActivePage(); let j = index">
-                    <app-result #result [highLighted]="highLighted" [result]="result">
+            <div class="ffrwc gap">
+                <div class="result" *ngFor="let result of getResultsOfActivePage(); let j = index">
+                    <app-result [vertical]="true" class="result" #result [highLighted]="highLighted" [result]="result">
                     </app-result>
                 </div>
             </div>

@@ -1,11 +1,10 @@
 <div class="fcc gap">
     <div class="fcc gap">
         <h2>Verschillen tussen 2 Fracties</h2>
-        Op deze pagina kunt u de periode en 2 fracties uitkiezen. Wanneer u daarna op de knop klikt,
-        worden alle resultaten opgehaald. Nadat de data is opgehaald kunt u per kamerstukdossier, een soort van
-        onderwerp,
-        zien waar deze 2 partijen verschillend hebben gestemd.
-
+        Op deze pagina kunt u de periode kiezen en 2 fracties selecteren. Wanneer u daarna op de knop klikt, worden alle
+        uitslagen opgehaald. Nadat de gegevens zijn opgehaald, kunt u per kamerstukdossier, een soort onderwerp, zien
+        waar deze 2 partijen verschillend hebben gestemd.
+        <br>
         Let op, het kan even duren voordat alles is opgehaald.
     </div>
     <hr style="width: 100%;">
@@ -76,7 +75,7 @@
                         <div> {{this.getPartyName(this.usedPartyBId)}}</div>
                     </div>
                 </div>
-                <div class="fc" style="gap: 4px; overflow-y: scroll;">
+                <div class="fc" style="gap: 4px;">
                     <app-collapse *ngFor="let d of k.value.decisions" [title]="getTitle(d)">
                         <app-result [highLighted]="getHighLighted()" [result]="d"></app-result>
                     </app-collapse>

@@ -17,7 +17,7 @@ const routes: Routes = [
   { path: 'verschillen', component: DifferenceComponent },
   { path: 'disclaimer', component: DisclaimerComponent },
   { path: 'over', component: AboutComponent },
-  { path: '**', component: VotingResultsComponent },
+  { path: '**', component: DifferenceComponent },
 ];
 
 @NgModule({

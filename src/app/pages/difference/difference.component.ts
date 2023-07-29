@@ -82,7 +82,7 @@ export class DifferenceComponent implements OnInit {
 
     let table = this.resultsService.getTableOfDecisionsWithSubjectNumber();
     let filters: Filter[] = []
-    for (let f of [f1, f2, f3]) {
+    for (let f of [table.filter, f1, f2, f3]) {
       if (f != null) {
         filters.push(f)
       }
@@ -90,8 +90,9 @@ export class DifferenceComponent implements OnInit {
     table.filter = new AndFilter(filters)
     let url = table.generateUrl()
 
+    table = this.resultsService.getTableOfDecisionsWithSubjectNumber();
     let filtersC: Filter[] = []
-    for (let f of [f2, f3]) {
+    for (let f of [table.filter, f2, f3]) {
       if (f != null) {
         filtersC.push(f)
       }
