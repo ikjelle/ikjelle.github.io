@@ -1,5 +1,6 @@
 import { HttpClient } from '@angular/common/http';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Subscription } from 'rxjs';
 import { Case, Decision } from 'src/app/services/OData/models/models';
 import { ODataResponse } from 'src/app/services/OData/models/response';
 import { Table } from 'src/app/services/OData/query-generator/Table';
@@ -11,8 +12,8 @@ import { ResultService } from 'src/app/services/result.service';
   templateUrl: './search-number-result.component.html',
   styleUrls: ['./search-number-result.component.css']
 })
-export class SearchNumberResultComponent implements OnInit {
-  ;
+export class SearchNumberResultComponent implements OnDestroy {
+  sub?: Subscription;
   getOptions(): { name: string, val: number, orderby: (a: Decision, b: Decision) => number }[] {
     let options = [
       {
@@ -85,7 +86,8 @@ export class SearchNumberResultComponent implements OnInit {
   testFollowNumber?: number;
   constructor(private resultService: ResultService, private http: HttpClient) { }
 
-  ngOnInit(): void {
+  ngOnDestroy(): void {
+    this.sub?.unsubscribe();
   }
 
   setOrderedResults() {
@@ -177,7 +179,9 @@ export class SearchNumberResultComponent implements OnInit {
       this.resultService.getDecisionByNumbers(numbers.splice(0, max)).filter!
     ])
     let url = table.generateUrl()
-    this.http.get<ODataResponse<Decision>>(url).subscribe({
+
+    this.sub?.unsubscribe();
+    this.sub = this.http.get<ODataResponse<Decision>>(url).subscribe({
       next:
         (response) => {
           let data = response.value;

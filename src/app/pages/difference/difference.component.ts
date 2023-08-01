@@ -1,5 +1,6 @@
 import { HttpClient } from '@angular/common/http';
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { Subscription } from 'rxjs';
 import { CaseTypePickerComponent } from 'src/app/components/case-type-picker/case-type-picker.component';
 import { CaseSubject, Decision, Party } from 'src/app/services/OData/models/models';
 import { ODataResponse } from 'src/app/services/OData/models/response';
@@ -12,11 +13,12 @@ import { ResultService } from 'src/app/services/result.service';
   templateUrl: './difference.component.html',
   styleUrls: ['./difference.component.css']
 })
-export class DifferenceComponent implements OnInit {
+export class DifferenceComponent implements OnInit, OnDestroy {
   polling: boolean = false;
   @ViewChild(CaseTypePickerComponent) caseTypePickerComp!: CaseTypePickerComponent
   usedPartyAId: string | undefined;
   usedPartyBId: string | undefined;
+  sub?: Subscription;
   getNumberOfSided(pro: boolean, partyId: string | undefined, decisions: Decision[]) {
     return decisions.filter(d =>
       d.Stemming.find(p =>
@@ -51,6 +53,9 @@ export class DifferenceComponent implements OnInit {
     this.updateAvailableParties()
   }
 
+  ngOnDestroy(): void {
+    this.sub?.unsubscribe();
+  }
   setA(event: any) {
     this.partyAId = event.target.value
   }
@@ -105,8 +110,9 @@ export class DifferenceComponent implements OnInit {
       this.totalCasesNoDifference = response["@odata.count"]!
     })
 
+    if (this.sub) this.sub.unsubscribe()
     let getCases = (url: string) => {
-      return this.http.get<ODataResponse<Decision>>(url).subscribe((response) => {
+      this.sub = this.http.get<ODataResponse<Decision>>(url).subscribe((response) => {
         let nextLink = response["@odata.nextLink"]
         this.totalCount = response["@odata.count"]!
         this.retrievedCount += response.value.length
@@ -114,6 +120,7 @@ export class DifferenceComponent implements OnInit {
         else this.polling = false
         this.setResults(response.value);
       })
+      return this.sub;
     }
     this.polling = true;
     getCases(url)

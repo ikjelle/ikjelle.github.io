@@ -1,7 +1,7 @@
 import { KeyValue } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
-import { Component, OnInit, ViewChild } from '@angular/core';
-import { filter } from 'rxjs';
+import { Component, HostListener, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { Subscription, filter } from 'rxjs';
 import { CaseTypePickerComponent } from 'src/app/components/case-type-picker/case-type-picker.component';
 import { Party, Decision, Vote } from 'src/app/services/OData/models/models';
 import { ODataResponse } from 'src/app/services/OData/models/response';
@@ -30,9 +30,10 @@ interface PartyData {
   templateUrl: './vote-along.component.html',
   styleUrls: ['./vote-along.component.css']
 })
-export class VoteAlongComponent implements OnInit {
+export class VoteAlongComponent implements OnDestroy {
   polling: boolean = false;
   @ViewChild(CaseTypePickerComponent) caseTypePickerComp!: CaseTypePickerComponent
+  sub?: Subscription;
   getAllSignedCasedOf(signer: any, fraction: string) {
     if (false) {
       return 0; // return 0 if x turned off.
@@ -50,7 +51,8 @@ export class VoteAlongComponent implements OnInit {
   amountPolled: number = 0
   constructor(private resultsService: ResultService, private http: HttpClient) { }
 
-  ngOnInit(): void {
+  ngOnDestroy(): void {
+    this.sub?.unsubscribe();
   }
 
   search() {
@@ -77,8 +79,10 @@ export class VoteAlongComponent implements OnInit {
 
     url = table.generateUrl()
 
+    if (this.sub) this.sub.unsubscribe()
+
     let getCases = (url: string) => {
-      return this.http.get<ODataResponse<Decision>>(url).subscribe({
+      this.sub = this.http.get<ODataResponse<Decision>>(url).subscribe({
         next: (response) => {
           let nextLink = response["@odata.nextLink"]
           this.totalCount = response["@odata.count"]!
@@ -89,6 +93,7 @@ export class VoteAlongComponent implements OnInit {
         },
         error: err => { }
       })
+      return this.sub;
     }
     getCases(url)
   }

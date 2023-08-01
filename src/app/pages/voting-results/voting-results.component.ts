@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http';
-import { Component, ElementRef, OnInit, ViewChild, ViewChildren } from '@angular/core';
+import { Component, ElementRef, OnDestroy, OnInit, ViewChild, ViewChildren } from '@angular/core';
 import { ControversialComponent } from 'src/app/components/controversial/controversial.component';
 import { Party, Decision } from 'src/app/services/OData/models/models';
 import { ODataResponse } from 'src/app/services/OData/models/response';
@@ -7,13 +7,14 @@ import { ResultService } from 'src/app/services/result.service';
 
 import { AndFilter, Filter } from 'src/app/services/OData/query-generator/filters';
 import { CaseTypePickerComponent } from 'src/app/components/case-type-picker/case-type-picker.component';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-voting-results',
   templateUrl: './voting-results.component.html',
   styleUrls: ['./voting-results.component.css']
 })
-export class VotingResultsComponent implements OnInit {
+export class VotingResultsComponent implements OnInit, OnDestroy {
   @ViewChild(ControversialComponent) child!: ControversialComponent;
   @ViewChild('disclaimerButton') disclaimerButton!: ElementRef;
   @ViewChildren('result', { read: ElementRef }) resultComponents: any;
@@ -36,12 +37,18 @@ export class VotingResultsComponent implements OnInit {
   loading: boolean = false;
   firstTimeLoaded = false;
 
+  subs: Subscription[] = [];
+
   constructor(private resultsService: ResultService, private http: HttpClient) {
   }
 
   ngOnInit(): void {
     this.resetData()
     this.getParties()
+  }
+
+  ngOnDestroy(): void {
+    this.subs.forEach(s => s.unsubscribe());
   }
 
   ngAfterViewInit() {
@@ -164,6 +171,8 @@ export class VotingResultsComponent implements OnInit {
     this.currentIndex = 1
     this.currentUrl = ""
     this.decisionAmount = undefined
+    this.subs.forEach(s => s.unsubscribe());
+    this.subs = []
   }
 
   currentUrl!: string;
@@ -189,7 +198,7 @@ export class VotingResultsComponent implements OnInit {
     if (index > 1) {
       url += "&$skip=" + (250 * (index - 1))
     }
-    return this.http.get<ODataResponse<Decision>>(url).subscribe({
+    let sub = this.http.get<ODataResponse<Decision>>(url).subscribe({
       next: (response) => {
         this.decisionAmount = response["@odata.count"]!
         this.data[index] = response.value
@@ -197,6 +206,8 @@ export class VotingResultsComponent implements OnInit {
       },
       error: err => { }
     })
+    this.subs.push(sub)
+    return sub
   }
 
   lastLoadingIndex = 1
