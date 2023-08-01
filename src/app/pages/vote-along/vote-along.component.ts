@@ -3,27 +3,13 @@ import { HttpClient } from '@angular/common/http';
 import { Component, HostListener, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { Subscription, filter } from 'rxjs';
 import { CaseTypePickerComponent } from 'src/app/components/case-type-picker/case-type-picker.component';
+import { CaseVote, PartyVoteAlongers } from 'src/app/components/vote-along-result/vote-along-result.component';
 import { Party, Decision, Vote } from 'src/app/services/OData/models/models';
 import { ODataResponse } from 'src/app/services/OData/models/response';
 import { AllCaseTypes, CaseTypeCheckBox } from 'src/app/services/OData/models/result-types';
 import { AndFilter } from 'src/app/services/OData/query-generator/filters';
+import { PartyService } from 'src/app/services/party.service';
 import { ResultService } from 'src/app/services/result.service';
-
-interface PartyData {
-  [party_id: string]: {
-    [party_id: string]: {
-      agreed: number;
-      disagreed: number;
-      mistakeAgreed: number;
-      mistakeDisagreed: number;
-      notVoted: number;
-
-      helped: number; // is 1 of the actors
-      helpedAgreed: number; // wether it agreed with the main actor
-      helpedDisagreed: number;
-    };
-  };
-};
 
 @Component({
   selector: 'app-vote-along',
@@ -34,30 +20,20 @@ export class VoteAlongComponent implements OnDestroy {
   polling: boolean = false;
   @ViewChild(CaseTypePickerComponent) caseTypePickerComp!: CaseTypePickerComponent
   sub?: Subscription;
-  getAllSignedCasedOf(signer: any, fraction: string) {
-    if (false) {
-      return 0; // return 0 if x turned off.
-    }
-    return signer[fraction].helped
-  }
 
   periodStart?: string = new Date(2021, 2, 32).toISOString().slice(0, 10);
   periodEnd?: string = undefined
 
-  ready: boolean = false;
-
-
   totalCount?: number = undefined
   amountPolled: number = 0
-  constructor(private resultsService: ResultService, private http: HttpClient) { }
+  constructor(private resultsService: ResultService, private http: HttpClient, private partyService: PartyService) { }
 
   ngOnDestroy(): void {
     this.sub?.unsubscribe();
   }
 
   search() {
-    this.data = {}
-    this.ready = false;
+    this.data = []
     this.polling = true;
     this.totalCount = undefined
     this.amountPolled = 0
@@ -98,7 +74,7 @@ export class VoteAlongComponent implements OnDestroy {
     getCases(url)
   }
 
-  data: PartyData = {};
+  data?: PartyVoteAlongers[];
 
   setResults(results: Decision[]) {
     // foreach case
@@ -116,75 +92,49 @@ export class VoteAlongComponent implements OnDestroy {
       }
       for (let actor of res.Zaak[0].ZaakActor) {
         if (!(actor.Fractie_Id)) continue
-        if (!(actor.Fractie_Id in this.data)) this.data[actor.Fractie_Id] = {}
+        let partyVA = this.data?.find(p => p.partyId == actor.Fractie_Id)
+        if (!partyVA) {
+          partyVA = {
+            partyId: actor.Fractie_Id,
+            votes: [],
+            petitioned: 0,
+            party$: this.partyService.getPartyById(actor.Fractie_Id)
+          }
+          this.data?.push(partyVA)
+        }
+        partyVA.petitioned++;
+
         for (let vote of res.Stemming) {
           if (!parties.find(v => v == vote.Fractie_Id)) {
             parties.push(vote.Fractie_Id)
           }
-          if (!(vote.Fractie_Id in this.data[actor.Fractie_Id])) this.data[actor.Fractie_Id][vote.Fractie_Id] = {
-            agreed: 0,
-            disagreed: 0,
-            mistakeAgreed: 0,
-            mistakeDisagreed: 0,
-            notVoted: 0,
-            helped: 0,
-            helpedAgreed: 0,
-            helpedDisagreed: 0,
-          }
-          let votedWith = false;
-          if (petitioners.find(p => p == vote.Fractie_Id)) {
-            votedWith = true;
-            this.data[actor.Fractie_Id][vote.Fractie_Id].helped += 1
-          }
-          if (vote.Soort == "Voor") {
-            this.data[actor.Fractie_Id][vote.Fractie_Id].agreed += 1
-            if (votedWith)
-              this.data[actor.Fractie_Id][vote.Fractie_Id].helpedAgreed += 1
-            if (vote.Vergissing)
-              this.data[actor.Fractie_Id][vote.Fractie_Id].mistakeAgreed += 1
-          } else if (vote.Soort == "Tegen") {
-            this.data[actor.Fractie_Id][vote.Fractie_Id].disagreed += 1
 
-            if (votedWith)
-              this.data[actor.Fractie_Id][vote.Fractie_Id].helpedDisagreed += 1
-            if (vote.Vergissing)
-              this.data[actor.Fractie_Id][vote.Fractie_Id].mistakeDisagreed += 1
-          } else {
-            this.data[actor.Fractie_Id][vote.Fractie_Id].notVoted += 1
+          let actorVote = partyVA.votes.find(p => p.partyId == vote.Fractie_Id)
+          if (!actorVote) {
+            actorVote = {
+              partyId: vote.Fractie_Id, caseVotes: [],
+              party$: this.partyService.getPartyById(vote.Fractie_Id)
+            }
+            partyVA.votes.push(actorVote)
           }
+
+          let cv: CaseVote = {
+            agreed: 0,
+            // case: res.Zaak[0],
+            caseId: res.Zaak[0].Id,
+            helper: res.Zaak[0].ZaakActor.find(zk => zk.Fractie_Id == vote.Fractie_Id) != null,
+            mistake: vote.Vergissing
+          }
+
+          if (vote.Soort == "Voor") {
+            cv.agreed = 1
+          } else if (vote.Soort == "Tegen") {
+            cv.agreed = -1
+          }
+          actorVote.caseVotes.push(cv)
         }
       }
     }
-    this.setParties(parties);
     // get all fractions so fraction can be matched
-  }
-
-  setParties(partyIds: string[]) {
-    let ids = [];
-    for (let id of partyIds) {
-      if (!(this.parties[id]) && id.length > 10)
-        ids.push(id)
-    }
-    if (ids.length == 0) return;
-    this.ready = false;
-    let url = this.resultsService.getPartiesByIds(ids).generateUrl()
-
-    this.http.get<ODataResponse<Party>>(url).subscribe({
-      next: (response) => {
-        for (let p of response.value) {
-          this.parties[p.Id] = p
-        }
-        this.ready = true;
-      },
-      error: err => { }
-    })
-  }
-  parties: { [id: string]: Party } = {}
-
-  getFractionName(id: string) {
-    if (!(this.parties[id])) {
-      console.log(id)
-    }
-    return this.parties[id].Afkorting ?? this.parties[id].NaamNL;
   }
 }

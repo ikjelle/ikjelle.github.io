@@ -1,0 +1,21 @@
+<div *ngIf="data.party$ | async as mainParty" class="fc card">
+    <div class="party-actor">
+        {{mainParty.Afkorting}} - {{data.petitioned}}
+    </div>
+    <div class="fc">
+        <div *ngFor="let party of getOrderedDataSet()" class="fr party-row l-gap">
+            <div *ngIf="party.party$ | async as p" class="party-name">{{p.Afkorting}}</div>
+            <div class="fr bars">
+                <div *ngIf="getAmount(party, 1) > 0"
+                    [ngStyle]="{'width':( getAmount(party, 1) / (getAmount(party, 1)+getAmount(party, -1)+ getAmount(party, 0) )* 100).toString() + '%'}"
+                    class="bar frc green">{{getAmount(party, 1)}}</div>
+                <div *ngIf="getAmount(party, -1) > 0"
+                    [ngStyle]="{'width':( getAmount(party, -1) / (getAmount(party, 1)+getAmount(party, -1)+ getAmount(party, 0))* 100).toString() + '%'}"
+                    class="bar frc red">{{getAmount(party, -1)}}</div>
+                <div *ngIf="getAmount(party, 0) > 0"
+                    [ngStyle]="{'width':( getAmount(party, 0) / (getAmount(party, 1)+getAmount(party, -1)+getAmount(party, 0) )* 100).toString() + '%'}"
+                    class="bar frc grey">{{getAmount(party, 0)}}</div>
+            </div>
+        </div>
+    </div>
+</div>

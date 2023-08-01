@@ -4,46 +4,6 @@
     margin-bottom: 8px;
 }
 
-.party-actor {
-    align-self: center;
-    padding-left: 100px;
-}
-
-.party-row {
-    justify-content: space-around;
-    width: 400px;
-}
-
-.party-name {
-    width: 100px;
-    max-width: 100px;
-}
-
-.bars {
-    height: 100%;
-    width: 300px;
-    max-width: 300px;
-}
-
-.bar {
-    height: 10px;
-    color: white;
-    font-size: x-small;
-    align-self: center;
-}
-
-.green {
-    background-color: green;
-}
-
-.red {
-    background-color: red;
-}
-
-.grey {
-    background-color: grey;
-}
-
 .disabled {
     opacity: 30%;
 }

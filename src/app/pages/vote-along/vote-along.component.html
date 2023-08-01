@@ -24,27 +24,9 @@
         <app-loading-spinner></app-loading-spinner>
     </div>
     <!-- Haal alle zaken op -->
-    <div class="ffrwc" *ngIf="data && ready">
-        <div *ngFor="let p of data | keyvalue" class="fcc" style="width: 410px;"
-            [style]="{order: -1 *getAllSignedCasedOf(p.value, p.key)}">
-            <div class="party-actor">{{getFractionName(p.key)}} - {{p.value[p.key].helped}}</div>
-            <div class="fc">
-                <div *ngFor="let r of p.value| keyvalue" class="fr party-row"
-                    [style]="{order:-1*(r.value.agreed-r.value.disagreed)}">
-                    <div class="party-name">{{getFractionName(r.key)}}</div>
-                    <div class="fr bars">
-                        <div *ngIf="r.value.agreed > 0"
-                            [ngStyle]="{'width':( r.value.agreed / (r.value.agreed+r.value.disagreed+ r.value.notVoted )* 100).toString() + '%'}"
-                            class="bar frc green">{{r.value.agreed}}</div>
-                        <div *ngIf="r.value.disagreed > 0"
-                            [ngStyle]="{'width':( r.value.disagreed / (r.value.agreed+r.value.disagreed+ r.value.notVoted )* 100).toString() + '%'}"
-                            class="bar frc red">{{r.value.disagreed}}</div>
-                        <div *ngIf="r.value.notVoted > 0"
-                            [ngStyle]="{'width':( r.value.notVoted / (r.value.agreed+r.value.disagreed+ r.value.notVoted )* 100).toString() + '%'}"
-                            class="bar frc grey">{{r.value.notVoted}}</div>
-                    </div>
-                </div>
-            </div>
+    <div class="ffrwc gap" *ngIf="data">
+        <div *ngFor="let p of data" class="fcc" style="width: 410px;" [style]="{order: -1 * p.petitioned}">
+            <app-vote-along-result [data]="p"></app-vote-along-result>
         </div>
     </div>
     <app-cors-error *ngIf="!totalCount"></app-cors-error>

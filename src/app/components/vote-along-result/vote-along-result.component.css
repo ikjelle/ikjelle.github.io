@@ -1,0 +1,46 @@
+.card {
+    background-color: whitesmoke;
+    border-radius: 25px;
+    padding-bottom: 10px;
+}
+
+.party-actor {
+    align-self: center;
+    padding-left: 100px;
+}
+
+.party-row {
+    justify-content: space-around;
+    width: 400px;
+}
+
+.party-name {
+    width: 100px;
+    max-width: 100px;
+    text-align: right;
+    font-size: small;
+}
+
+.bars {
+    width: 280px;
+    max-width: 280px;
+}
+
+.bar {
+    height: 10px;
+    color: white;
+    font-size: x-small;
+    align-self: center;
+}
+
+.green {
+    background-color: green;
+}
+
+.red {
+    background-color: red;
+}
+
+.grey {
+    background-color: grey;
+}
