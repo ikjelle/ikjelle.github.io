@@ -187,7 +187,7 @@ export class VotingResultsComponent implements OnInit {
     // TODO: catch CORS
     let url = this.currentUrl;
     if (index > 1) {
-      url += "&skip=" + (250 * (index - 1))
+      url += "&$skip=" + (250 * (index - 1))
     }
     return this.http.get<ODataResponse<Decision>>(url).subscribe({
       next: (response) => {
