@@ -24,6 +24,7 @@ export class ResultService {
   getLatestStartDate(dates: string[]) {
     let latestDate = null
     for (let ds of dates) {
+      if (ds == null) continue
       let date = new Date(ds)
       if (latestDate == null || date > latestDate) {
         latestDate = date
@@ -34,6 +35,7 @@ export class ResultService {
   getEarliestEndDate(dates: string[]) {
     let earliestDate = null
     for (let ds of dates) {
+      if (ds == null) continue
       let date = new Date(ds)
       if (earliestDate == null || date < earliestDate) {
         earliestDate = date

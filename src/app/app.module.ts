@@ -27,6 +27,7 @@ import { CollapseComponent } from './components/collapse/collapse.component';
 import { CaseTypePickerComponent } from './components/case-type-picker/case-type-picker.component';
 import { LoadingSpinnerComponent } from './components/loading-spinner/loading-spinner.component';
 import { VoteAlongResultComponent } from './components/vote-along-result/vote-along-result.component';
+import { DeciderComponent } from './pages/decider/decider.component';
 
 @NgModule({
   declarations: [
@@ -51,7 +52,8 @@ import { VoteAlongResultComponent } from './components/vote-along-result/vote-al
     CollapseComponent,
     CaseTypePickerComponent,
     LoadingSpinnerComponent,
-    VoteAlongResultComponent
+    VoteAlongResultComponent,
+    DeciderComponent
   ],
   imports: [
     BrowserModule,

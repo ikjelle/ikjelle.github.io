@@ -1,0 +1,41 @@
+<div class="fcc gap">
+    <div class="fcc gap">
+        <h2>De Beslisser van de stemming</h2>
+        Op deze pagina kunt u van de geselecteerde partij in een bepaalde periode zien waarin deze partij de beslissende
+        stem heeft gegeven.
+        Deze stem heeft ervoor gezorgd dat een Zaak is aangemomen of verworpen.
+    </div>
+    <hr style="width: 100%;">
+
+    <app-period-picker [(start)]="periodStart" [(end)]="periodEnd"
+        (update)="updateAvailableParties()"></app-period-picker>
+
+    <div class="ffrwc l-gap">
+        <div>Kies partij: </div>
+        <div>
+            <select class="party-select" (change)="setParty($event)">
+                <option [selected]="partyId== null" disabled>Kies een Partij</option>
+                <option [value]="p.Id" [selected]="p && p.Id==partyId" *ngFor="let p of parties">{{p.Afkorting}}
+                </option>
+            </select>
+        </div>
+    </div>
+
+    <app-collapse [title]="'Type zaken'">
+        <app-case-type-picker></app-case-type-picker>
+    </app-collapse>
+    <div class="frc">
+        <button [disabled]="!(partyId)" [ngClass]="{'btn-disabled': !(partyId)}" class="btn btn-prim"
+            (click)="getDeciderDecisions()">Haal zaken op</button>
+    </div>
+
+    <app-cors-error *ngIf="parties.length == 0"></app-cors-error>
+    <div class="fcc" style="padding:8px" *ngIf="totalCount || polling">
+        <div *ngIf="totalCount" class="frc">
+            Totaal aantal zaken: {{totalCount}} (Met de huidige filters)
+        </div>
+        <div class="fcc" *ngIf="polling">
+            <app-loading-spinner></app-loading-spinner>
+        </div>
+    </div>
+</div>
