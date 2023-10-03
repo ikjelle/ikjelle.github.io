@@ -1,12 +1,10 @@
-import { KeyValue } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
-import { Component, HostListener, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import { Subscription, filter } from 'rxjs';
+import { Component, OnDestroy, ViewChild } from '@angular/core';
+import { Subscription } from 'rxjs';
 import { CaseTypePickerComponent } from 'src/app/components/case-type-picker/case-type-picker.component';
 import { CaseVote, PartyVoteAlongers } from 'src/app/components/vote-along-result/vote-along-result.component';
-import { Party, Decision, Vote } from 'src/app/services/OData/models/models';
+import { Decision } from 'src/app/services/OData/models/models';
 import { ODataResponse } from 'src/app/services/OData/models/response';
-import { AllCaseTypes, CaseTypeCheckBox } from 'src/app/services/OData/models/result-types';
 import { AndFilter } from 'src/app/services/OData/query-generator/filters';
 import { PartyService } from 'src/app/services/party.service';
 import { ResultService } from 'src/app/services/result.service';

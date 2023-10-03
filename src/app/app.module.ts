@@ -28,6 +28,7 @@ import { CaseTypePickerComponent } from './components/case-type-picker/case-type
 import { LoadingSpinnerComponent } from './components/loading-spinner/loading-spinner.component';
 import { VoteAlongResultComponent } from './components/vote-along-result/vote-along-result.component';
 import { DeciderComponent } from './pages/decider/decider.component';
+import { PartyPickerComponent } from './components/party-picker/party-picker.component';
 
 @NgModule({
   declarations: [
@@ -53,7 +54,8 @@ import { DeciderComponent } from './pages/decider/decider.component';
     CaseTypePickerComponent,
     LoadingSpinnerComponent,
     VoteAlongResultComponent,
-    DeciderComponent
+    DeciderComponent,
+    PartyPickerComponent
   ],
   imports: [
     BrowserModule,

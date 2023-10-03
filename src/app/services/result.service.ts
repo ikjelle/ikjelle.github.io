@@ -24,7 +24,7 @@ export class ResultService {
   getLatestStartDate(dates: string[]) {
     let latestDate = null
     for (let ds of dates) {
-      if (ds == null) continue
+      if (ds == null || ds == "") continue
       let date = new Date(ds)
       if (latestDate == null || date > latestDate) {
         latestDate = date
@@ -35,7 +35,7 @@ export class ResultService {
   getEarliestEndDate(dates: string[]) {
     let earliestDate = null
     for (let ds of dates) {
-      if (ds == null) continue
+      if (ds == null || ds == "") continue
       let date = new Date(ds)
       if (earliestDate == null || date < earliestDate) {
         earliestDate = date
@@ -57,7 +57,7 @@ export class ResultService {
         }),
         new Table(new Vote(), {
           expansions: [new Table(new Party(), {
-            select: ["Afkorting", "NaamEN", "NaamNL"]
+            select: ["Afkorting", "NaamEN", "NaamNL", "Id"]
           })]
         }),
         // get date
@@ -125,10 +125,12 @@ export class ResultService {
     // by looking at vote count you can atleast check if they have votes
 
     let filters = []
-    if (end != null) {
+    if (!(end == null || end == undefined || end == "")) {
+      console.log(end)
+      console.log(typeof end)
       filters.push(new CompareCriterica("DatumActief", c.le, this.formatDateString(end)));
     }
-    if (start != null) {
+    if (!(start == null || start == undefined || start == "")) {
       filters.push(new OrFilter([
         new CompareCriterica("DatumInactief", c.ge, this.formatDateString(start)),
         new CompareCriterica("DatumInactief", c.eq, "null")
@@ -226,6 +228,14 @@ export class ResultService {
       // The in clause uses less nodes, so its way better than multiple eq
       table.filter = new AllCriteria("Zaak", new InCriterica("Soort", typeNames))
     }
+
+    return table;
+  }
+
+  getDecisionByDecisionIds(ids: string[]): Table {
+    let table = this.getTableOfDecisions();
+
+    table.filter = new InCriterica("Id", ids);
 
     return table;
   }

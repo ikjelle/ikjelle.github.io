@@ -1,4 +1,4 @@
-import { Filter } from "./filters";
+import { AndFilter, CompareCriterica, Filter, c } from "./filters";
 import { MetaDataModelKey, MetaDataSelectKey } from "../models/models";
 import 'reflect-metadata';
 
@@ -94,10 +94,19 @@ export class Table {
         return orderByStatement;
     }
 
-    generateUrl(): string {
+    generateUrl(notDeleted: boolean = true): string {
         var url = "";
         url += this.table;
         url += "?";
+        if (notDeleted) {
+            // make sure deleted rows are not in results
+            let existFilter = new CompareCriterica("Verwijderd", c.eq, false)
+            if (this.filter) {
+                this.filter = new AndFilter([this.filter, existFilter]);
+            } else {
+                this.filter = existFilter;
+            }
+        }
 
         url += this.generateTable("&")
 

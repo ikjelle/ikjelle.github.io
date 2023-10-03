@@ -14,38 +14,27 @@ import { ResultService } from 'src/app/services/result.service';
   styleUrls: ['./difference.component.css']
 })
 export class DifferenceComponent implements OnInit, OnDestroy {
-  polling: boolean = false;
-  @ViewChild(CaseTypePickerComponent) caseTypePickerComp!: CaseTypePickerComponent
-  usedPartyAId: string | undefined;
-  usedPartyBId: string | undefined;
+
   sub?: Subscription;
-  getNumberOfSided(pro: boolean, partyId: string | undefined, decisions: Decision[]) {
-    return decisions.filter(d =>
-      d.Stemming.find(p =>
-        p.Fractie_Id == partyId)?.Soort == (pro ? "Voor" : "Tegen")
-    ).length
-  }
-  getPartyName(partyId: string | undefined) {
-    return this.parties.find(p => p.Id == partyId)?.NaamNL;
-  }
-  getHighLighted(): string[] {
-    return this.parties.filter(p => p.Id == this.usedPartyAId || p.Id == this.usedPartyBId).map(p => p.Afkorting)
-  }
-  getTitle(d: Decision): string {
-    return d.Zaak[0].Onderwerp + ':<br>' +
-      d.Stemming.find(p => p.Fractie_Id == this.usedPartyAId)?.ActorFractie + "(" +
-      d.Stemming.find(p => p.Fractie_Id == this.usedPartyAId)?.Soort + (d.Stemming.find(p => p.Fractie_Id == this.usedPartyAId)?.Vergissing ? '*' : '') + ") - " +
-      d.Stemming.find(p => p.Fractie_Id == this.usedPartyBId)?.ActorFractie + "(" +
-      d.Stemming.find(p => p.Fractie_Id == this.usedPartyBId)?.Soort + (d.Stemming.find(p => p.Fractie_Id == this.usedPartyBId)?.Vergissing ? '*' : '') + ")";
-  }
+  @ViewChild(CaseTypePickerComponent) caseTypePickerComp!: CaseTypePickerComponent
+
   periodStart?: string = new Date(2021, 2, 32).toISOString().slice(0, 10);
   periodEnd?: string = undefined;
   parties: Party[] = [];
   partyAId?: string;
   partyBId?: string;
+
+  usedPartyAId: string | undefined;
+  usedPartyBId: string | undefined;
+
+  polling: boolean = false;
+
+
   totalCount?: number
   retrievedCount: number = 0
   totalCasesNoDifference?: number = 0
+
+  data: { [id: number]: { caseSubject: CaseSubject, decisions: Decision[] } } = {}
 
   constructor(private resultsService: ResultService, private http: HttpClient) { }
 
@@ -59,10 +48,27 @@ export class DifferenceComponent implements OnInit, OnDestroy {
   setA(event: any) {
     this.partyAId = event.target.value
   }
+
+  getDisabledB(): string[] {
+    if (!this.partyAId) return [];
+    let partyA = this.parties.find(p => p.Id == this.partyAId)!;
+    return [this.partyAId, ...this.parties.filter(p => {
+      // if party was not active while party a was. return true
+      if (p.DatumActief > partyA.DatumActief) {
+        if (partyA.DatumInactief != null && p.DatumActief >= partyA.DatumInactief) {
+          return true;
+        }
+      }
+      if (p.DatumInactief != null && p.DatumInactief <= partyA.DatumActief) {
+        return true;
+      }
+      return false;
+    }
+    ).map(p => p.Id)];
+  }
   setB(event: any) {
     this.partyBId = event.target.value
   }
-
   updateAvailableParties() {
     let url = this.resultsService.getParties(this.periodStart, this.periodEnd).generateUrl()
 
@@ -125,7 +131,7 @@ export class DifferenceComponent implements OnInit, OnDestroy {
     this.polling = true;
     getCases(url)
   }
-  data: { [id: number]: { caseSubject: CaseSubject, decisions: Decision[] } } = {}
+
   setResults(decisions: Decision[]) {
     for (let d of decisions) {
       let id = d.Zaak[0].Kamerstukdossier[0].Nummer
@@ -134,5 +140,28 @@ export class DifferenceComponent implements OnInit, OnDestroy {
       }
       this.data[id].decisions.push(d)
     }
+  }
+
+  getNumberOfSided(pro: boolean, partyId: string | undefined, decisions: Decision[]) {
+    return decisions.filter(d =>
+      d.Stemming.find(p =>
+        p.Fractie_Id == partyId)?.Soort == (pro ? "Voor" : "Tegen")
+    ).length
+  }
+
+  getPartyName(partyId: string | undefined) {
+    return this.parties.find(p => p.Id == partyId)?.NaamNL;
+  }
+
+  getHighLighted(): string[] {
+    return this.parties.filter(p => p.Id == this.usedPartyAId || p.Id == this.usedPartyBId).map(p => p.Afkorting)
+  }
+
+  getTitle(d: Decision): string {
+    return d.Zaak[0].Onderwerp + ':<br>' +
+      d.Stemming.find(p => p.Fractie_Id == this.usedPartyAId)?.ActorFractie + "(" +
+      d.Stemming.find(p => p.Fractie_Id == this.usedPartyAId)?.Soort + (d.Stemming.find(p => p.Fractie_Id == this.usedPartyAId)?.Vergissing ? '*' : '') + ") - " +
+      d.Stemming.find(p => p.Fractie_Id == this.usedPartyBId)?.ActorFractie + "(" +
+      d.Stemming.find(p => p.Fractie_Id == this.usedPartyBId)?.Soort + (d.Stemming.find(p => p.Fractie_Id == this.usedPartyBId)?.Vergissing ? '*' : '') + ")";
   }
 }

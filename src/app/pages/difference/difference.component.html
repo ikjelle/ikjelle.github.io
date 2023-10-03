@@ -13,23 +13,17 @@
         (update)="updateAvailableParties()"></app-period-picker>
     <div class="ffrwc gap">
         <div class="ffrwc l-gap">
-            <div>Kies partij: </div>
+            <div>Kies partij A: </div>
             <div>
-                <select class="party-select" (change)="setA($event)">
-                    <option [selected]="partyAId== null" disabled>Kies een Partij</option>
-                    <option [disabled]="p.Id == partyBId" [value]="p.Id" [selected]="p && p.Id==partyAId"
-                        *ngFor="let p of parties">{{p.Afkorting}}</option>
-                </select>
+                <app-party-picker [disabledIds]="[partyBId!]" [parties]="parties"
+                    (change)="setA($event)"></app-party-picker>
             </div>
         </div>
         <div class="ffrwc l-gap">
-            <div>Kies partij: </div>
+            <div>Kies partij B: </div>
             <div>
-                <select class="party-select" (change)="setB($event)">
-                    <option [selected]="partyBId== null" disabled>Kies een Partij</option>
-                    <option [disabled]="p.Id == partyAId" [value]="p.Id" [selected]="p.Id==partyBId"
-                        *ngFor="let p of parties">{{p.Afkorting}}</option>
-                </select>
+                <app-party-picker [disabledIds]="getDisabledB()" [parties]="parties"
+                    (change)="setB($event)"></app-party-picker>
             </div>
         </div>
     </div>
