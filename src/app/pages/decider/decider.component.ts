@@ -102,6 +102,8 @@ export class DeciderComponent implements OnInit {
       `&$filter=hvote sub lvote le pvote and hvote add lvote le 150&$orderby=Besluit/Agendapunt/Activiteit/Datum DESC&$count=true`
     // filter out all entries that still did not meet requirements, like a vote wont pass if value is == so those cases are in the data
 
+    // ideally join this set of data with the decisions ids, but idk if thats possible rn
+
     this.currentIndex = 1;
     this.data = {};
     this.totalCount = undefined;
@@ -144,13 +146,13 @@ export class DeciderComponent implements OnInit {
 
   getCasesFromIds(ids: string[], index: number) {
     // for every x in ids
-    const chunkSize = 36;
+    const chunkSize = 30;
 
     var dec = (localIndex: number) => {
       const i = localIndex * chunkSize;
       const chunkIds = ids.slice(i, i + chunkSize);
       let table = this.resultsService.getDecisionByDecisionIds(chunkIds)
-      let url = table.generateUrl(false);
+      let url = table.generateUrl();
       let sub = this.http.get<ODataResponse<Decision>>(url).subscribe({
         next: (response) => {
           let data: Decision[] = [];

@@ -126,8 +126,6 @@ export class ResultService {
 
     let filters = []
     if (!(end == null || end == undefined || end == "")) {
-      console.log(end)
-      console.log(typeof end)
       filters.push(new CompareCriterica("DatumActief", c.le, this.formatDateString(end)));
     }
     if (!(start == null || start == undefined || start == "")) {

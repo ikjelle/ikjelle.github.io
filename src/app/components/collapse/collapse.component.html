@@ -1,6 +1,6 @@
 <div class="collapse">
     <div class="title" (click)="collapseComponent()">
-        <div class="fr" style="width: 80%;">
+        <div class="fr" style="width: 100%;">
             <ng-content *ngIf="!title" select="[id=title]"></ng-content>
             <div *ngIf="title" [innerHTML]="title"></div>
         </div>

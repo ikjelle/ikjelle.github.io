@@ -158,8 +158,7 @@ export class DifferenceComponent implements OnInit, OnDestroy {
   }
 
   getTitle(d: Decision): string {
-    return d.Zaak[0].Onderwerp + ':<br>' +
-      d.Stemming.find(p => p.Fractie_Id == this.usedPartyAId)?.ActorFractie + "(" +
+    return d.Stemming.find(p => p.Fractie_Id == this.usedPartyAId)?.ActorFractie + "(" +
       d.Stemming.find(p => p.Fractie_Id == this.usedPartyAId)?.Soort + (d.Stemming.find(p => p.Fractie_Id == this.usedPartyAId)?.Vergissing ? '*' : '') + ") - " +
       d.Stemming.find(p => p.Fractie_Id == this.usedPartyBId)?.ActorFractie + "(" +
       d.Stemming.find(p => p.Fractie_Id == this.usedPartyBId)?.Soort + (d.Stemming.find(p => p.Fractie_Id == this.usedPartyBId)?.Vergissing ? '*' : '') + ")";

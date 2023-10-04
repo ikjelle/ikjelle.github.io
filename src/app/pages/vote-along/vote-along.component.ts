@@ -85,8 +85,7 @@ export class VoteAlongComponent implements OnDestroy {
       let petitioners = res.Zaak[0].ZaakActor.map(a => a.Fractie_Id)
       if (res.StemmingsSoort == "Hoofdelijk") continue;
       if (petitioners.find(p => res.Stemming.find(v => v.Fractie_Id == p && v.Soort == "Voor") != undefined) == undefined) {
-        // console.log("Someone did put one in but did not vote YAY")
-        // console.log(res)
+        // Someone did put one in but did not vote YAY
       }
       for (let actor of res.Zaak[0].ZaakActor) {
         if (!(actor.Fractie_Id)) continue
