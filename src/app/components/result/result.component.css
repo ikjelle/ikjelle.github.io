@@ -103,7 +103,24 @@
 
 .party-name:hover+.size-hover {
     display: block;
+}
+
+.left {
     right: 0;
+}
+
+.right {
+    left: 0;
+}
+
+.party-bubble {}
+
+.bubble-num {
+    display: none;
+}
+
+.party-bubble:hover .bubble-num {
+    display: block;
 }
 
 .mistake {

@@ -5,7 +5,8 @@
             {{vote.ActorNaam}}
             <i *ngIf="this.result.StemmingsSoort == 'Hoofdelijk'">{{vote.ActorFractie}}</i>
         </div>
-        <span *ngIf="this.result.StemmingsSoort != 'Hoofdelijk'" class="size-hover">
+        <span *ngIf="this.vertical && this.result.StemmingsSoort != 'Hoofdelijk'" class="size-hover"
+            [ngClass]="vote.Soort == 'Voor'? 'right': 'left'">
             {{vote.FractieGrootte}}
         </span>
     </div>
@@ -51,8 +52,10 @@
         </div>
     </div>
     <div class="hor-parties gap">
-        <div *ngFor="let vote of getOrderedVotes()" class="fr l-gap" [ngStyle]="{order: getHOrder(vote)}">
-            <div class="bubble" [ngClass]="getClass(vote)"></div>
+        <div *ngFor="let vote of getOrderedVotes()" class="fr l-gap party-bubble" [ngStyle]="{order: getHOrder(vote)}">
+            <div class="bubble frc" [ngClass]="getClass(vote)">
+                <div class="bubble-num">{{vote.FractieGrootte}}</div>
+            </div>
             <div class="fcc">
                 <ng-container *ngTemplateOutlet="partyTemplate; context: { $implicit: vote }"></ng-container>
             </div>
