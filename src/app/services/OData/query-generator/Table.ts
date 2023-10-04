@@ -1,4 +1,4 @@
-import { Filter } from "./filters";
+import { AndFilter, CompareCriterica, Filter, c } from "./filters";
 import { MetaDataModelKey, MetaDataSelectKey } from "../models/models";
 import 'reflect-metadata';
 
@@ -14,6 +14,7 @@ export class Table {
     orderBy = false;
     orderByProp: string = "";
     orderByAscending = false;
+    removeDeleted = true;
 
     public constructor(model: any, init?: Partial<Table>) {
         this.select = Reflect.getMetadata(MetaDataSelectKey, model);
@@ -50,6 +51,15 @@ export class Table {
     }
 
     getFilter() {
+        if (this.removeDeleted) {
+            // make sure deleted rows are not in results
+            let existFilter = new CompareCriterica("Verwijderd", c.eq, false)
+            if (this.filter) {
+                this.filter = new AndFilter([this.filter, existFilter]);
+            } else {
+                this.filter = existFilter;
+            }
+        }
         if (this.filter) {
             return "$filter=" + this.filter.toText();
         }

@@ -1,0 +1,7 @@
+<select class="party-select" (change)="setParty($event)">
+    <option [selected]="selectedParty== null" disabled>Kies een Partij</option>
+    <option [disabled]="isDisabled(p.Id)" [value]="p.Id" [selected]="p && p.Id==selectedParty"
+        *ngFor="let p of parties">
+        {{getNaming(p)}}
+    </option>
+</select>

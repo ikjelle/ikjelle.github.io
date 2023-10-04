@@ -15,21 +15,15 @@
         <div class="ffrwc l-gap">
             <div>Kies partij: </div>
             <div>
-                <select class="party-select" (change)="setA($event)">
-                    <option [selected]="partyAId== null" disabled>Kies een Partij</option>
-                    <option [disabled]="p.Id == partyBId" [value]="p.Id" [selected]="p && p.Id==partyAId"
-                        *ngFor="let p of parties">{{p.Afkorting}}</option>
-                </select>
+                <app-party-picker [disabledIds]="[partyBId!]" [parties]="parties"
+                    (change)="setA($event)"></app-party-picker>
             </div>
         </div>
         <div class="ffrwc l-gap">
             <div>Kies partij: </div>
             <div>
-                <select class="party-select" (change)="setB($event)">
-                    <option [selected]="partyBId== null" disabled>Kies een Partij</option>
-                    <option [disabled]="p.Id == partyAId" [value]="p.Id" [selected]="p.Id==partyBId"
-                        *ngFor="let p of parties">{{p.Afkorting}}</option>
-                </select>
+                <app-party-picker [disabledIds]="getDisabledB()" [parties]="parties"
+                    (change)="setB($event)"></app-party-picker>
             </div>
         </div>
     </div>
@@ -60,23 +54,36 @@
         <div class="fcc" style="width: 100%; margin-bottom: 8px;" [style]=" {order:-1*k.value.decisions.length}"
             *ngFor="let k of data | keyvalue">
             <app-collapse>
-                <div class="fc" id="title">
-                    <div style="align-self: flex-start; text-align: left;">
-                        {{k.value.caseSubject.Titel}}: {{k.value.decisions.length}}
-                    </div>
-                    <div style="align-self: flex-end;" class="fr l-gap">
-                        <div>Aantal Voor stemmen: </div>
-                        <div>{{this.getPartyName(this.usedPartyAId)}}</div>
-                        <div>
-                            {{this.getNumberOfSided(true, this.usedPartyAId, k.value.decisions)}}
-                            -
-                            {{this.getNumberOfSided(false, this.usedPartyAId, k.value.decisions)}}
+                <div id="title" style="width: 100%;">
+                    <div class="fcc l-gap">
+                        <div class="frc">
+                            <h3 style="margin-bottom: 1px; margin-top: 0.2em;">{{k.value.caseSubject.Titel}}</h3>
+                            <!-- <span>({{k.value.decisions.length}})</span> -->
                         </div>
-                        <div> {{this.getPartyName(this.usedPartyBId)}}</div>
+                        <div class="frc l-gap">
+                            <div>Voor: </div>
+                            <div>{{this.getPartyName(this.usedPartyAId)}}</div>
+                            <div>
+                                {{this.getNumberOfSided(true, this.usedPartyAId, k.value.decisions)}}
+                                -
+                                {{this.getNumberOfSided(false, this.usedPartyAId, k.value.decisions)}}
+                            </div>
+                            <div>{{this.getPartyName(this.usedPartyBId)}}</div>
+                        </div>
                     </div>
                 </div>
                 <div class="fc" style="gap: 4px;">
-                    <app-collapse *ngFor="let d of k.value.decisions" [title]="getTitle(d)">
+                    <app-collapse *ngFor="let d of k.value.decisions">
+                        <div id="title" style="width: 100%;">
+                            <div class="fcc l-gap">
+                                <div class="frc">
+                                    <p style="margin-bottom: 1px; margin-top: 0.2em;">{{d.Zaak[0].Onderwerp}}</p>
+                                </div>
+                                <div class="frc l-gap">
+                                    <small>{{getTitle(d)}}</small>
+                                </div>
+                            </div>
+                        </div>
                         <app-result [highLighted]="getHighLighted()" [result]="d"></app-result>
                     </app-collapse>
                 </div>

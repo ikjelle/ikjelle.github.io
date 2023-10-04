@@ -7,11 +7,13 @@ import { VotingResultsComponent } from './pages/voting-results/voting-results.co
 import { SearchNumberResultComponent } from './pages/search-number-result/search-number-result.component';
 import { VoteAlongComponent } from './pages/vote-along/vote-along.component';
 import { DifferenceComponent } from './pages/difference/difference.component';
+import { DeciderComponent } from './pages/decider/decider.component';
 
 
 const routes: Routes = [
   { path: 'resultaat/:id', component: SingleResultComponent },
   { path: 'filter', component: VotingResultsComponent },
+  { path: 'beslisser', component: DeciderComponent },
   { path: 'zoek', component: SearchNumberResultComponent },
   { path: 'mee-stemmers', component: VoteAlongComponent },
   { path: 'verschillen', component: DifferenceComponent },

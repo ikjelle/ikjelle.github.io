@@ -1,7 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { BehaviorSubject, Observable } from 'rxjs';
-import { Case, Party } from 'src/app/services/OData/models/models';
-import { PartyService } from 'src/app/services/party.service';
+import { BehaviorSubject } from 'rxjs';
+import { Party } from 'src/app/services/OData/models/models';
 
 @Component({
   selector: 'app-vote-along-result',
@@ -23,13 +22,13 @@ export class VoteAlongResultComponent implements OnInit {
 
   getOrderedDataSet(): VoteAlonger[] {
     // sort list based on input property
-    let orderby = () => this.data.votes.sort((a, b) => {
+    let orderby = () => this.data.votes.filter(v => v.partyId != this.data.partyId).sort((a, b) => {
       return (
         b.caseVotes.filter(v => v.agreed == 1).length -
-        b.caseVotes.filter(v => v.agreed == -1).length
+        b.caseVotes.filter(v => v.agreed != 1).length
       ) - (
           a.caseVotes.filter(v => v.agreed == 1).length -
-          a.caseVotes.filter(v => v.agreed == -1).length
+          a.caseVotes.filter(v => v.agreed != 1).length
         )
     })
 

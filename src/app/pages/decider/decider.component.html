@@ -1,0 +1,59 @@
+<div class="fcc gap">
+    <div class="fcc gap">
+        <h2>De Beslisser van de stemming</h2>
+        Op deze pagina kunt u van de geselecteerde partij in een geselecteerde periode zien, waar deze partij de
+        beslissende
+        stem heeft gegeven.
+        Een beslissende stem is in dit geval: een stem die met de tegengestelde waarde de uitslag had doen veranderen.
+        Deze stem heeft ervoor "kunnen" zorgen, dat een zaak werd aangemomen of verworpen.
+    </div>
+    <hr style="width: 100%;">
+
+    <app-period-picker [(start)]="periodStart" [(end)]="periodEnd"
+        (update)="updateAvailableParties()"></app-period-picker>
+
+    <div class="ffrwc l-gap">
+        <div>Kies partij: </div>
+        <div>
+            <app-party-picker [selectedParty]="selectedPartyId!" [parties]="parties"
+                (change)="setParty($event)"></app-party-picker>
+        </div>
+    </div>
+
+    <app-collapse [title]="'Type zaken'">
+        <app-case-type-picker></app-case-type-picker>
+    </app-collapse>
+    <div class="frc">
+        <button [disabled]="!(selectedPartyId)" [ngClass]="{'btn-disabled': !(selectedPartyId)}" class="btn btn-prim"
+            (click)="getDeciderDecisions()">Haal zaken op</button>
+    </div>
+
+    <app-cors-error *ngIf="parties.length == 0"></app-cors-error>
+    <div class="fcc" style="padding:8px" *ngIf="totalCount! >= 0 || pollingThreads >0">
+        <div *ngIf="totalCount! - not == 0" class="frc">
+            Geen zaken gevonden
+        </div>
+        <div class="fcc" *ngIf="pollingThreads >0">
+            <app-loading-spinner></app-loading-spinner>
+        </div>
+    </div>
+    <div class="fcc" *ngIf="baseUrl != ''">
+        <div #results class="fcc gap">
+            <ng-container *ngTemplateOutlet="pagination"></ng-container>
+            <div *ngIf="data" class="ffrwc gap">
+                <app-result class="result" [vertical]="true" [highLighted]="[this.partyId!]"
+                    *ngFor="let result of getResultsOfActivePage()" [result]="result"></app-result>
+            </div>
+            <ng-container *ngTemplateOutlet="pagination"></ng-container>
+        </div>
+    </div>
+</div>
+
+<ng-template #pagination>
+    <div class="ffrwc l-gap">
+        <div [ngStyle]="{'cursor': i == currentIndex? '': 'pointer', 'text-decoration': i == currentIndex? 'underline': ''}"
+            (click)="getNextPage(i)" *ngFor="let i of getIndexes()">
+            {{i}}
+        </div>
+    </div>
+</ng-template>

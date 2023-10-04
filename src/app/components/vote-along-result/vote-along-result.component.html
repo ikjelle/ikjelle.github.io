@@ -1,6 +1,6 @@
 <div *ngIf="data.party$ | async as mainParty" class="fc card">
     <div class="party-actor">
-        {{mainParty.Afkorting}} - {{data.petitioned}}
+        {{mainParty.Afkorting}} - {{data.petitioned}} zaken
     </div>
     <div class="fc">
         <div *ngFor="let party of getOrderedDataSet()" class="fr party-row l-gap">
