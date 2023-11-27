@@ -24,7 +24,7 @@ export class VotingResultsComponent implements OnInit, OnDestroy {
 
   parties: Party[] = []
 
-  periodStart?: string = new Date(2021, 2, 32).toISOString().slice(0, 10);
+  periodStart?: string = undefined;
   periodEnd?: string = undefined
 
   textSearch = "";

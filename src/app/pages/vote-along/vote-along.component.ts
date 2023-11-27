@@ -19,7 +19,7 @@ export class VoteAlongComponent implements OnDestroy {
   @ViewChild(CaseTypePickerComponent) caseTypePickerComp!: CaseTypePickerComponent
   sub?: Subscription;
 
-  periodStart?: string = new Date(2021, 2, 32).toISOString().slice(0, 10);
+  periodStart?: string = undefined;
   periodEnd?: string = undefined
 
   totalCount?: number = undefined

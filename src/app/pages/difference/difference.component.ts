@@ -18,7 +18,7 @@ export class DifferenceComponent implements OnInit, OnDestroy {
   sub?: Subscription;
   @ViewChild(CaseTypePickerComponent) caseTypePickerComp!: CaseTypePickerComponent
 
-  periodStart?: string = new Date(2021, 2, 32).toISOString().slice(0, 10);
+  periodStart?: string = undefined;
   periodEnd?: string = undefined;
   parties: Party[] = [];
   partyAId?: string;
