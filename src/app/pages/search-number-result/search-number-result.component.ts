@@ -14,71 +14,6 @@ import { ResultService } from 'src/app/services/result.service';
 })
 export class SearchNumberResultComponent implements OnDestroy {
   sub?: Subscription;
-  getOptions(): { name: string, val: number, orderby: (a: Decision, b: Decision) => number }[] {
-    let options = [
-      {
-        name: "Datum (aflopend)", val: 1,
-        orderby: (a: Decision, b: Decision) => {
-          if (a.Agendapunt.Activiteit.Datum == b.Agendapunt.Activiteit.Datum) {
-            return 0;
-          } else if (a.Agendapunt.Activiteit.Datum < b.Agendapunt.Activiteit.Datum) {
-            return 1
-          } else {
-            return -1
-          }
-        }
-      },
-      {
-        name: "Datum(oplopend)", val: 2,
-        orderby: (a: Decision, b: Decision) => {
-          if (a.Agendapunt.Activiteit.Datum == b.Agendapunt.Activiteit.Datum) {
-            return 0;
-          } else if (a.Agendapunt.Activiteit.Datum > b.Agendapunt.Activiteit.Datum) {
-            return 1
-          } else {
-            return -1
-          }
-        }
-      },
-      {
-        name: "Op volgnummer(aflopend)", val: 3,
-        orderby: (a: Decision, b: Decision) => {
-          if (a.Zaak[0].Volgnummer == b.Zaak[0].Volgnummer) {
-            return 0;
-          } else if (a.Zaak[0].Volgnummer < b.Zaak[0].Volgnummer) {
-            return 1
-          } else {
-            return -1
-          }
-        }
-      },
-      {
-        name: "Op volgnummer(oplopend)", val: 4,
-        orderby: (a: Decision, b: Decision) => {
-          if (a.Zaak[0].Volgnummer == b.Zaak[0].Volgnummer) {
-            return 0;
-          } else if (a.Zaak[0].Volgnummer > b.Zaak[0].Volgnummer) {
-            return 1
-          } else {
-            return -1
-          }
-        }
-      },
-    ]
-    if (this.testFollowNumber) options.push({
-      name: "In de buurt van Volgnummer", val: 5,
-      orderby: (a: Decision, b: Decision) => {
-        if (Math.abs(a.Zaak[0].Volgnummer - this.testFollowNumber!) == Math.abs(b.Zaak[0].Volgnummer - this.testFollowNumber!)) {
-          return 0;
-        } else if (Math.abs(a.Zaak[0].Volgnummer - this.testFollowNumber!) > Math.abs(b.Zaak[0].Volgnummer - this.testFollowNumber!)) {
-          return 1
-        } else {
-          return -1
-        }
-      }
-    },)
-    return options
-  }
   results?: Decision[];
   number = "";
   notFound = false;
@@ -88,6 +23,45 @@ export class SearchNumberResultComponent implements OnDestroy {
 
   ngOnDestroy(): void {
     this.sub?.unsubscribe();
+  }
+
+  getOptions(): { name: string, val: number, orderby: (a: Decision, b: Decision) => number }[] {
+    let options = [
+      {
+        name: "Datum (aflopend)", val: 1,
+        orderby: orderDecisionsByDateDesc
+      },
+      {
+        name: "Datum (oplopend)", val: 2,
+        orderby: orderDecisionsByDate
+      },
+      {
+        name: "Op volgnummer (aflopend)", val: 3,
+        orderby: orderFollowNumberDesc
+      },
+      {
+        name: "Op volgnummer (oplopend)", val: 4,
+        orderby: orderFollowNumber
+      },
+    ]
+    if (this.testFollowNumber) options.push({
+      name: "In de buurt van Volgnummer", val: 5,
+      orderby: (a: Decision, b: Decision) => {
+        let aFollowNumber = a.Zaak[0].Volgnummer;
+        if (aFollowNumber == 0) aFollowNumber = a.Zaak[0].Document[0].Volgnummer;
+        let bFollowNumber = b.Zaak[0].Volgnummer;
+        if (bFollowNumber == 0) bFollowNumber = b.Zaak[0].Document[0].Volgnummer;
+
+        if (Math.abs(aFollowNumber - this.testFollowNumber!) == Math.abs(bFollowNumber - this.testFollowNumber!)) {
+          return 0;
+        } else if (Math.abs(aFollowNumber - this.testFollowNumber!) > Math.abs(bFollowNumber - this.testFollowNumber!)) {
+          return 1
+        } else {
+          return -1
+        }
+      }
+    },)
+    return options
   }
 
   setOrderedResults() {
@@ -195,5 +169,39 @@ export class SearchNumberResultComponent implements OnDestroy {
 
   numberInputChanged(event: any) {
     this.number = event.target.value
+  }
+}
+function orderDecisionsByDateDesc(a: Decision, b: Decision): number {
+  return orderDecisionsByDate(b, a);
+}
+
+function orderDecisionsByDate(a: Decision, b: Decision): number {
+  const dateA = a.Agendapunt.Activiteit.Datum;
+  const dateB = b.Agendapunt.Activiteit.Datum;
+
+  if (dateA === dateB) {
+    return 0;
+  } else if (dateA > dateB) {
+    return 1;
+  } else {
+    return -1;
+  }
+}
+
+function orderFollowNumberDesc(a: Decision, b: Decision): number {
+  return orderFollowNumber(b, a)
+}
+function orderFollowNumber(a: Decision, b: Decision): number {
+  let aFollowNumber = a.Zaak[0].Volgnummer;
+  if (aFollowNumber == 0) aFollowNumber = a.Zaak[0].Document[0].Volgnummer;
+  let bFollowNumber = b.Zaak[0].Volgnummer;
+  if (bFollowNumber == 0) bFollowNumber = b.Zaak[0].Document[0].Volgnummer;
+
+  if (aFollowNumber == bFollowNumber) {
+    return 0;
+  } else if (aFollowNumber > bFollowNumber) {
+    return 1
+  } else {
+    return -1
   }
 }

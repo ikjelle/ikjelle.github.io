@@ -43,12 +43,12 @@
 </ng-template>
 
 <ng-template #horizontalVote>
-    <div class="frc vote-bar">
+    <div class="frc vote-bar nays"> <!-- default for filling last nay pixel -->
         <div style="height: 25px;" class="yays frc" [style]="{width: (votesYay/(votesYay + votesNay)* 100) + '%'}">
-            <div class="fcc">{{votesYay}}</div>
+            <div class="fcc" *ngIf="votesYay">{{votesYay}}</div>
         </div>
         <div style="height: 25px;" class="nays frc" [style]="{width: (votesNay/(votesYay + votesNay)* 100) + '%'}">
-            <div class="fcc">{{votesNay}}</div>
+            <div class="fcc" *ngIf="votesNay">{{votesNay}}</div>
         </div>
     </div>
     <div class="hor-parties gap">

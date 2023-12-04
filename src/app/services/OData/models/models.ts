@@ -113,6 +113,8 @@ export class CaseSubject {
 export class Document {
     @s
     DocumentNummer!: string;
+    @s
+    Volgnummer!: number;
 }
 
 @model("Fractie")

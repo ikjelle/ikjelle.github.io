@@ -23,7 +23,7 @@ export class PeriodPickerComponent implements OnInit {
     // Verkiezingen
     {
       name: "Verkiezing 2023",
-      start: new Date(2023, 11, 6).toISOString().slice(0, 10),
+      start: new Date(2023, 11, 7).toISOString().slice(0, 10),
       end: undefined,
     },
     {

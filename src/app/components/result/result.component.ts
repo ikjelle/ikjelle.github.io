@@ -36,7 +36,9 @@ export class ResultComponent implements OnInit {
     let number = ""
     number += this.result.Zaak[0].Kamerstukdossier[0].Nummer
     if (this.result.Zaak[0].Kamerstukdossier[0].Toevoeging) number += "-" + this.result.Zaak[0].Kamerstukdossier[0].Toevoeging
-    number += "-" + this.result.Zaak[0].Volgnummer
+    let followNumber = this.result.Zaak[0].Volgnummer;
+    if (followNumber == 0) followNumber = this.result.Zaak[0].Document[0].Volgnummer;
+    number += "-" + followNumber;
     return number
   }
 
