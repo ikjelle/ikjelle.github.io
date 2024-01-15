@@ -1,5 +1,6 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { CaseTypeCheckBox, AllCaseTypes } from 'src/app/services/OData/models/result-types';
+import { StateService } from 'src/app/services/state.service';
 
 @Component({
   selector: 'app-case-type-picker',
@@ -10,11 +11,14 @@ export class CaseTypePickerComponent implements OnInit {
 
   @Input() caseTypes!: CaseTypeCheckBox[]
   @Output() caseTypesChange = new EventEmitter<CaseTypeCheckBox[]>();
-  constructor() { }
+
+  state: any;
+  constructor(private stateService: StateService) { }
 
   ngOnInit(): void {
-    this.caseTypes = AllCaseTypes.filter(rt => rt.enabled)
-    this.caseTypesChange.emit(this.caseTypes)
+    this.state = this.stateService.periodState$.getValue() || {};
+    this.caseTypes = this.state.caseTypes ?? AllCaseTypes.filter(rt => rt.enabled)
+    this.emitCaseTypeChange()
   }
 
   checkAllTypes(event: any) {
@@ -27,7 +31,7 @@ export class CaseTypePickerComponent implements OnInit {
         resultType.checked = false
       }
     }
-    this.caseTypesChange.emit(this.caseTypes)
+    this.emitCaseTypeChange()
   }
 
   allTypesChecked() {
@@ -40,8 +44,14 @@ export class CaseTypePickerComponent implements OnInit {
   }
 
   changeTypeChecked(type: any) {
-    type.checked = !type.checked
+    type.checked = !type.allTypesChecked
+    this.emitCaseTypeChange()
+  }
+
+  emitCaseTypeChange() {
     this.caseTypesChange.emit(this.caseTypes)
+    this.state.caseTypes = this.caseTypes
+    this.stateService.caseTypesState$.next(this.state)
   }
 
 }

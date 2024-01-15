@@ -1,4 +1,5 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { StateService } from 'src/app/services/state.service';
 
 interface IPreset {
   name: string;
@@ -44,12 +45,16 @@ export class PeriodPickerComponent implements OnInit {
 
   selectedSet = null;
   hasInitialized: boolean = false;
+  state: any;
 
-  constructor() { }
+  constructor(private stateService: StateService) { }
 
   ngOnInit() {
+    this.state = this.stateService.periodState$.getValue() || {};
     // set start to the lastest known election
-    if (!this.start && !this.end) {
+    this.start = this.start ?? this.state.periodStart
+    this.end = this.end ?? this.state.periodEnd
+    if (Object.keys(this.state).length == 0) {
       let now = new Date().toISOString().slice(0, 10);
       for (let e of this.elections) {
         if ((e.start != undefined && e.start < now) && (e.end == undefined || e.end > now)) {
@@ -68,10 +73,14 @@ export class PeriodPickerComponent implements OnInit {
   setStart(start: any) {
     this.start = start;
     this.startChange.emit(this.start);
+    this.state.periodStart = this.start;
+    this.stateService.periodState$.next(this.state);
   }
   setEnd(end: any) {
     this.end = end;
     this.endChange.emit(this.end);
+    this.state.periodEnd = this.end;
+    this.stateService.periodState$.next(this.state);
   }
 
   periodStartDateChange(event: any) {

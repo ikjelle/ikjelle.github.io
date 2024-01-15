@@ -6,6 +6,7 @@ import { ODataResponse } from 'src/app/services/OData/models/response';
 import { Table } from 'src/app/services/OData/query-generator/Table';
 import { AndFilter } from 'src/app/services/OData/query-generator/filters';
 import { ResultService } from 'src/app/services/result.service';
+import { StateService } from 'src/app/services/state.service';
 
 @Component({
   selector: 'app-search-number-result',
@@ -19,7 +20,7 @@ export class SearchNumberResultComponent implements OnDestroy {
   notFound = false;
   orderby: number = 1;
   testFollowNumber?: number;
-  constructor(private resultService: ResultService, private http: HttpClient) { }
+  constructor(private stateService: StateService, private resultService: ResultService, private http: HttpClient) { }
 
   ngOnDestroy(): void {
     this.sub?.unsubscribe();
@@ -158,6 +159,7 @@ export class SearchNumberResultComponent implements OnDestroy {
     this.sub = this.http.get<ODataResponse<Decision>>(url).subscribe({
       next:
         (response) => {
+          this.stateService.UrlSucceed();
           let data = response.value;
           this.results = data
           this.setOrderedResults()

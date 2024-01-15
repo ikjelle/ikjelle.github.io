@@ -23,7 +23,7 @@
         <button [disabled]="!number" [ngClass]="{'btn-disabled': !number}" class="btn btn-prim"
             (click)="searchResult()">Zoek</button>
     </div>
-    <app-cors-error *ngIf="!results"></app-cors-error>
+
     <div class="fcc" *ngIf="notFound">
         <div>
             De zoekopdracht gaf geen resultaten.

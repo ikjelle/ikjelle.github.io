@@ -6,6 +6,7 @@ import { PeriodPickerComponent } from 'src/app/components/period-picker/period-p
 import { Decision, Party } from 'src/app/services/OData/models/models';
 import { ODataResponse } from 'src/app/services/OData/models/response';
 import { ResultService } from 'src/app/services/result.service';
+import { StateService } from 'src/app/services/state.service';
 
 @Component({
   selector: 'app-decider',
@@ -38,7 +39,7 @@ export class DeciderComponent implements OnDestroy {
 
   subs: Subscription[] = [];
 
-  constructor(private resultsService: ResultService, private http: HttpClient) { }
+  constructor(private stateService: StateService, private resultsService: ResultService, private http: HttpClient) { }
 
   ngAfterViewInit(): void {
     this.updateAvailableParties();
@@ -58,6 +59,7 @@ export class DeciderComponent implements OnDestroy {
     // TODO: catch CORS
     this.http.get<ODataResponse<Party>>(url).
       subscribe((response) => {
+        this.stateService.UrlSucceed();
         this.parties = response.value;
       })
   }

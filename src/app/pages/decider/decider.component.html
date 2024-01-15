@@ -27,7 +27,6 @@
             (click)="getDeciderDecisions()">Haal zaken op</button>
     </div>
 
-    <app-cors-error *ngIf="parties.length == 0"></app-cors-error>
     <div class="fcc" style="padding:8px" *ngIf="totalCount! >= 0 || pollingThreads >0">
         <div *ngIf="totalCount! - not == 0" class="frc">
             Geen zaken gevonden

@@ -9,6 +9,7 @@ import { ODataResponse } from 'src/app/services/OData/models/response';
 import { AndFilter } from 'src/app/services/OData/query-generator/filters';
 import { PartyService } from 'src/app/services/party.service';
 import { ResultService } from 'src/app/services/result.service';
+import { StateService } from 'src/app/services/state.service';
 
 @Component({
   selector: 'app-vote-along',
@@ -31,7 +32,7 @@ export class VoteAlongComponent implements OnDestroy {
 
   totalCount?: number = undefined
   amountPolled: number = 0
-  constructor(private resultsService: ResultService, private http: HttpClient, private partyService: PartyService) { }
+  constructor(private stateService: StateService, private resultsService: ResultService, private http: HttpClient, private partyService: PartyService) { }
 
   ngOnDestroy(): void {
     this.sub?.unsubscribe();
@@ -65,6 +66,7 @@ export class VoteAlongComponent implements OnDestroy {
     let getCases = (url: string) => {
       this.sub = this.http.get<ODataResponse<Decision>>(url).subscribe({
         next: (response) => {
+          this.stateService.UrlSucceed();
           let nextLink = response["@odata.nextLink"]
           this.totalCount = response["@odata.count"]!
           this.amountPolled += response.value.length

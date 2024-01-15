@@ -8,6 +8,7 @@ import { AndFilter, Filter } from 'src/app/services/OData/query-generator/filter
 import { CaseTypePickerComponent } from 'src/app/components/case-type-picker/case-type-picker.component';
 import { Subscription } from 'rxjs';
 import { PeriodPickerComponent } from 'src/app/components/period-picker/period-picker.component';
+import { StateService } from 'src/app/services/state.service';
 
 @Component({
   selector: 'app-voting-results',
@@ -44,7 +45,7 @@ export class VotingResultsComponent implements OnInit, OnDestroy {
 
   subs: Subscription[] = [];
 
-  constructor(private resultsService: ResultService, private http: HttpClient) {
+  constructor(private stateService: StateService, private resultsService: ResultService, private http: HttpClient) {
   }
 
   ngOnInit(): void {
@@ -104,7 +105,7 @@ export class VotingResultsComponent implements OnInit, OnDestroy {
             }
           }
           this.parties.push(...newParties);
-          this.firstTimeLoaded = true;
+          this.stateService.UrlSucceed();
         },
         error: err => {
         }
