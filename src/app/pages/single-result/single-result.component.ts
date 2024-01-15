@@ -1,9 +1,9 @@
-import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Decision } from 'src/app/services/OData/models/models';
 import { ODataResponse } from 'src/app/services/OData/models/response';
 import { AndFilter } from 'src/app/services/OData/query-generator/filters';
+import { HttpCacheService } from 'src/app/services/http-cache.service';
 import { ResultService } from 'src/app/services/result.service';
 
 @Component({
@@ -13,7 +13,7 @@ import { ResultService } from 'src/app/services/result.service';
 })
 export class SingleResultComponent implements OnInit {
 
-  constructor(private http: HttpClient, private route: ActivatedRoute, private resultsService: ResultService,) { }
+  constructor(private http: HttpCacheService, private route: ActivatedRoute, private resultsService: ResultService,) { }
 
   caseResult?: Decision;
   highLighted?: string[];

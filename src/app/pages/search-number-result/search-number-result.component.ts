@@ -1,10 +1,10 @@
-import { HttpClient } from '@angular/common/http';
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { Case, Decision } from 'src/app/services/OData/models/models';
 import { ODataResponse } from 'src/app/services/OData/models/response';
 import { Table } from 'src/app/services/OData/query-generator/Table';
 import { AndFilter } from 'src/app/services/OData/query-generator/filters';
+import { HttpCacheService } from 'src/app/services/http-cache.service';
 import { ResultService } from 'src/app/services/result.service';
 import { StateService } from 'src/app/services/state.service';
 
@@ -20,7 +20,7 @@ export class SearchNumberResultComponent implements OnDestroy {
   notFound = false;
   orderby: number = 1;
   testFollowNumber?: number;
-  constructor(private stateService: StateService, private resultService: ResultService, private http: HttpClient) { }
+  constructor(private stateService: StateService, private resultService: ResultService, private http: HttpCacheService) { }
 
   ngOnDestroy(): void {
     this.sub?.unsubscribe();

@@ -1,16 +1,16 @@
 import { Injectable } from '@angular/core';
 import { Party } from './OData/models/models';
 import { ODataResponse } from './OData/models/response';
-import { HttpClient } from '@angular/common/http';
 import { ResultService } from './result.service';
-import { BehaviorSubject, Observable, delay, of } from 'rxjs';
+import { BehaviorSubject } from 'rxjs';
+import { HttpCacheService } from './http-cache.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class PartyService {
 
-  constructor(private http: HttpClient, private resultsService: ResultService) { }
+  constructor(private http: HttpCacheService, private resultsService: ResultService) { }
 
   parties: { [id: string]: BehaviorSubject<Party | null> } = {}
   retrieving: string[] = []

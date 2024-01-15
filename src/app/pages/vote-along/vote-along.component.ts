@@ -1,4 +1,3 @@
-import { HttpClient } from '@angular/common/http';
 import { Component, OnDestroy, ViewChild } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { CaseTypePickerComponent } from 'src/app/components/case-type-picker/case-type-picker.component';
@@ -7,6 +6,7 @@ import { CaseVote, PartyVoteAlongers } from 'src/app/components/vote-along-resul
 import { Decision } from 'src/app/services/OData/models/models';
 import { ODataResponse } from 'src/app/services/OData/models/response';
 import { AndFilter } from 'src/app/services/OData/query-generator/filters';
+import { HttpCacheService } from 'src/app/services/http-cache.service';
 import { PartyService } from 'src/app/services/party.service';
 import { ResultService } from 'src/app/services/result.service';
 import { StateService } from 'src/app/services/state.service';
@@ -32,7 +32,7 @@ export class VoteAlongComponent implements OnDestroy {
 
   totalCount?: number = undefined
   amountPolled: number = 0
-  constructor(private stateService: StateService, private resultsService: ResultService, private http: HttpClient, private partyService: PartyService) { }
+  constructor(private stateService: StateService, private resultsService: ResultService, private http: HttpCacheService, private partyService: PartyService) { }
 
   ngOnDestroy(): void {
     this.sub?.unsubscribe();

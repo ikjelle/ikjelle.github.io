@@ -1,10 +1,10 @@
-import { HttpClient } from '@angular/common/http';
 import { Component, OnDestroy, ViewChild } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { CaseTypePickerComponent } from 'src/app/components/case-type-picker/case-type-picker.component';
 import { PeriodPickerComponent } from 'src/app/components/period-picker/period-picker.component';
 import { Decision, Party } from 'src/app/services/OData/models/models';
 import { ODataResponse } from 'src/app/services/OData/models/response';
+import { HttpCacheService } from 'src/app/services/http-cache.service';
 import { ResultService } from 'src/app/services/result.service';
 import { StateService } from 'src/app/services/state.service';
 
@@ -39,7 +39,7 @@ export class DeciderComponent implements OnDestroy {
 
   subs: Subscription[] = [];
 
-  constructor(private stateService: StateService, private resultsService: ResultService, private http: HttpClient) { }
+  constructor(private stateService: StateService, private resultsService: ResultService, private http: HttpCacheService) { }
 
   ngAfterViewInit(): void {
     this.updateAvailableParties();

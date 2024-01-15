@@ -1,4 +1,3 @@
-import { HttpClient } from '@angular/common/http';
 import { Component, ElementRef, OnDestroy, OnInit, ViewChild, ViewChildren } from '@angular/core';
 import { ControversialComponent } from 'src/app/components/controversial/controversial.component';
 import { Party, Decision } from 'src/app/services/OData/models/models';
@@ -9,6 +8,7 @@ import { CaseTypePickerComponent } from 'src/app/components/case-type-picker/cas
 import { Subscription } from 'rxjs';
 import { PeriodPickerComponent } from 'src/app/components/period-picker/period-picker.component';
 import { StateService } from 'src/app/services/state.service';
+import { HttpCacheService } from 'src/app/services/http-cache.service';
 
 @Component({
   selector: 'app-voting-results',
@@ -45,7 +45,7 @@ export class VotingResultsComponent implements OnInit, OnDestroy {
 
   subs: Subscription[] = [];
 
-  constructor(private stateService: StateService, private resultsService: ResultService, private http: HttpClient) {
+  constructor(private stateService: StateService, private resultsService: ResultService, private http: HttpCacheService) {
   }
 
   ngOnInit(): void {
