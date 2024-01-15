@@ -4,10 +4,10 @@ import { ControversialComponent } from 'src/app/components/controversial/controv
 import { Party, Decision } from 'src/app/services/OData/models/models';
 import { ODataResponse } from 'src/app/services/OData/models/response';
 import { ResultService } from 'src/app/services/result.service';
-
 import { AndFilter, Filter } from 'src/app/services/OData/query-generator/filters';
 import { CaseTypePickerComponent } from 'src/app/components/case-type-picker/case-type-picker.component';
 import { Subscription } from 'rxjs';
+import { PeriodPickerComponent } from 'src/app/components/period-picker/period-picker.component';
 
 @Component({
   selector: 'app-voting-results',
@@ -20,12 +20,17 @@ export class VotingResultsComponent implements OnInit, OnDestroy {
   @ViewChildren('result', { read: ElementRef }) resultComponents: any;
   @ViewChild(CaseTypePickerComponent) caseTypePickerComp!: CaseTypePickerComponent
 
+  @ViewChild(PeriodPickerComponent) periodPickerComp!: PeriodPickerComponent;
+
+  get periodStart(): string | undefined {
+    return this.periodPickerComp.start;
+  }
+  get periodEnd(): string | undefined {
+    return this.periodPickerComp.end;
+  }
   extendedFiltersEnabled = true;
 
   parties: Party[] = []
-
-  periodStart?: string = undefined;
-  periodEnd?: string = undefined
 
   textSearch = "";
 
@@ -44,7 +49,6 @@ export class VotingResultsComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.resetData()
-    this.getParties()
   }
 
   ngOnDestroy(): void {
@@ -52,6 +56,7 @@ export class VotingResultsComponent implements OnInit, OnDestroy {
   }
 
   ngAfterViewInit() {
+    this.getParties()
     let disclaimerStatus = sessionStorage.getItem("disclaimer-open")
     if (disclaimerStatus == "closed") {
       // closeDisclaimer
@@ -60,11 +65,9 @@ export class VotingResultsComponent implements OnInit, OnDestroy {
   }
 
   periodStartDateChange(event: any) {
-    this.periodStart = event.target.value;
     this.getParties();
   }
   periodEndDateChange(event: any) {
-    this.periodStart = event.target.value;
     this.getParties();
   }
   updateDate() {

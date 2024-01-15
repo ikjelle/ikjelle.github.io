@@ -2,6 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Component, OnDestroy, ViewChild } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { CaseTypePickerComponent } from 'src/app/components/case-type-picker/case-type-picker.component';
+import { PeriodPickerComponent } from 'src/app/components/period-picker/period-picker.component';
 import { CaseVote, PartyVoteAlongers } from 'src/app/components/vote-along-result/vote-along-result.component';
 import { Decision } from 'src/app/services/OData/models/models';
 import { ODataResponse } from 'src/app/services/OData/models/response';
@@ -19,8 +20,14 @@ export class VoteAlongComponent implements OnDestroy {
   @ViewChild(CaseTypePickerComponent) caseTypePickerComp!: CaseTypePickerComponent
   sub?: Subscription;
 
-  periodStart?: string = undefined;
-  periodEnd?: string = undefined
+  @ViewChild(PeriodPickerComponent) periodPickerComp!: PeriodPickerComponent;
+
+  get periodStart(): string | undefined {
+    return this.periodPickerComp.start;
+  }
+  get periodEnd(): string | undefined {
+    return this.periodPickerComp.end;
+  }
 
   totalCount?: number = undefined
   amountPolled: number = 0

@@ -15,6 +15,7 @@ export class PeriodPickerComponent implements OnInit {
 
   @Input() start?: string = undefined;
   @Input() end?: string = undefined;
+
   @Output() startChange = new EventEmitter<string | undefined>();
   @Output() endChange = new EventEmitter<string | undefined>();
   @Output() update = new EventEmitter();
@@ -42,12 +43,14 @@ export class PeriodPickerComponent implements OnInit {
   presets: IPreset[] = [...this.elections];
 
   selectedSet = null;
+  hasInitialized: boolean = false;
 
   constructor() { }
 
-  ngOnInit(): void {
-    let now = new Date().toISOString().slice(0, 10);
+  ngOnInit() {
+    // set start to the lastest known election
     if (!this.start && !this.end) {
+      let now = new Date().toISOString().slice(0, 10);
       for (let e of this.elections) {
         if ((e.start != undefined && e.start < now) && (e.end == undefined || e.end > now)) {
           this.setStart(e.start);
@@ -70,7 +73,6 @@ export class PeriodPickerComponent implements OnInit {
     this.end = end;
     this.endChange.emit(this.end);
   }
-
 
   periodStartDateChange(event: any) {
     this.setStart(event.target.value);

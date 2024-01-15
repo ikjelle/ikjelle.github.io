@@ -1,10 +1,10 @@
 import { HttpClient } from '@angular/common/http';
-import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { Component, OnDestroy, ViewChild } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { CaseTypePickerComponent } from 'src/app/components/case-type-picker/case-type-picker.component';
+import { PeriodPickerComponent } from 'src/app/components/period-picker/period-picker.component';
 import { CaseSubject, Decision, Party } from 'src/app/services/OData/models/models';
 import { ODataResponse } from 'src/app/services/OData/models/response';
-import { CaseTypeCheckBox, AllCaseTypes } from 'src/app/services/OData/models/result-types';
 import { AndFilter, Filter } from 'src/app/services/OData/query-generator/filters';
 import { ResultService } from 'src/app/services/result.service';
 
@@ -13,13 +13,19 @@ import { ResultService } from 'src/app/services/result.service';
   templateUrl: './difference.component.html',
   styleUrls: ['./difference.component.css']
 })
-export class DifferenceComponent implements OnInit, OnDestroy {
+export class DifferenceComponent implements OnDestroy {
 
   sub?: Subscription;
   @ViewChild(CaseTypePickerComponent) caseTypePickerComp!: CaseTypePickerComponent
 
-  periodStart?: string = undefined;
-  periodEnd?: string = undefined;
+  @ViewChild(PeriodPickerComponent) periodPickerComp!: PeriodPickerComponent;
+
+  get periodStart(): string | undefined {
+    return this.periodPickerComp.start;
+  }
+  get periodEnd(): string | undefined {
+    return this.periodPickerComp.end;
+  }
   parties: Party[] = [];
   partyAId?: string;
   partyBId?: string;
@@ -38,7 +44,7 @@ export class DifferenceComponent implements OnInit, OnDestroy {
 
   constructor(private resultsService: ResultService, private http: HttpClient) { }
 
-  ngOnInit(): void {
+  ngAfterViewInit(): void {
     this.updateAvailableParties()
   }
 

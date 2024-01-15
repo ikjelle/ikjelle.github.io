@@ -17,6 +17,7 @@ export class ResultService {
     }
     return undefined;
   }
+
   formatDate(date: Date) {
     return date.toISOString()
   }
@@ -145,7 +146,6 @@ export class ResultService {
       orderByProp: "NaamNL",
       orderByAscending: true
     })
-
     return table
   }
 

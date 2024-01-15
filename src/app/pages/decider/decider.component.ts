@@ -1,7 +1,8 @@
 import { HttpClient } from '@angular/common/http';
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnDestroy, ViewChild } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { CaseTypePickerComponent } from 'src/app/components/case-type-picker/case-type-picker.component';
+import { PeriodPickerComponent } from 'src/app/components/period-picker/period-picker.component';
 import { Decision, Party } from 'src/app/services/OData/models/models';
 import { ODataResponse } from 'src/app/services/OData/models/response';
 import { ResultService } from 'src/app/services/result.service';
@@ -11,12 +12,17 @@ import { ResultService } from 'src/app/services/result.service';
   templateUrl: './decider.component.html',
   styleUrls: ['./decider.component.css']
 })
-export class DeciderComponent implements OnInit {
+export class DeciderComponent implements OnDestroy {
 
   @ViewChild(CaseTypePickerComponent) caseTypePickerComp!: CaseTypePickerComponent
+  @ViewChild(PeriodPickerComponent) periodPickerComp!: PeriodPickerComponent;
 
-  periodStart?: string = undefined;
-  periodEnd?: string = undefined;
+  get periodStart(): string | undefined {
+    return this.periodPickerComp.start;
+  }
+  get periodEnd(): string | undefined {
+    return this.periodPickerComp.end;
+  }
   parties: Party[] = [];
   partyId?: string;
   selectedPartyId?: string;
@@ -34,7 +40,7 @@ export class DeciderComponent implements OnInit {
 
   constructor(private resultsService: ResultService, private http: HttpClient) { }
 
-  ngOnInit(): void {
+  ngAfterViewInit(): void {
     this.updateAvailableParties();
   }
 

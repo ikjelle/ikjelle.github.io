@@ -5,12 +5,11 @@
         beslissende
         stem heeft gegeven.
         Een beslissende stem is in dit geval: een stem die met de tegengestelde waarde de uitslag had doen veranderen.
-        Deze stem heeft ervoor "kunnen" zorgen, dat een zaak werd aangemomen of verworpen.
+        Deze stem heeft ervoor "kunnen" zorgen, dat een zaak werd aangenomen of verworpen.
     </div>
     <hr style="width: 100%;">
 
-    <app-period-picker [(start)]="periodStart" [(end)]="periodEnd"
-        (update)="updateAvailableParties()"></app-period-picker>
+    <app-period-picker (update)="updateAvailableParties()"></app-period-picker>
 
     <div class="ffrwc l-gap">
         <div>Kies partij: </div>
