@@ -22,14 +22,9 @@ export class CaseTypePickerComponent implements OnInit {
   }
 
   checkAllTypes(event: any) {
-    if (event.target.checked) {
-      for (const resultType of this.caseTypes) {
-        resultType.checked = true
-      }
-    } else {
-      for (const resultType of this.caseTypes) {
-        resultType.checked = false
-      }
+    // make all on or off
+    for (const resultType of this.caseTypes) {
+      resultType.checked = event.target.checked
     }
     this.emitCaseTypeChange()
   }
@@ -44,7 +39,7 @@ export class CaseTypePickerComponent implements OnInit {
   }
 
   changeTypeChecked(type: any) {
-    type.checked = !type.allTypesChecked
+    type.checked = !type.checked // toggle
     this.emitCaseTypeChange()
   }
 
