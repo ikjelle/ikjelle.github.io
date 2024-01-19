@@ -1,7 +1,7 @@
 <ng-template #partyTemplate let-vote>
     <!-- Maybe if head vote, groupby parties and collapse them open to see who voted -->
     <div class="party" [ngStyle]="isHighLighted(vote.Fractie) ? {order: 1} : {order: 2}">
-        <div class="party-name" [ngClass]="{'mark' :isHighLighted(vote.Fractie), 'mistake':vote.Fractie.Vergissing}">
+        <div class="party-name" [ngClass]="{'mark':isHighLighted(vote.Fractie) ,'mistake':vote.Vergissing }">
             {{vote.ActorNaam}}
             <i *ngIf="this.result.StemmingsSoort == 'Hoofdelijk'">{{vote.ActorFractie}}</i>
         </div>
