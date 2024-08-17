@@ -64,18 +64,16 @@
 </ng-template>
 
 <div class="fcc gap card">
-    <div class="header fc l-gap">
-        <div class="fr" style="justify-content: space-between;">
-            <h3 class="hyphenate" style="margin:0;">{{result.Zaak[0].Titel}}</h3>
-            <p class="date"><small class="text-muted">{{getLocalDate()}}</small></p>
+    <div class="fc l-gap">
+        <div class="header">{{result.Zaak[0].Titel}}</div>
+        <div class="type" style="display:flex; flex-direction:row; justify-content:center;align-items: center;gap:2px;">
+          {{result.Zaak[0].Soort}}: {{getCaseNumber()}} | <span class="datelbl">{{getLocalDate()}}</span>
         </div>
-        <div class="fr l-gap">
-            <i>{{result.Zaak[0].Soort}}:</i>
-            <small style="align-self: flex-end;">{{getCaseNumber()}}</small>
-        </div>
-        <small>{{votingResult}}</small>
-        <div>{{result.Zaak[0].Onderwerp}}</div>
+        <div class="description">{{result.Zaak[0].Onderwerp}}</div>
+        <div class="status">{{votingResult}}</div>
     </div>
+    
+
     <div *ngIf="vertical; else horizontalVote">
         <ng-container *ngTemplateOutlet="verticalVote"></ng-container>
     </div>
@@ -84,7 +82,7 @@
             <a class="link" target="_blank" [href]="getTKUrl()">tweedekamer.nl</a>
         </div>
         <a target="_blank" [href]="'./resultaat/' + result.Zaak[0].Id + '?'+ getQueryParams()">
-            <img style="width: 18px; height: 18px;" src="./assets/share.png">
+            Delen <img style="width: 18px; height: 18px;" src="./assets/share.png">
         </a>
     </div>
 </div>
