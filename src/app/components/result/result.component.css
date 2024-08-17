@@ -162,3 +162,36 @@
     display: flex;
     flex-flow: row wrap;
 }
+
+
+.header {
+    font-size: 1.3em;
+    font-weight: bold;
+    color: #333;
+    text-align: center;
+    margin-bottom: 10px;
+}
+
+.type {
+    font-size: 1em;
+    color: #777;
+    text-align: center;
+    margin-bottom: 5px;
+}
+
+.datelbl {
+    font-size: 0.7em;
+    color: #777;
+    text-align: center;
+}
+
+.description {
+    font-size: 1em;
+    color: #444;
+}
+
+.status {
+    font-size: 1em;
+    font-weight: bold;
+    text-align: center;
+}
